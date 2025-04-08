@@ -7,36 +7,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (readMoreLink) {
             readMoreLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                const postTitle = post.querySelector('h3').textContent;
-                const postDate = post.querySelector('.blog-date').textContent;
-                const postContent = post.querySelector('p:not(.blog-date)').textContent;
-
-                // Create and show the full blog post
-                const fullPost = document.createElement('div');
-                fullPost.className = 'full-blog-post';
-                fullPost.innerHTML = `
-                    <h3>${postTitle}</h3>
-                    <p class="blog-date">${postDate}</p>
-                    <div class="blog-content">
-                        <p>${postContent}</p>
-                    </div>
-                    <button class="close-blog-post glow-button">Close</button>
-                `;
-
-                // Remove any existing full post
-                const existingPost = blogSection.querySelector('.full-blog-post');
-                if (existingPost) {
-                    existingPost.remove();
+                
+                // Toggle between preview and full content
+                const previewContent = post.querySelector('.preview-content');
+                const fullContent = post.querySelector('.full-content');
+                
+                if (previewContent.style.display !== 'none') {
+                    // Show full content
+                    previewContent.style.display = 'none';
+                    fullContent.style.display = 'block';
+                    readMoreLink.textContent = 'Show Less';
+                    
+                    // Scroll to the post
+                    post.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    // Show preview content
+                    previewContent.style.display = 'block';
+                    fullContent.style.display = 'none';
+                    readMoreLink.textContent = 'Read More';
                 }
-
-                blogSection.appendChild(fullPost);
-                fullPost.scrollIntoView({ behavior: 'smooth' });
-
-                // Add close button functionality
-                const closeButton = fullPost.querySelector('.close-blog-post');
-                closeButton.addEventListener('click', function() {
-                    fullPost.remove();
-                });
             });
         }
     });
