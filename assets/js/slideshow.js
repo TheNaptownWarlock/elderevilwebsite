@@ -34,4 +34,13 @@ function initSlideshow(containerId) {
             showSlide(currentIndex);
         });
     }
-} 
+}
+
+// Initialize all slideshows when the document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initSlideshow('jester-slideshow');
+    initSlideshow('wizard-slideshow');
+    initSlideshow('elder-evil-coffee-slideshow');
+    initSlideshow('necro-nom-icon-slideshow');
+    initSlideshow('elder-cow-slideshow');
+}); 
