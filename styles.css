@@ -13,17 +13,29 @@
 }
 
 body {
-    margin: 0;
-    padding: 0;
     font-family: 'Germania One', cursive;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    background-image: url('../images/UI images/ElderEvilBorder.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
     min-height: 100vh;
     position: relative;
 }
 
-/* Remove the dark overlay temporarily to see if image is loading */
 body::before {
-    display: none; /* Temporarily disable the overlay */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--primary-color);
+    opacity: 0.9;
+    z-index: -1;
 }
 
 .container {
