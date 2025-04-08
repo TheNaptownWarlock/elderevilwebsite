@@ -20,7 +20,7 @@ body {
     background-image: url('../images/UI images/ElderEvilBorder.png');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
     position: relative;
@@ -33,7 +33,8 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(42, 27, 61, 0.5);
+    background-color: var(--primary-color);
+    opacity: 0.9;
     z-index: -1;
 }
 
@@ -698,4 +699,34 @@ footer {
 
 .close-popup:hover {
     background: var(--glow-color);
+}
+
+.full-blog-post {
+    background: rgba(42, 27, 61, 0.7);
+    border: 1px solid var(--glow-color);
+    padding: 2rem;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.full-blog-post h3 {
+    color: var(--glow-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.full-blog-post .blog-date {
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.full-blog-post .blog-content {
+    margin-bottom: 2rem;
+}
+
+.full-blog-post .close-blog-post {
+    display: block;
+    margin: 0 auto;
+    padding: 0.5rem 1.5rem;
 } 
