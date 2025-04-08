@@ -593,16 +593,15 @@ footer {
 }
 
 .project-description {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    text-align: center;
+    color: var(--text-color);
+    margin: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
-.project-description p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: var(--text-color);
+.project-description em {
+    color: var(--accent-color);
 }
 
 /* Date Display */
