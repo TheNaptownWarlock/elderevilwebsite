@@ -729,4 +729,69 @@ footer {
     display: block;
     margin: 0 auto;
     padding: 0.5rem 1.5rem;
+}
+
+.blog-post-full {
+    background: rgba(42, 27, 61, 0.7);
+    border: 1px solid var(--glow-color);
+    padding: 2rem;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.blog-post-full h1 {
+    color: var(--glow-color);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+}
+
+.blog-post-full .blog-date {
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.blog-post-full .blog-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.blog-post-full .blog-content p {
+    margin-bottom: 1.5rem;
+}
+
+.blog-post-full .blog-content ul {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.blog-post-full .blog-content li {
+    margin-bottom: 0.5rem;
+}
+
+.blog-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+    padding: 1rem;
+    border-top: 1px solid var(--glow-color);
+    border-bottom: 1px solid var(--glow-color);
+}
+
+.prev-post, .next-post {
+    color: var(--glow-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.prev-post:hover, .next-post:hover {
+    text-shadow: 0 0 10px var(--glow-color);
+    transform: translateX(5px);
+}
+
+.prev-post:hover {
+    transform: translateX(-5px);
 } 
