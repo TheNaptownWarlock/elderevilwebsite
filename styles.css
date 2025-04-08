@@ -77,34 +77,49 @@ body::before {
     box-shadow: 0 0 20px var(--glow-color);
 }
 
-/* Navigation */
+/* Header Styles */
 header {
-    background-color: rgba(42, 27, 61, 0.9);
-    padding: 1rem 0;
-    position: fixed;
-    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 20px 0;
+    position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
+    backdrop-filter: blur(3px);
+    text-align: center;
+}
+
+nav {
+    display: inline-block;
+    margin: 0 auto;
 }
 
 nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     justify-content: center;
-    list-style: none;
-    gap: 2rem;
+    gap: 20px;
 }
 
-nav a {
-    color: var(--text-color);
+nav ul li {
+    display: inline-block;
+}
+
+nav ul li a {
+    color: #fff;
     text-decoration: none;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 4px;
     transition: all 0.3s ease;
-    text-shadow: 0 0 5px var(--glow-color);
+    text-shadow: 0 0 5px rgba(138, 43, 226, 0.7);
 }
 
-nav a:hover {
-    color: var(--glow-color);
-    text-shadow: 0 0 10px var(--glow-color);
+nav ul li a:hover {
+    color: #8a2be2;
+    text-shadow: 0 0 10px rgba(138, 43, 226, 0.9);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Hero Section */
