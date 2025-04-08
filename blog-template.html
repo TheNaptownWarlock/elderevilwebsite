@@ -3,128 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Post Template - The Naptown Warlock</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Blog Post Template</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <style>
-        .template-form {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: rgba(42, 27, 61, 0.7);
-            border: 1px solid var(--glow-color);
-            border-radius: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--glow-color);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--glow-color);
-            border-radius: 5px;
-            color: white;
-        }
-
-        .form-group textarea {
-            min-height: 200px;
-            resize: vertical;
-        }
-
-        .image-upload {
-            margin-top: 1rem;
-        }
-
-        .preview-image {
-            max-width: 200px;
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .template-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .template-button {
-            padding: 0.5rem 1rem;
-            background: var(--glow-color);
-            color: var(--dark-bg);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .template-button:hover {
-            background: var(--accent-color);
-            transform: translateY(-2px);
-            box-shadow: 0 0 10px var(--glow-color);
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <header class="glow-effect">
             <nav>
                 <ul>
-                    <li><a href="index.html">Back to Site</a></li>
+                    <li><a href="../index.html#home">Home</a></li>
+                    <li><a href="../index.html#food">Elder Cuisine</a></li>
+                    <li><a href="../index.html#clay">The Lil Guys</a></li>
+                    <li><a href="../index.html#blog">Blog</a></li>
+                    <li><a href="../index.html#about">About</a></li>
+                    <li><a href="../index.html#contact">Contact</a></li>
                 </ul>
             </nav>
         </header>
 
         <main>
-            <section class="template-section">
-                <h1>Blog Post Template</h1>
-                <form id="blogTemplateForm">
-                    <div class="form-group">
-                        <label for="postTitle">Title:</label>
-                        <input type="text" id="postTitle" name="postTitle" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="postDate">Date:</label>
-                        <input type="date" id="postDate" name="postDate" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="postContent">Content:</label>
-                        <textarea id="postContent" name="postContent" rows="10" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="postImage">Featured Image (optional):</label>
-                        <input type="file" id="postImage" name="postImage" accept="image/*">
-                        <div id="imagePreview" class="image-preview"></div>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="button" id="previewButton" class="glow-button">Preview Post</button>
-                        <button type="button" id="generateButton" class="glow-button">Generate Post</button>
-                    </div>
-                </form>
-            </section>
-
-            <section id="previewArea" class="preview-section" style="display: none;">
-                <h2>Preview</h2>
-                <div class="blog-post-preview">
-                    <!-- Preview content will be inserted here -->
+            <article class="blog-post-full">
+                <h1>Your Blog Post Title</h1>
+                <p class="blog-date">Month Day, Year</p>
+                <div class="blog-content">
+                    <p>Your blog post content goes here. You can include:</p>
+                    <ul>
+                        <li>Text paragraphs</li>
+                        <li>Images</li>
+                        <li>Lists</li>
+                        <li>Links</li>
+                    </ul>
+                    <p>Format your content using HTML tags as needed.</p>
                 </div>
-                <button id="backToForm" class="glow-button">Back to Form</button>
-            </section>
+            </article>
         </main>
 
         <footer class="glow-effect">
@@ -136,7 +49,6 @@
             <p>&copy; 2024 The Naptown Warlock. All rights reserved.</p>
         </footer>
     </div>
-
     <script src="assets/js/blog-template.js"></script>
 </body>
 </html> 
