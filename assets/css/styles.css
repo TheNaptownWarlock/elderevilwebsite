@@ -1,3 +1,140 @@
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Germania One', cursive;
+    background-image: url('../images/UI images/thenaptownwarlock_darker_and_more_cartoony_dark_ominous_stone_h_6edf4799-cbe1-4880-a454-d10598ee8ec6.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #fff;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.7);
+    min-height: 100vh;
+}
+
+/* Header Styles */
+header {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Section Styles */
+section {
+    padding: 40px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+/* Portfolio Item Styles */
+.portfolio-item {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Contact Form Styles */
+.contact-section {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.contact-form {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #fff;
+}
+
+.contact-form input,
+.contact-form textarea {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #8a2be2;
+}
+
+/* Footer Styles */
+footer {
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    text-align: center;
+}
+
+/* Image Popup Styles */
+.image-popup {
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+/* Username Modal Styles */
+#username-modal {
+    background-color: rgba(0, 0, 0, 0.95);
+    color: #fff;
+}
+
+#username-form input {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#username-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Blog Post Styles */
+.blog-post {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Slideshow Container Styles */
+.slideshow-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Glow Text Effect */
+.glow-text {
+    text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+}
+
+/* Social Links */
+.social-links a {
+    color: #fff;
+    text-shadow: 0 0 5px rgba(138, 43, 226, 0.7);
+}
+
+/* Navigation Links */
+nav ul li a {
+    color: #fff;
+    text-shadow: 0 0 5px rgba(138, 43, 226, 0.7);
+}
+
+nav ul li a:hover {
+    color: #8a2be2;
+    text-shadow: 0 0 10px rgba(138, 43, 226, 0.9);
+}
+
 /* Chat Styles */
 .chat-container {
     max-width: 800px;
@@ -50,54 +187,6 @@
     background: #0056b3;
 }
 
-/* Username Modal Styles */
-#username-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    max-width: 400px;
-    width: 90%;
-}
-
-#username-modal h3 {
-    margin-top: 0;
-    color: #333;
-    text-align: center;
-}
-
-#username-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#username-form input {
-    padding: 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-}
-
-#username-form button {
-    padding: 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-#username-form button:hover {
-    background: #0056b3;
-}
-
 /* Message Styles */
 .message {
     margin: 10px 0;
@@ -121,64 +210,6 @@
     float: right;
     color: #666;
     font-size: 0.8em;
-}
-
-/* Contact Form Styles */
-.contact-section {
-    padding: 40px 20px;
-    background: #f8f9fa;
-}
-
-.contact-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 30px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.contact-form input,
-.contact-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    border-color: #8a2be2;
-    outline: none;
-}
-
-.contact-form textarea {
-    height: 150px;
-    resize: vertical;
-}
-
-.contact-form button {
-    width: 100%;
-    padding: 12px;
-    background: #8a2be2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.contact-form button:hover {
-    background: #7b1fa2;
-    transform: translateY(-2px);
-}
-
-.contact-form button:active {
-    transform: translateY(0);
 }
 
 /* Glow Button Effect */
@@ -214,14 +245,6 @@
         padding: 10px;
         font-size: 14px;
     }
-}
-
-/* Footer Styles */
-footer {
-    text-align: center;
-    padding: 20px;
-    background: #333;
-    color: white;
 }
 
 /* Responsive Design */
