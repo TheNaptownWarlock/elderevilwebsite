@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post Template - The Naptown Warlock</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .template-form {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(42, 27, 61, 0.7);
+            border: 1px solid var(--glow-color);
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--glow-color);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glow-color);
+            border-radius: 5px;
+            color: white;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .image-upload {
+            margin-top: 1rem;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .template-button {
+            padding: 0.5rem 1rem;
+            background: var(--glow-color);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-button:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="glow-effect">
+            <nav>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#food">Elder Cuisine</a></li>
+                    <li><a href="index.html#clay">The Lil Guys</a></li>
+                    <li><a href="index.html#blog">Blog</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <form id="blogTemplateForm" class="template-form">
+                <div class="form-group">
+                    <label for="postTitle">Post Title</label>
+                    <input type="text" id="postTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="postDate">Post Date</label>
+                    <input type="date" id="postDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="postContent">Post Content</label>
+                    <textarea id="postContent" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="postImage">Post Image</label>
+                    <input type="file" id="postImage" accept="image/*" class="image-upload">
+                    <img id="imagePreview" class="preview-image">
+                </div>
+
+                <div class="template-actions">
+                    <button type="button" id="previewButton" class="template-button">Preview Post</button>
+                    <button type="button" id="generateButton" class="template-button">Generate Post</button>
+                </div>
+            </form>
+
+            <div id="previewArea" class="blog-post-full" style="display: none;">
+                <!-- Preview content will be inserted here -->
+            </div>
+        </main>
+
+        <footer class="glow-effect">
+            <div class="social-links">
+                <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <p>&copy; 2024 The Naptown Warlock. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="assets/js/blog-template.js"></script>
+</body>
+</html> 
