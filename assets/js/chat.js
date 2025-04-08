@@ -8,6 +8,7 @@ const chatDisplay = document.getElementById('chat-display');
 const usernameModal = document.getElementById('username-modal');
 const usernameForm = document.getElementById('username-form');
 const usernameInput = document.getElementById('username-input');
+const startChattingBtn = document.getElementById('start-chatting');
 const currentUsername = document.getElementById('current-username');
 
 // Check if username exists in localStorage
@@ -22,8 +23,7 @@ if (!username) {
 }
 
 // Handle username submission
-usernameForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+startChattingBtn.addEventListener('click', () => {
     username = usernameInput.value.trim();
     if (username) {
         if (username === 'TheNaptownWarlock') {
@@ -47,8 +47,12 @@ usernameForm.addEventListener('submit', (e) => {
 // Handle chat form submission
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (!username) {
+        usernameModal.style.display = 'block';
+        return;
+    }
     const message = messageInput.value.trim();
-    if (message && username) {
+    if (message) {
         socket.emit('chat message', {
             text: message,
             user: username
@@ -127,10 +131,32 @@ style.textContent = `
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
     }
     #current-username {
         font-weight: bold;
         color: #333;
+    }
+    #username-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    #username-form input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    #username-form button {
+        padding: 8px;
+        background: #8a2be2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #username-form button:hover {
+        background: #7b1fa2;
     }
 `;
 document.head.appendChild(style); 
