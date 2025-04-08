@@ -97,22 +97,6 @@ footer {
     background-color: rgba(0, 0, 0, 0.95);
 }
 
-/* Username Modal Styles */
-#username-modal {
-    background-color: rgba(0, 0, 0, 0.95);
-    color: #fff;
-}
-
-#username-form input {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-#username-form input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
 /* Blog Post Styles */
 .blog-post {
     padding: 20px;
