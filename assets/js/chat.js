@@ -11,6 +11,17 @@ const usernameInput = document.getElementById('username-input');
 const startChattingBtn = document.getElementById('start-chatting');
 const currentUsername = document.getElementById('current-username');
 
+console.log('DOM Elements loaded:', {
+    chatForm,
+    messageInput,
+    chatDisplay,
+    usernameModal,
+    usernameForm,
+    usernameInput,
+    startChattingBtn,
+    currentUsername
+});
+
 // Check if username exists in localStorage
 let username = localStorage.getItem('username');
 if (!username) {
@@ -23,43 +34,55 @@ if (!username) {
 }
 
 // Handle username submission
-startChattingBtn.addEventListener('click', () => {
-    username = usernameInput.value.trim();
-    if (username) {
-        if (username === 'TheNaptownWarlock') {
-            // Check if this is the actual Naptown Warlock
-            const isAuthorized = confirm('Are you the actual Naptown Warlock?');
-            if (!isAuthorized) {
-                alert('Sorry, only the actual Naptown Warlock can use this username.');
-                return;
+if (startChattingBtn) {
+    startChattingBtn.addEventListener('click', function() {
+        console.log('Start chatting button clicked');
+        username = usernameInput.value.trim();
+        console.log('Username entered:', username);
+        
+        if (username) {
+            if (username === 'TheNaptownWarlock') {
+                // Check if this is the actual Naptown Warlock
+                const isAuthorized = confirm('Are you the actual Naptown Warlock?');
+                if (!isAuthorized) {
+                    alert('Sorry, only the actual Naptown Warlock can use this username.');
+                    return;
+                }
             }
+            localStorage.setItem('username', username);
+            currentUsername.textContent = username;
+            if (username === 'TheNaptownWarlock') {
+                currentUsername.classList.add('special-username');
+            }
+            usernameModal.style.display = 'none';
+            appendMessage('System', `Welcome to the chat, ${username}!`, new Date());
+            console.log('Username set and modal closed');
         }
-        localStorage.setItem('username', username);
-        currentUsername.textContent = username;
-        if (username === 'TheNaptownWarlock') {
-            currentUsername.classList.add('special-username');
-        }
-        usernameModal.style.display = 'none';
-        appendMessage('System', `Welcome to the chat, ${username}!`, new Date());
-    }
-});
+    });
+} else {
+    console.error('Start chatting button not found');
+}
 
 // Handle chat form submission
-chatForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!username) {
-        usernameModal.style.display = 'block';
-        return;
-    }
-    const message = messageInput.value.trim();
-    if (message) {
-        socket.emit('chat message', {
-            text: message,
-            user: username
-        });
-        messageInput.value = '';
-    }
-});
+if (chatForm) {
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!username) {
+            usernameModal.style.display = 'block';
+            return;
+        }
+        const message = messageInput.value.trim();
+        if (message) {
+            socket.emit('chat message', {
+                text: message,
+                user: username
+            });
+            messageInput.value = '';
+        }
+    });
+} else {
+    console.error('Chat form not found');
+}
 
 // Handle incoming messages
 socket.on('chat message', (msg) => {
