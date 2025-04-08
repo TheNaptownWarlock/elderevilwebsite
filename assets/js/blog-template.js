@@ -70,10 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             
-            // Find the blog section
+            // Find the blog section and blog posts container
             const blogSection = doc.querySelector('#blog');
-            if (!blogSection) {
-                throw new Error('Blog section not found in index.html');
+            const blogPostsContainer = blogSection.querySelector('.blog-posts');
+            
+            if (!blogSection || !blogPostsContainer) {
+                throw new Error('Blog section or posts container not found in index.html');
             }
             
             // Create the new blog post preview
@@ -97,8 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a href="blog-posts/${folderName}/" class="read-more">Read More</a>
             `;
             
-            // Insert the new post at the beginning of the blog section
-            blogSection.insertBefore(newPost, blogSection.firstChild);
+            // Insert the new post at the beginning of the blog posts container
+            blogPostsContainer.insertBefore(newPost, blogPostsContainer.firstChild);
             
             // Convert the updated document back to HTML
             const updatedHtml = doc.documentElement.outerHTML;

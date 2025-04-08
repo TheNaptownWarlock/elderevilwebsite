@@ -1,58 +1,63 @@
-BLOG POST CREATION GUIDE
-=======================
+Blog Post Creation Guide
+=====================
 
-1. OPENING THE TEMPLATE
-   - Open blog-template.html in your browser
-   - This is your starting point for creating new blog posts
+1. Open the Blog Template
+   - Navigate to blog-template.html in your browser
+   - This is your starting point for all new blog posts
 
-2. FILLING OUT THE FORM
-   - Post Title: Enter your blog post title
-   - Post Date: Select the publication date
-   - Post Content: Write your blog post content (supports multiple paragraphs)
-   - Optional: Upload an image for your post
+2. Fill Out the Form
+   - Title: Enter your blog post title
+   - Date: Select the publication date
+   - Content: Write your blog post content
+   - Image: (Optional) Upload a featured image
+   - Use the Preview button to check how it looks
 
-3. USING THE BUTTONS
-   - "Preview Post": Click to see how your post will look
-   - "Generate Post": Click to create a zip file containing your blog post
+3. Generate Your Post
+   - Click the "Generate Post" button
+   - This will:
+     * Create a zip file containing your blog post
+     * Download an updated index.html with the new post preview
+     * The new post will appear at the top of your blog section
 
-4. AFTER GENERATING
+4. Update Your Site
    - Extract the downloaded zip file to the blog-posts directory
    - The structure will be:
      blog-posts/
      └── your-post-title/
          ├── index.html
          └── images/
-             └── your-image.jpg
+             └── (your uploaded image)
+   - Replace the existing index.html with the downloaded one
 
-5. UPDATING THE MAIN SITE
-   - Open index.html
-   - Add a new blog post preview section in the blog section
-   - Link to your new post using the format:
-     <article class="blog-post">
-         <h3>Your Post Title</h3>
-         <p class="blog-date">Date</p>
-         <p>Preview text of your blog post...</p>
-         <a href="./blog-posts/your-post-title/" class="read-more">Read More</a>
-     </article>
+5. Update GitHub
+   - Use the update-github.bat file in your website folder
+   - Double-click it to automatically:
+     * Add all changes
+     * Commit with a message
+     * Push to GitHub
 
-6. GIT WORKFLOW
-   After creating your new post:
-   git add blog-posts/your-post-title/
-   git add index.html
-   git commit -m "Add new blog post: [Your Post Title]"
-   git push
+6. Verify Your Post
+   - Check your website to ensure:
+     * The new post appears in the blog section
+     * The "Read More" link works correctly
+     * Images display properly
+     * The post maintains your site's styling
 
-7. BEST PRACTICES
-   - Keep image sizes consistent
-   - Use descriptive alt text for images
-   - Maintain consistent formatting
-   - Test links before pushing
-   - Preview changes locally before committing
+Best Practices:
+- Keep post titles concise and descriptive
+- Use proper formatting in your content
+- Optimize images before uploading
+- Test links before publishing
+- Make regular backups of your index.html
 
-8. FILE STRUCTURE
-   Each blog post has its own folder:
-   blog-posts/
-   └── post-title/
-       ├── index.html
-       └── images/
-           └── post-image.jpg 
+File Structure:
+- Each blog post has its own folder under blog-posts/
+- The folder name is derived from your post title
+- All files related to a post stay in its folder
+- The main index.html contains post previews
+
+Remember:
+- Always preview your post before generating
+- Keep a backup of your index.html
+- Use the update-github.bat for quick updates
+- Test everything after making changes 
