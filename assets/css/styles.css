@@ -7,6 +7,8 @@ body {
     color: #fff;
     min-height: 100vh;
     position: relative;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* Debug styles - temporarily remove all overlays */
@@ -18,7 +20,11 @@ body::before {
     position: relative;
     z-index: 2;
     min-height: 100vh;
-    background-color: transparent;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #1a0033;
 }
 
 /* Make all sections transparent temporarily */
@@ -34,6 +40,8 @@ section {
     margin: 20px 0;
     border-radius: 8px;
     backdrop-filter: blur(3px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Make header more transparent temporarily */
@@ -44,6 +52,8 @@ header {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(3px);
+    width: 100%;
+    margin: 0;
 }
 
 /* Portfolio Item Styles */
@@ -52,16 +62,22 @@ header {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Contact Form Styles */
 .contact-section {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contact-form {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contact-form input,
@@ -84,26 +100,42 @@ header {
 
 /* Footer Styles */
 footer {
+    background-color: rgba(0, 0, 0, 0.4);
     padding: 20px;
     text-align: center;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 /* Image Popup Styles */
 .image-popup {
     background-color: rgba(0, 0, 0, 0.95);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
 }
 
 /* Blog Post Styles */
 .blog-post {
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Slideshow Container Styles */
 .slideshow-container {
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Glow Text Effect */
