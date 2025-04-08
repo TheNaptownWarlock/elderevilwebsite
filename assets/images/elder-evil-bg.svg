@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .text { font-family: 'Germania One', serif; font-size: 120px; fill: #000000; }
+        .snake { fill: #000000; }
+    </style>
+    <g transform="translate(100, 200)">
+        <!-- Elder Evil Text -->
+        <text class="text" x="0" y="0">Elder Evil</text>
+        
+        <!-- Snake Design -->
+        <path class="snake" d="M 200,50 C 250,50 300,-50 350,-50 L 400,-50 C 450,-50 500,50 550,50" 
+              stroke="#000000" stroke-width="15" fill="none"/>
+        <path class="snake" d="M 200,70 C 250,70 300,-30 350,-30 L 400,-30 C 450,-30 500,70 550,70" 
+              stroke="#000000" stroke-width="15" fill="none"/>
+        
+        <!-- Diamond -->
+        <rect x="375" y="-40" width="20" height="20" transform="rotate(45 385 -30)" fill="#000000"/>
+    </g>
+</svg> 
