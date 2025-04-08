@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Germania One', cursive;
-    background-image: url('../../images/UI images/thenaptownwarlock_darker_and_more_cartoony_dark_ominous_stone_h_6edf4799-cbe1-4880-a454-d10598ee8ec6.png');
+    background-image: url('/assets/images/UI images/thenaptownwarlock_darker_and_more_cartoony_dark_ominous_stone_h_6edf4799-cbe1-4880-a454-d10598ee8ec6.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -13,9 +13,9 @@ body {
     position: relative;
 }
 
-/* Remove the dark overlay temporarily to see if image is loading */
+/* Debug styles - temporarily remove all overlays */
 body::before {
-    display: none; /* Temporarily disable the overlay */
+    display: none;
 }
 
 .container {
@@ -25,28 +25,34 @@ body::before {
     background-color: transparent;
 }
 
+/* Make all sections transparent temporarily */
+section, header, footer, .portfolio-item, .contact-section, .blog-post, .slideshow-container {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+}
+
+/* Add a temporary border to see section boundaries */
+section {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Make sections more transparent temporarily */
 section {
     padding: 40px 20px;
-    background-color: rgba(0, 0, 0, 0.2);
     margin: 20px 0;
     border-radius: 8px;
-    backdrop-filter: blur(1px);
 }
 
 /* Make header more transparent temporarily */
 header {
-    background-color: rgba(0, 0, 0, 0.2);
     padding: 20px 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(1px);
 }
 
 /* Portfolio Item Styles */
 .portfolio-item {
-    background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -82,7 +88,6 @@ header {
 
 /* Footer Styles */
 footer {
-    background-color: rgba(0, 0, 0, 0.9);
     padding: 20px;
     text-align: center;
 }
@@ -110,7 +115,6 @@ footer {
 
 /* Blog Post Styles */
 .blog-post {
-    background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -118,7 +122,6 @@ footer {
 
 /* Slideshow Container Styles */
 .slideshow-container {
-    background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 8px;
 }
