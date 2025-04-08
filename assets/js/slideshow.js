@@ -5,31 +5,35 @@ function initSlideshow(containerId) {
     const nextBtn = container.querySelector('.next-btn');
     let currentIndex = 0;
 
-    // Hide all images except the first one
+    // Initialize all slides
     images.forEach((img, index) => {
-        img.style.display = index === 0 ? 'block' : 'none';
+        img.style.opacity = index === 0 ? '1' : '0';
+        img.classList.toggle('active', index === 0);
     });
 
     function showSlide(index) {
-        images.forEach(img => img.style.display = 'none');
-        images[index].style.display = 'block';
+        // Remove active class from all slides
+        images.forEach(img => {
+            img.style.opacity = '0';
+            img.classList.remove('active');
+        });
         
-        // Add fade-in effect
-        images[index].classList.add('fade-in');
-        setTimeout(() => {
-            images[index].classList.remove('fade-in');
-        }, 500);
+        // Add active class to current slide
+        images[index].style.opacity = '1';
+        images[index].classList.add('active');
     }
 
     if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event from bubbling to the image
             currentIndex = (currentIndex - 1 + images.length) % images.length;
             showSlide(currentIndex);
         });
     }
 
     if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event from bubbling to the image
             currentIndex = (currentIndex + 1) % images.length;
             showSlide(currentIndex);
         });
