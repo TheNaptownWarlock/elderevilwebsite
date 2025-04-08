@@ -123,6 +123,7 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .popup-image {
@@ -131,6 +132,9 @@ footer {
     object-fit: contain;
     border-radius: 8px;
     margin-bottom: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .popup-description {
@@ -142,6 +146,9 @@ footer {
     padding: 1rem;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .popup-description .image-date {
