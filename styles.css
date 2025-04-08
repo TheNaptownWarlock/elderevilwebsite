@@ -433,41 +433,64 @@ footer {
 .slideshow-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: auto;
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .slide {
     position: absolute;
     width: 100%;
-    height: 100%;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 1rem;
 }
 
 .slide.active {
+    position: relative;
     opacity: 1;
 }
 
 .slide img {
     width: 100%;
-    height: 300px;
+    max-width: 600px;
+    height: auto;
     object-fit: cover;
     border-radius: 8px;
+    margin-bottom: 1rem;
 }
 
 .slide-description {
     width: 100%;
+    max-width: 600px;
     padding: 1rem;
     background: rgba(42, 27, 61, 0.9);
     color: var(--text-color);
     text-align: center;
-    margin-top: 1rem;
     border-radius: 8px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--glow-color) rgba(42, 27, 61, 0.9);
+}
+
+.slide-description::-webkit-scrollbar {
+    width: 8px;
+}
+
+.slide-description::-webkit-scrollbar-track {
+    background: rgba(42, 27, 61, 0.9);
+    border-radius: 4px;
+}
+
+.slide-description::-webkit-scrollbar-thumb {
+    background-color: var(--glow-color);
+    border-radius: 4px;
 }
 
 .prev-btn, .next-btn {
@@ -560,4 +583,74 @@ footer {
     padding: 5px 10px;
     border-radius: 3px;
     font-size: 0.9rem;
+}
+
+/* Image Popup */
+.image-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.image-popup.active {
+    display: flex;
+}
+
+.popup-image {
+    max-width: 90%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.popup-description {
+    max-width: 800px;
+    padding: 1rem;
+    background: rgba(42, 27, 61, 0.9);
+    color: var(--text-color);
+    text-align: center;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--glow-color) rgba(42, 27, 61, 0.9);
+}
+
+.close-popup {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(42, 27, 61, 0.9);
+    color: var(--text-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.close-popup:hover {
+    background: var(--glow-color);
+}
+
+.slide img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.slide img:hover {
+    transform: scale(1.02);
 } 

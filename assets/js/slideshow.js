@@ -1,40 +1,45 @@
 function initSlideshow(containerId) {
     const container = document.getElementById(containerId);
-    const images = container.querySelectorAll('.slide');
+    const slides = container.querySelectorAll('.slide');
     const prevBtn = container.querySelector('.prev-btn');
     const nextBtn = container.querySelector('.next-btn');
     let currentIndex = 0;
 
     // Initialize all slides
-    images.forEach((img, index) => {
-        img.style.opacity = index === 0 ? '1' : '0';
-        img.classList.toggle('active', index === 0);
+    slides.forEach((slide, index) => {
+        if (index === 0) {
+            slide.style.opacity = '1';
+            slide.classList.add('active');
+        } else {
+            slide.style.opacity = '0';
+            slide.classList.remove('active');
+        }
     });
 
     function showSlide(index) {
-        // Remove active class from all slides
-        images.forEach(img => {
-            img.style.opacity = '0';
-            img.classList.remove('active');
+        // Hide all slides
+        slides.forEach(slide => {
+            slide.style.opacity = '0';
+            slide.classList.remove('active');
         });
         
-        // Add active class to current slide
-        images[index].style.opacity = '1';
-        images[index].classList.add('active');
+        // Show current slide
+        slides[index].style.opacity = '1';
+        slides[index].classList.add('active');
     }
 
     if (prevBtn) {
         prevBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event from bubbling to the image
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
             showSlide(currentIndex);
         });
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event from bubbling to the image
-            currentIndex = (currentIndex + 1) % images.length;
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % slides.length;
             showSlide(currentIndex);
         });
     }
