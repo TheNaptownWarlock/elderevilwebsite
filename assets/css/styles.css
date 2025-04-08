@@ -43,36 +43,12 @@ section {
     border-radius: 8px;
 }
 
-/* Header Styles */
+/* Make header more transparent temporarily */
 header {
-    background-color: #1a1a1a;
-    padding: 1rem 0;
+    padding: 20px 0;
     position: sticky;
     top: 0;
-    z-index: 1000;
-    text-align: center;
-}
-
-.logo-container {
-    margin: 0 auto;
-    max-width: 200px;
-    padding: 1rem 0;
-}
-
-.header-logo {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
-    transition: transform 0.3s ease;
-}
-
-.header-logo:hover {
-    transform: scale(1.05);
-}
-
-nav {
-    display: inline-block;
-    margin: 0 auto;
+    z-index: 100;
 }
 
 /* Portfolio Item Styles */
