@@ -326,10 +326,11 @@ footer {
 /* Blog Posts */
 .blog-post {
     background: rgba(42, 27, 61, 0.7);
-    border: 1px solid var(--glow-color);
     padding: 1.5rem;
-    transition: all 0.3s ease;
-    position: relative;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--glow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .blog-post:hover {
@@ -340,35 +341,35 @@ footer {
 .blog-post h3 {
     color: var(--glow-color);
     margin-bottom: 0.5rem;
+    font-size: 1.5rem;
 }
 
-.blog-date {
+.blog-post .blog-date {
     color: var(--accent-color);
-    font-size: 0.9em;
     margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.blog-post p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
 }
 
 .read-more {
-    color: var(--glow-color);
-    text-decoration: none;
     display: inline-block;
-    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--glow-color);
+    color: var(--dark-bg);
+    text-decoration: none;
+    border-radius: 5px;
     transition: all 0.3s ease;
-    position: relative;
-}
-
-.read-more::after {
-    content: '→';
-    margin-left: 5px;
-    transition: transform 0.3s ease;
-}
-
-.read-more:hover::after {
-    transform: translateX(5px);
+    font-weight: bold;
 }
 
 .read-more:hover {
-    text-shadow: 0 0 10px var(--glow-color);
+    background: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px var(--glow-color);
 }
 
 /* About Section */
@@ -529,6 +530,22 @@ footer {
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
+    margin-top: 1rem;
+    text-align: left;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.slide-description .image-date {
+    font-weight: bold;
+    color: #ff6b6b;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.slide-description p {
+    margin: 0;
 }
 
 .slide:hover .slide-description {
@@ -732,17 +749,18 @@ footer {
 }
 
 .blog-post-full {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
     background: rgba(42, 27, 61, 0.7);
     border: 1px solid var(--glow-color);
-    padding: 2rem;
-    margin: 2rem 0;
-    position: relative;
+    border-radius: 10px;
 }
 
 .blog-post-full h1 {
-    color: var(--glow-color);
     text-align: center;
-    margin-bottom: 1rem;
+    color: var(--glow-color);
+    margin-bottom: 2rem;
     font-size: 2.5rem;
 }
 
