@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="assets/js/slideshow.js"></script>
+    <script src="assets/js/fullscreen.js"></script>
 </head>
 <body>
     <div class="container">
@@ -221,6 +222,18 @@
         <button class="close-popup">&times;</button>
         <img class="popup-image" src="" alt="">
         <div class="popup-description"></div>
+    </div>
+
+    <!-- Fullscreen Image Popup -->
+    <div id="fullscreen-popup" class="fullscreen-popup">
+        <button class="close-fullscreen">&times;</button>
+        <div class="fullscreen-content">
+            <img class="fullscreen-image" src="" alt="">
+            <div class="fullscreen-description">
+                <p class="fullscreen-date"></p>
+                <p class="fullscreen-text"></p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
