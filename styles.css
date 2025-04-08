@@ -429,14 +429,12 @@ footer {
     padding: 0.5rem 1.5rem;
 }
 
-/* Slideshow Styles */
+/* Slideshow */
 .slideshow-container {
     position: relative;
     width: 100%;
     height: 400px;
     overflow: hidden;
-    border: 1px solid var(--glow-color);
-    border-radius: 5px;
     margin-bottom: 1rem;
 }
 
@@ -445,7 +443,10 @@ footer {
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .slide.active {
@@ -454,61 +455,45 @@ footer {
 
 .slide img {
     width: 100%;
-    height: 100%;
+    height: 300px;
     object-fit: cover;
-    cursor: pointer;
+    border-radius: 8px;
 }
 
 .slide-description {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: var(--text-color);
+    width: 100%;
     padding: 1rem;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
+    background: rgba(42, 27, 61, 0.9);
+    color: var(--text-color);
+    text-align: center;
+    margin-top: 1rem;
+    border-radius: 8px;
 }
 
-.slide:hover .slide-description {
-    transform: translateY(0);
-}
-
-.slide-description p {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.prev-btn,
-.next-btn {
+.prev-btn, .next-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(42, 27, 61, 0.8);
+    background: rgba(42, 27, 61, 0.9);
     color: var(--text-color);
-    border: 1px solid var(--glow-color);
-    padding: 10px 15px;
+    border: none;
+    padding: 1rem;
     cursor: pointer;
-    font-size: 1.2em;
-    transition: all 0.3s ease;
+    font-size: 1.5rem;
     z-index: 10;
-    pointer-events: auto;
+    transition: all 0.3s ease;
+}
+
+.prev-btn:hover, .next-btn:hover {
+    background: var(--glow-color);
 }
 
 .prev-btn {
-    left: 10px;
+    left: 0;
 }
 
 .next-btn {
-    right: 10px;
-}
-
-.prev-btn:hover,
-.next-btn:hover {
-    background: var(--glow-color);
-    box-shadow: 0 0 10px var(--glow-color);
+    right: 0;
 }
 
 .fade-in {
