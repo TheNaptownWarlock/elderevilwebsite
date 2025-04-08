@@ -49,46 +49,66 @@ function initSlideshow(containerId) {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all slideshows
     const slideshows = document.querySelectorAll('.slideshow-container');
-    slideshows.forEach(initSlideshow);
+    
+    slideshows.forEach(slideshow => {
+        const slides = slideshow.querySelectorAll('.slide');
+        const prevBtn = slideshow.querySelector('.prev-btn');
+        const nextBtn = slideshow.querySelector('.next-btn');
+        let currentSlide = 0;
 
-    // Image popup functionality
-    const popup = document.getElementById('image-popup');
-    const popupImage = popup.querySelector('.popup-image');
-    const popupDescription = popup.querySelector('.popup-description');
-    const closePopup = popup.querySelector('.close-popup');
-
-    // Add click event to all slideshow images
-    document.querySelectorAll('.slideshow-image').forEach(img => {
-        img.addEventListener('click', function() {
-            popupImage.src = this.src;
-            popupImage.alt = this.alt;
-            
-            // Get the description from the slide
-            const description = this.nextElementSibling;
-            if (description && description.classList.contains('slide-description')) {
-                popupDescription.innerHTML = description.innerHTML;
-            }
-            
-            popup.classList.add('active');
+        // Add click event to images for fullscreen
+        slides.forEach(slide => {
+            const img = slide.querySelector('img');
+            img.addEventListener('click', function() {
+                const popup = document.getElementById('image-popup');
+                const popupImg = popup.querySelector('.popup-image');
+                const popupDesc = popup.querySelector('.popup-description');
+                
+                popupImg.src = this.src;
+                popupImg.alt = this.alt;
+                popupDesc.innerHTML = slide.querySelector('.slide-description').innerHTML;
+                
+                popup.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
         });
-    });
 
-    // Close popup when clicking the close button
-    closePopup.addEventListener('click', function() {
-        popup.classList.remove('active');
-    });
+        // Close popup when clicking the close button
+        const closePopup = document.querySelector('.close-popup');
+        closePopup.addEventListener('click', function() {
+            const popup = document.getElementById('image-popup');
+            popup.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
 
-    // Close popup when clicking outside the image
-    popup.addEventListener('click', function(e) {
-        if (e.target === popup) {
-            popup.classList.remove('active');
-        }
-    });
+        // Close popup when clicking outside the image
+        const popup = document.getElementById('image-popup');
+        popup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
 
-    // Close popup with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && popup.classList.contains('active')) {
-            popup.classList.remove('active');
+        // Show initial slide
+        showSlide(currentSlide);
+
+        // Previous button click handler
+        prevBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        // Next button click handler
+        nextBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.display = i === index ? 'block' : 'none';
+            });
         }
     });
 }); 
