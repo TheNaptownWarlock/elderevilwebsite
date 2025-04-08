@@ -269,11 +269,9 @@ footer {
 
 .portfolio-item h3 {
     color: var(--glow-color);
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    position: relative;
-    z-index: 1;
+    margin-top: 1rem;
     text-align: center;
+    font-size: 1.5rem;
 }
 
 .portfolio-item p {
@@ -281,6 +279,22 @@ footer {
     position: relative;
     z-index: 1;
     text-align: center;
+}
+
+.project-icon {
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.project-icon i {
+    font-size: 1.5rem;
+    color: var(--glow-color);
+    transition: transform 0.3s ease;
+}
+
+.project-icon i:hover {
+    transform: scale(1.2);
 }
 
 /* Blog Posts */
