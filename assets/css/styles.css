@@ -3,11 +3,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Germania One', cursive;
-    background-image: url('/assets/images/UI images/thenaptownwarlock_darker_and_more_cartoony_dark_ominous_stone_h_6edf4799-cbe1-4880-a454-d10598ee8ec6.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background-color: #1a0033;
     color: #fff;
     min-height: 100vh;
     position: relative;
@@ -33,26 +29,26 @@ section, header, footer, .portfolio-item, .contact-section, .blog-post, .slidesh
 
 /* Add a temporary border to see section boundaries */
 section {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Make sections more transparent temporarily */
-section {
     padding: 40px 20px;
+    background-color: rgba(0, 0, 0, 0.4);
     margin: 20px 0;
     border-radius: 8px;
+    backdrop-filter: blur(3px);
 }
 
 /* Make header more transparent temporarily */
 header {
+    background-color: rgba(0, 0, 0, 0.4);
     padding: 20px 0;
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(3px);
 }
 
 /* Portfolio Item Styles */
 .portfolio-item {
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -95,22 +91,6 @@ footer {
 /* Image Popup Styles */
 .image-popup {
     background-color: rgba(0, 0, 0, 0.95);
-}
-
-/* Username Modal Styles */
-#username-modal {
-    background-color: rgba(0, 0, 0, 0.95);
-    color: #fff;
-}
-
-#username-form input {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-#username-form input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
 }
 
 /* Blog Post Styles */
