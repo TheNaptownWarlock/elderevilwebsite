@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="assets/js/slideshow.js"></script>
+    <script src="assets/js/chat.js"></script>
 </head>
 <body>
     <div class="container">
@@ -214,13 +217,16 @@
                 </form>
             </section>
 
-            <section id="chat" class="chat-section">
-                <h2>Chat Room</h2>
+            <section id="chat" class="section">
+                <h2>Chat with The Naptown Warlock</h2>
                 <div class="chat-container">
-                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-header">
+                        <span>Current user: <span id="current-username">Not set</span></span>
+                    </div>
+                    <div id="chat-display" class="chat-messages"></div>
                     <form id="chat-form" class="chat-form">
                         <input type="text" id="message-input" placeholder="Type your message..." required>
-                        <button type="submit" class="glow-button">Send</button>
+                        <button type="submit">Send</button>
                     </form>
                 </div>
             </section>
@@ -243,7 +249,13 @@
         <div class="popup-description"></div>
     </div>
 
-    <script src="assets/js/slideshow.js"></script>
-    <script src="assets/js/chat.js"></script>
+    <!-- Username Modal -->
+    <div id="username-modal">
+        <h3>Choose Your Username</h3>
+        <form id="username-form">
+            <input type="text" id="username-input" placeholder="Enter your username" required>
+            <button type="submit">Start Chatting</button>
+        </form>
+    </div>
 </body>
 </html>
