@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </footer>
     </div>
 
-    <!-- Image Popup -->
+    // Image Popup
     <div id="image-popup" class="image-popup">
         <button class="close-popup">&times;</button>
         <img class="popup-image" src="" alt="">
@@ -312,7 +312,6 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <script src="assets/js/slideshow.js"></script>
-    <script src="assets/js/chat.js"></script>
 </body>
 </html>`;
             
@@ -360,68 +359,60 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Create the blog post HTML
-        let blogPostHTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - The Naptown Warlock</title>
-    <link rel="stylesheet" href="../../styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <div class="container">
-        <header class="glow-effect">
-            <nav>
-                <ul>
-                    <li><a href="../../index.html#home">Home</a></li>
-                    <li><a href="../../index.html#food">Elder Cuisine</a></li>
-                    <li><a href="../../index.html#clay">The Lil Guys</a></li>
-                    <li><a href="../../index.html#blog">Blog</a></li>
-                    <li><a href="../../index.html#about">About</a></li>
-                    <li><a href="../../index.html#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </header>
+        let blogPostHtml = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${title} - The Naptown Warlock</title>
+                <link rel="stylesheet" href="../../styles.css">
+                <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            </head>
+            <body>
+                <div class="container">
+                    <header class="glow-effect">
+                        <nav>
+                            <ul>
+                                <li><a href="../../index.html#home">Home</a></li>
+                                <li><a href="../../index.html#food">Elder Cuisine</a></li>
+                                <li><a href="../../index.html#clay">The Lil Guys</a></li>
+                                <li><a href="../../index.html#blog">Blog</a></li>
+                                <li><a href="../../index.html#about">About</a></li>
+                                <li><a href="../../index.html#contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </header>
 
-        <main>
-            <article class="blog-post-full">
-                <h1>${title}</h1>
-                <p class="blog-date">${formattedDate}</p>
-                <div class="blog-content">
-                    ${content.split('\n').map(paragraph => `<p>${paragraph}</p>`).join('')}
-        `;
+                    <main>
+                        <article class="blog-post-full">
+                            <h1>${title}</h1>
+                            <p class="blog-date">${formattedDate}</p>
+                            <div class="blog-content">
+                                ${content.split('\n').map(paragraph => `<p>${paragraph}</p>`).join('')}
+                            </div>
+                            <a href="../../index.html#blog" class="glow-button">Back to Blog</a>
+                        </article>
+                    </main>
 
-        if (imageFile) {
-            // Create a unique filename for the image
-            const imageFilename = `blog-${Date.now()}-${imageFile.name}`;
-            blogPostHTML += `<img src="images/${imageFilename}" alt="${title}" style="max-width: 100%; margin: 1rem 0;">`;
-        }
-
-        blogPostHTML += `
+                    <footer class="glow-effect">
+                        <div class="social-links">
+                            <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                        <p>&copy; 2024 The Naptown Warlock. All rights reserved.</p>
+                    </footer>
                 </div>
-                <a href="../../index.html#blog" class="glow-button">Back to Blog</a>
-            </article>
-        </main>
-
-        <footer class="glow-effect">
-            <div class="social-links">
-                <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
-                    <i class="fab fa-instagram"></i>
-                </a>
-            </div>
-            <p>&copy; 2024 The Naptown Warlock. All rights reserved.</p>
-        </footer>
-    </div>
-</body>
-</html>`;
+            </body>
+            </html>`;
 
         // Create a zip file containing the blog post structure
         const zip = new JSZip();
         
         // Add the HTML file
-        zip.file(`${folderName}/index.html`, blogPostHTML);
+        zip.file(`${folderName}/index.html`, blogPostHtml);
         
         // Create images folder and add image if present
         if (imageFile) {
