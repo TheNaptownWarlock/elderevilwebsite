@@ -262,26 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2>Blog</h2>
                 <div class="blog-posts">
                     ${newPost.outerHTML}
-                    <article class="blog-post">
-                        <h3>Welcome to My Blog</h3>
-                        <p class="blog-date">June 1, 2024</p>
-                        <p>Welcome to my mystical corner of creativity! I'm The Naptown Warlock, and this blog is where I'll share my journey through the realms of art, food, and creativity.</p>
-                        <a href="./blog-posts/welcome.html" class="read-more">Read More</a>
-                    </article>
-
-                    <article class="blog-post">
-                        <h3>The Art of Coffee Roasting</h3>
-                        <p class="blog-date">May 15, 2024</p>
-                        <p>Roasting coffee is both a science and an art. It's where the magic happens, transforming green coffee beans into the aromatic, flavorful beans we all know and love.</p>
-                        <a href="./blog-posts/coffee-roasting.html" class="read-more">Read More</a>
-                    </article>
-
-                    <article class="blog-post">
-                        <h3>Clay Sculpting Techniques</h3>
-                        <p class="blog-date">May 1, 2024</p>
-                        <p>Creating my Lil Guys has been a journey of discovery and experimentation. Each character starts as a simple lump of clay and transforms into a unique personality through careful sculpting and attention to detail.</p>
-                        <a href="./blog-posts/clay-sculpting.html" class="read-more">Read More</a>
-                    </article>
                 </div>
             </section>
 
