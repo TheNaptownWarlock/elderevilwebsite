@@ -123,11 +123,10 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
 .popup-image {
-    max-width: 100%;
+    max-width: 600px;
     max-height: 60vh;
     object-fit: contain;
     border-radius: 8px;
@@ -146,9 +145,6 @@ footer {
     padding: 1rem;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .popup-description .image-date {
