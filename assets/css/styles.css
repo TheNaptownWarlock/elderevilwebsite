@@ -123,6 +123,8 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    margin: auto;
 }
 
 .popup-image {
@@ -139,8 +141,7 @@ footer {
 .popup-description {
     color: white;
     text-align: center;
-    width: 100%;
-    max-width: 600px;
+    width: 600px;
     margin: 0 auto;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.3);
@@ -443,30 +444,38 @@ nav ul li a:hover {
 }
 
 .nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    font-size: 2rem;
-    width: 50px;
-    height: 50px;
+    position: relative;
+    background: rgba(42, 27, 61, 0.9);
+    color: var(--glow-color);
+    border: 2px solid var(--glow-color);
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 2;
+    margin: 1rem 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-button:hover {
-    background: rgba(138, 43, 226, 0.7);
-    color: white;
+    background: var(--glow-color);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--glow-color);
+}
+
+.nav-buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 .prev-button {
-    left: 1rem;
+    margin-right: 1rem;
 }
 
 .next-button {
-    right: 1rem;
+    margin-left: 1rem;
 } 
