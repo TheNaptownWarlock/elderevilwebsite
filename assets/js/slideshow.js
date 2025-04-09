@@ -52,4 +52,34 @@ document.addEventListener('DOMContentLoaded', function() {
     initSlideshow('elder-evil-coffee-slideshow');
     initSlideshow('necro-nom-icon-slideshow');
     initSlideshow('elder-cow-slideshow');
+
+    // Mobile Menu Functionality
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const closeMenuButton = document.querySelector('.close-menu');
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelectorAll('nav a');
+
+    // Toggle mobile menu
+    mobileMenuButton.addEventListener('click', function() {
+        nav.classList.add('active');
+    });
+
+    // Close mobile menu
+    closeMenuButton.addEventListener('click', function() {
+        nav.classList.remove('active');
+    });
+
+    // Close menu when clicking a link
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            nav.classList.remove('active');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!nav.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+            nav.classList.remove('active');
+        }
+    });
 }); 
