@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Naptown Warlock - Blog</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../assets/js/slideshow.js"></script>
+    <script src="../assets/js/fullscreen.js"></script>
+    <script src="../assets/js/blog-template.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="glow-effect">
+            <nav>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../index.html#food">Elder Cuisine</a></li>
+                    <li><a href="../index.html#clay">The Lil Guys</a></li>
+                    <li><a href="../index.html#blog">Blog</a></li>
+                    <li><a href="../index.html#about">About</a></li>
+                    <li><a href="../index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section id="blog-post" class="blog-post-section">
+                <h1 class="blog-title"></h1>
+                <p class="blog-date"></p>
+                <div class="blog-content"></div>
+            </section>
+        </main>
+
+        <footer class="glow-effect">
+            <div class="social-links">
+                <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" class="social-icon">
+                    <i class="fab fa-spotify"></i>
+                </a>
+            </div>
+            <p>&copy; 2025 The Naptown Warlock. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Image Popup -->
+    <div id="image-popup" class="image-popup">
+        <div class="popup-content">
+            <button class="close-popup">&times;</button>
+            <img class="popup-image" src="" alt="">
+            <div class="popup-description">
+                <p class="image-date"></p>
+                <p class="image-text"></p>
+            </div>
+            <div class="nav-buttons-container">
+                <button class="nav-button prev-button">&lt;</button>
+                <button class="nav-button next-button">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Image Popup -->
+    <div id="fullscreen-popup" class="fullscreen-popup">
+        <button class="close-fullscreen">&times;</button>
+        <div class="fullscreen-content">
+            <img class="fullscreen-image" src="" alt="">
+            <div class="fullscreen-description">
+                <p class="fullscreen-date"></p>
+                <p class="fullscreen-text"></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

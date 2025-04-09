@@ -478,4 +478,84 @@ nav ul li a:hover {
 
 .next-button {
     margin-left: 1rem;
+}
+
+/* General Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px; /* Add padding on smaller screens */
+    }
+
+    header nav ul {
+        flex-direction: column; /* Stack nav items vertically */
+        align-items: center;
+    }
+
+    header nav ul li {
+        margin: 10px 0; /* Add space between stacked nav items */
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr; /* Stack portfolio items */
+        gap: 30px;
+    }
+
+    .slideshow-container img,
+    .popup-image,
+    .fullscreen-image {
+        max-width: 90vw; /* Ensure images don't overflow small screens */
+        height: auto;
+    }
+
+    .popup-content {
+        width: 90%; /* Make popup slightly smaller */
+        padding: 15px;
+    }
+
+    .popup-description {
+        width: 100%; /* Allow description to take full width */
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: calc(100% - 20px); /* Adjust input width */
+    }
+
+    /* Adjust font sizes for smaller screens */
+    h1 {
+        font-size: 2.5em;
+    }
+    h2 {
+        font-size: 1.8em;
+    }
+    h3 {
+        font-size: 1.3em;
+    }
+    p, li, a, button {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    h1 {
+        font-size: 2em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    h3 {
+        font-size: 1.1em;
+    }
+    p, li, a, button {
+        font-size: 0.9em;
+    }
+
+    .hero-section h1 {
+        font-size: 2.2em; /* Specific adjustment for hero title */
+    }
+
+    .contact-form {
+        padding: 15px;
+    }
 } 

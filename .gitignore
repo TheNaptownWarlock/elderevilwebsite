@@ -45,3 +45,4 @@ backup/
 *.exe
 *.msi
 *.dmg 
+.vercel
