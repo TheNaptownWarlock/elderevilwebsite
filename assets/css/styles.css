@@ -17,7 +17,7 @@ body {
     background-color: var(--primary-color);
     color: var(--text-color);
     line-height: 1.6;
-    background-image: url('../images/UI images/thenaptownwarlock_darker_and_more_cartoony_dark_ominous_stone_h_6edf4799-cbe1-4880-a454-d10598ee8ec6.png');
+    background-image: url('../images/UI images/ElderEvilBorder.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -131,6 +131,10 @@ nav ul li a:hover {
     align-items: center;
     text-align: center;
     padding: 0 20px;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/UI images/ElderEvilBorder.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
 .hero-section h1 {
