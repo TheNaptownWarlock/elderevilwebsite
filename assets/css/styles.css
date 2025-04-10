@@ -1392,4 +1392,21 @@ nav ul li a:hover {
     border-radius: 2px;
     width: 0%;
     transition: width 0.1s linear;
+}
+
+.music-credit {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-align: center;
+    font-style: italic;
+    text-shadow: 0 0 10px var(--glow-color);
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.music-credit:hover {
+    opacity: 1;
+    text-shadow: 0 0 15px var(--glow-color);
+    transform: scale(1.05);
 } 
