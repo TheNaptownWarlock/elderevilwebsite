@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="assets/js/slideshow.js"></script>
     <script src="assets/js/fullscreen.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/music-player.js"></script>
 </head>
 <body>
     <div class="container">
@@ -22,6 +24,8 @@
                     <li><a href="#blog">Blog</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li><a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" rel="noopener noreferrer"><i class="fab fa-spotify"></i></a></li>
+                    <li><a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a></li>
                 </ul>
             </nav>
         </header>
@@ -29,7 +33,7 @@
         <main>
             <section id="home" class="hero-section">
                 <img src="assets/images/UI images/78136624_1341202766059618_1486831288903008256_n (2).png" alt="The Naptown Warlock" class="hero-image">
-                <h1 class="glow-text">The Naptown Warlock</h1>
+                <h1>The Naptown Warlock</h1>
                 <p class="subtitle">Culinary Magic & Mystic Crafts</p>
                 <div class="social-links">
                     <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
@@ -38,6 +42,26 @@
                     <a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" class="social-icon">
                         <i class="fab fa-spotify"></i>
                     </a>
+                </div>
+                
+                <div class="music-player">
+                    <div class="player-controls">
+                        <button id="prevTrack" class="player-button">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button id="playPause" class="player-button">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="nextTrack" class="player-button">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    <div class="track-info">
+                        <div id="trackTitle" class="track-title">No track selected</div>
+                        <div class="progress-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -68,14 +92,12 @@
                                 <img src="assets/images/food/Necro-NOM-icon/cinnamon rolls.jpg" alt="Cursed Cinnamon Rolls">
                                 <div class="slide-description">
                                     <p class="image-date">April 1, 2025</p>
-                                    <p>Where death meets deliciousness. Our Necro-NOM-icon creations bring new life to classic recipes, transforming them into something truly extraordinary. From cursed cinnamon rolls to bewitched empanadas, each bite tells a story of culinary resurrection.</p>
                                 </div>
                             </div>
                             <div class="slide">
                                 <img src="assets/images/food/Necro-NOM-icon/Goatcheeseanddateempanada.jpg" alt="Bewitched Empanadas">
                                 <div class="slide-description">
                                     <p class="image-date">April 1, 2025</p>
-                                    <p>Where death meets deliciousness. Our Necro-NOM-icon creations bring new life to classic recipes, transforming them into something truly extraordinary. From cursed cinnamon rolls to bewitched empanadas, each bite tells a story of culinary resurrection.</p>
                                 </div>
                             </div>
                             <button class="prev-btn" aria-label="Previous image">❮</button>
@@ -235,16 +257,15 @@
     <!-- Image Popup -->
     <div id="image-popup" class="image-popup">
         <div class="popup-content">
-            <button class="close-popup">&times;</button>
-            <img class="popup-image" src="" alt="">
-            <div class="popup-description">
-                <p class="image-date"></p>
-                <p class="image-text"></p>
+            <div class="popup-image-container">
+                <img class="popup-image" src="" alt="Popup Image">
+                <div class="nav-buttons-container">
+                    <button class="nav-button prev">❮</button>
+                    <button class="nav-button next">❯</button>
+                </div>
             </div>
-            <div class="nav-buttons-container">
-                <button class="nav-button prev-button">&lt;</button>
-                <button class="nav-button next-button">&gt;</button>
-            </div>
+            <div class="popup-description"></div>
+            <button class="close-popup">✕</button>
         </div>
     </div>
 
@@ -259,5 +280,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Audio Elements -->
+    <audio id="necronomicon-sound" src="assets/audio/Mmmm.mp3"></audio>
 </body>
 </html>
