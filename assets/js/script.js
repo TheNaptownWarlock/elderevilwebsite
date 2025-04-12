@@ -143,4 +143,44 @@ document.addEventListener('DOMContentLoaded', function() {
             showPopup(this.src, currentDescription, imageSet);
         });
     });
+
+    // Dropdown Menu Functionality
+    const dropdownToggle = document.getElementById('projects-dropdown');
+    const dropdownMenu = document.getElementById('projects-menu');
+
+    console.log('Dropdown elements:', { dropdownToggle, dropdownMenu });
+
+    if (dropdownToggle && dropdownMenu) {
+        // Toggle dropdown on click
+        dropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Dropdown clicked');
+            dropdownMenu.classList.toggle('active');
+            dropdownToggle.classList.toggle('active');
+            console.log('Dropdown state:', dropdownMenu.classList.contains('active'));
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const isClickOutside = !dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target);
+            if (isClickOutside && dropdownMenu.classList.contains('active')) {
+                console.log('Closing dropdown - clicked outside');
+                dropdownMenu.classList.remove('active');
+                dropdownToggle.classList.remove('active');
+            }
+        });
+
+        // Close dropdown when clicking a menu item
+        const menuItems = dropdownMenu.querySelectorAll('a');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                console.log('Menu item clicked:', this.href);
+                dropdownMenu.classList.remove('active');
+                dropdownToggle.classList.remove('active');
+            });
+        });
+    } else {
+        console.error('Dropdown elements not found');
+    }
 }); 
