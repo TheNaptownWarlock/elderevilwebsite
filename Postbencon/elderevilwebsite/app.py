@@ -3441,6 +3441,16 @@ else:
     # User profile section
     user = st.session_state.current_user
     
+    # Add a simple navigation reminder in the main content area
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #8B4513, #A0522D); 
+                color: #FFFACD; padding: 10px; border-radius: 10px; 
+                margin-bottom: 20px; text-align: center; border: 2px solid #654321;">
+        <strong>🗺️ Navigation Tip:</strong> If you can't see the navigation sidebar on the left, 
+        look for the hamburger menu (☰) in the top-left corner to reopen it!
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Profile button with avatar
     profile_col1, profile_col2 = st.sidebar.columns([1, 3])
     with profile_col1:
