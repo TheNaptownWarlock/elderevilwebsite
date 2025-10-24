@@ -3447,7 +3447,7 @@ else:
                 color: #FFFACD; padding: 10px; border-radius: 10px; 
                 margin-bottom: 20px; text-align: center; border: 2px solid #654321;">
         <strong>🗺️ Navigation Tip:</strong> If you can't see the navigation sidebar on the left, 
-        look for the hamburger menu (☰) in the top-left corner to reopen it!
+        look for the hamburger menu (☰) in the top-left corner to reopen it! (Updated)
     </div>
     """, unsafe_allow_html=True)
     
