@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Naptown Warlock</title>
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="stylesheet" href="assets/css/styles.css"><link rel="stylesheet" href="assets/css/dropdown-fix.css">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="assets/js/slideshow.js"></script>
+    <script src="assets/js/fullscreen.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/music-player.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="glow-effect">
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="projects-dropdown">Projects <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu" id="projects-menu">
+                            <li><a href="#cellar">The Cellar</a></li>
+                            <li><a href="#food">Elder Cuisine</a></li>
+                            <li><a href="#clay">The Lil Guys</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li><li><a href="fantasy-calendar.html">Bencon</a></li>
+                    <li><a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" rel="noopener noreferrer"><i class="fab fa-spotify social-icon nav-icon"></i></a></li>
+                    <li><a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram social-icon nav-icon"></i></a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section id="home" class="hero-section">
+                <img src="assets/images/UI images/78136624_1341202766059618_1486831288903008256_n (2).png" alt="The Naptown Warlock" class="hero-image">
+                <h1>The Naptown Warlock</h1>
+                <p class="subtitle"><em>Tenebra Fiat Luxem</em></p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" class="social-icon">
+                        <i class="fab fa-spotify"></i>
+                    </a>
+                </div>
+                
+                <div class="music-player">
+                    <div class="player-controls">
+                        <button id="prevTrack" class="player-button">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button id="playPause" class="player-button">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="nextTrack" class="player-button">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    <div class="track-info">
+                        <div id="trackTitle" class="track-title">No track selected</div>
+                        <div class="progress-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="music-credit">Music By Me</div>
+                <div class="about-content">
+                    <p>Heyya strange traveler! Thanks for visiting me in this cold and dark part of the cosmos!</p>
+                    <p>Things come in go out of my life like waves so I figured I'd try to capture moments of their light in my life before they dissapear into the void of time.</p>
+                    <p>I got involved first with my projects years ago when I tried my hand at roast coffee. Being able to source it and roast it at home emboldened me to try and pick up some other skills that, although are far from polished, allow me to experiment and have a lil bit of fun on this rock.</p>
+                    <p>Enjoy the show!</p>
+                </div>
+            </section>
+
+            <section id="cellar" class="portfolio-section">
+                <h2>The Cellar</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="boozin-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/boozin/WineLineup/IMG_0510.png" alt="Wine Lineup" onerror="console.error('Failed to load image:', this.src)">
+                                <div class="slide-description">
+                                    <p class="image-date">March 17, 2024</p>
+                                    <p>All three wines side by side! Edin did the art for Rassel & Black Talon. Yaz did the art for Hush.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/boozin/Hush/IMG_2047.png" alt="Hush Mead" onerror="console.error('Failed to load image:', this.src)">
+                                <div class="slide-description">
+                                    <p class="image-date">March 24, 2024</p>
+                                    <p>The second wine in the wine lineup. A little bit more sultry and velvety than the cab.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/boozin/BlackTalon/IMG_4452.jpg" alt="Black Talon" onerror="console.error('Failed to load image:', this.src)">
+                                <div class="slide-description">
+                                    <p class="image-date">March 10, 2024</p>
+                                    <p>Cab wine. The crowd favorite. This thing slapped. The last bottle, aged 6yrs is in Edin's hands. Aged for a 1yr on French oak.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/boozin/Cider/IMG_4131.jpg" alt="Apple Cider" onerror="console.error('Failed to load image:', this.src)">
+                                <div class="slide-description">
+                                    <p class="image-date">March 3, 2024</p>
+                                    <p>Ciders are super fast! You can make one in as little as week!</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/boozin/FirstMead/IMG_2156.png" alt="First Mead" onerror="console.error('Failed to load image:', this.src)">
+                                <div class="slide-description">
+                                    <p class="image-date">February 25, 2024</p>
+                                    <p>Illya helped go out to the burbs to get all the equipment for this guy. Aged 3 years. Clover honey. Delicious. Taught ya that mead could be complex and not overly sweet/syrupy.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <h3>Boozin'</h3>
+                        <p class="project-description"><em>Wine, Beer, Whatever Yer Feelin'</em></p>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="merch-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/merch/Glasses/1571D010-95C0-4BB9-9AEA-344D9D32669B.jpg" alt="Glasses - Front View">
+                                <div class="slide-description">
+                                    <p class="image-date">April 11, 2025</p>
+                                    <p>Some of the really nice glasses, art by Yaz</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/merch/Glasses/FFF69559-6434-41B9-B244-C8CA463C5057.jpg" alt="Glasses - Detail View 1">
+                                <div class="slide-description">
+                                    <p class="image-date">April 11, 2025</p>
+                                    <p>Some of the really nice glasses, art by Yaz</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/merch/Glasses/931A08CF-EBE7-41CF-A7BA-8B07D122A0C9.jpg" alt="Glasses - Detail View 2">
+                                <div class="slide-description">
+                                    <p class="image-date">April 11, 2025</p>
+                                    <p>Some of the really nice glasses, art by Yaz</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/merch/hexproof/IMG_5048.jpg" alt="Hexproof Design">
+                                <div class="slide-description">
+                                    <p class="image-date">April 10, 2025</p>
+                                    <p>Collab with Eli. He did the lion's share here with growing/making the sauce. Super hot! But I told Yaz what to design and she made the label.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <h3>Merch</h3>
+                        <p class="project-description"><em>Custom etched glasses and magical designs</em></p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="food" class="portfolio-section">
+                <h2>Elder Cuisine</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="elder-evil-coffee-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/food/Elder Evil Coffee/Sidama Roast 4_6_25/IMG_6607.jpg" alt="Sidama Roast Coffee">
+                                <div class="slide-description">
+                                    <p class="image-date">April 6, 2025</p>
+                                    <p>First roast in awhile for my friends over at Bucket O' Blood! From the mountains of Sidama in Ethiopia. Turbinado flavor comes across quite well.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/Elder Evil Coffee/ColdBrew/IMG_1327.jpg" alt="Cold Brew Coffee">
+                                <div class="slide-description">
+                                    <p class="image-date">April 10, 2025</p>
+                                    <p>Cold Brew - A smooth, low-acid coffee concentrate perfect for hot summer days.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <h3>Elder Evil Coffee</h3>
+                        <p class="project-description"><em>This was the first of my projects and spun everything else up. I started with a popcorn popper and a prayer.</em></p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="necro-nom-icon-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/food/Necro-NOM-icon/cinnamon rolls.jpg" alt="Cursed Cinnamon Rolls">
+                                <div class="slide-description">
+                                    <p class="image-date">April 1, 2025</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/Necro-NOM-icon/Goatcheeseanddateempanada.jpg" alt="Bewitched Empanadas">
+                                <div class="slide-description">
+                                    <p class="image-date">April 1, 2025</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Necro-NOM-icon</h3>
+                        <p class="project-description"><em>This is a general repository of my cooking projects.</em></p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="elder-cow-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/food/The Elder Cow/Jade for Ellis/IMG_6638.jpg" alt="Jade for Ellis">
+                                <div class="slide-description">
+                                    <p class="image-date">April 5, 2025</p>
+                                    <p>Ellis was my old roommate for a couple years! After recently hanging out she gave me a bunch of tea she had imported recently. I used my techniques from Water Lilies here and was able to successfully infuse the flavor in and make a great texture. So much so that me and other friends killed two pints pretty quickly. Will be more deliberate in these texture techniques going forward!</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/The Elder Cow/Outlaw Country for Chad/IMG_6219.jpg" alt="Outlaw Country for Chad">
+                                <div class="slide-description">
+                                    <p class="image-date">March 15, 2025</p>
+                                    <p>For my next project I wanted to do something really unhinged for my chaotic friend Chad. We joke about beans alot so I wondered if I could make a baked bean ice cream. Chad is really into old western films so I themed it around that. I decided to see if I could smoke the milk and it worked! Then candied bacon and added it with baked beans to the churn. Very divisive. Some folks were reviled by the bean texture other weren't too fond of the smoke flavor. I actually thought the smoke flavor worked well but the main issue here was I had added bourbon which raised the freezing point making the base texture not as good as normal. Should've been softer. Still got alot of laughs out of this one.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/The Elder Cow/Water Lilies for Illya/Water_Lilies.png" alt="Water Lilies for Illya">
+                                <div class="slide-description">
+                                    <p class="image-date">March 1, 2025</p>
+                                    <p>This was the first project in my ice cream series. I wanted to do it for my dear friend Illya as he is always pushing me to challenge myself with projects. Illya and I used to work at the Art Institute together so I wanted to theme it around that. Since he had given me some Parisian tea, I decided to theme it after Monet's Water Lilies. I torched cinnamon bark and let it sit in the milk with some of the tea to infuse it. Then made lemon cake that I added during the churn. The lemon cake was like the yellow lilies arising from the water and the base had a nice cereal milk flavor quality.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/The Elder Cow/Water Lilies for Illya/IMG_8798.jpg" alt="Water Lilies for Illya - Detail View 1">
+                                <div class="slide-description">
+                                    <p class="image-date">March 1, 2025</p>
+                                    <p>This was the first project in my ice cream series. I wanted to do it for my dear friend Illya as he is always pushing me to challenge myself with projects. Illya and I used to work at the Art Institute together so I wanted to theme it around that. Since he had given me some Parisian tea, I decided to theme it after Monet's Water Lilies. I torched cinnamon bark and let it sit in the milk with some of the tea to infuse it. Then made lemon cake that I added during the churn. The lemon cake was like the yellow lilies arising from the water and the base had a nice cereal milk flavor quality.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/food/The Elder Cow/Water Lilies for Illya/IMG_6096.jpg" alt="Water Lilies for Illya - Detail View 2">
+                                <div class="slide-description">
+                                    <p class="image-date">March 1, 2025</p>
+                                    <p>This was the first project in my ice cream series. I wanted to do it for my dear friend Illya as he is always pushing me to challenge myself with projects. Illya and I used to work at the Art Institute together so I wanted to theme it around that. Since he had given me some Parisian tea, I decided to theme it after Monet's Water Lilies. I torched cinnamon bark and let it sit in the milk with some of the tea to infuse it. Then made lemon cake that I added during the churn. The lemon cake was like the yellow lilies arising from the water and the base had a nice cereal milk flavor quality.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-ice-cream"></i>
+                        </div>
+                        <h3>The Elder Cow</h3>
+                        <p class="project-description"><em>I started this project as way to deal with late night anxiety spikes. I try to make a themed ice cream for friends once a week.</em></p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="clay" class="portfolio-section">
+                <h2>The Lil Guys</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="jester-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/clay/Lil Guy 1 - The Jester/IMG_6603.jpg" alt="The Jester - Front View">
+                                <div class="slide-description">
+                                    <p class="image-date">April 3, 2025</p>
+                                    <p>A soft lad who always brings a laugh.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/clay/Lil Guy 1 - The Jester/IMG_6424.jpg" alt="The Jester - Detail View">
+                                <div class="slide-description">
+                                    <p class="image-date">April 3, 2025</p>
+                                    <p>A soft lad who always brings a laugh.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <h3>The Jester</h3>
+                        <p>A soft lad who always brings a laugh.</p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="slideshow-container" id="wizard-slideshow">
+                            <div class="slide">
+                                <img src="assets/images/clay/Lil Guy 2 - The Wizard/IMG_6749.jpg" alt="The Wizard - Front View">
+                                <div class="slide-description">
+                                    <p class="image-date">April 7, 2025</p>
+                                    <p>A prestigious master of magicks, unfortunately he still hasn't mastered his potion tolerance.</p>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <img src="assets/images/clay/Lil Guy 2 - The Wizard/IMG_6606.jpg" alt="The Wizard - Detail View">
+                                <div class="slide-description">
+                                    <p class="image-date">April 7, 2025</p>
+                                    <p>A prestigious master of magicks, unfortunately he still hasn't mastered his potion tolerance.</p>
+                                </div>
+                            </div>
+                            <button class="prev-btn" aria-label="Previous image">❮</button>
+                            <button class="next-btn" aria-label="Next image">❯</button>
+                        </div>
+                        <h3>The Wizard</h3>
+                        <p>A prestigious master of magicks, unfortunately he still hasn't mastered his potion tolerance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="blog" class="blog-section">
+                <h2>Blog</h2>
+                <div class="blog-posts">
+                    <article class="blog-post">
+                        <h3>test</h3>
+                        <p class="blog-date">April 7, 2025</p>
+                        <p>Read the full post...</p>
+                        <a href="blog-posts/test/" class="read-more">Read More</a>
+                    </article>
+                </div>
+            </section>
+
+            <section id="contact" class="contact-section">
+                <h2>Contact</h2>
+                <form class="contact-form" action="https://formspree.io/f/xpwpogbv" method="POST">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <textarea name="message" placeholder="Message" required></textarea>
+                    <button type="submit" class="glow-button">Send Message</button>
+                </form>
+            </section>
+        </main>
+
+        <footer class="glow-effect">
+            <div class="social-links">
+                <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://open.spotify.com/user/afriendlybum?si=07380f5d471c4a8a" target="_blank" class="social-icon">
+                    <i class="fab fa-spotify"></i>
+                </a>
+            </div>
+            <p>&copy; 2025 The Naptown Warlock. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Image Popup -->
+    <div id="image-popup" class="image-popup">
+        <div class="popup-content">
+            <div class="popup-image-container">
+                <img class="popup-image" src="" alt="Popup Image">
+                <div class="nav-buttons-container">
+                    <button class="nav-button prev">❮</button>
+                    <button class="nav-button next">❯</button>
+                </div>
+            </div>
+            <div class="popup-description"></div>
+            <button class="close-popup">✕</button>
+        </div>
+    </div>
+
+    <!-- Fullscreen Image Popup -->
+    <div id="fullscreen-popup" class="fullscreen-popup">
+        <button class="close-fullscreen">&times;</button>
+        <div class="fullscreen-content">
+            <img class="fullscreen-image" src="" alt="">
+            <div class="fullscreen-description">
+                <p class="fullscreen-date"></p>
+                <p class="fullscreen-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="necronomicon-sound" src="assets/audio/Mmmm.mp3"></audio>
+</body>
+</html>

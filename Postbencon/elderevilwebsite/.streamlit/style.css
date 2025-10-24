@@ -1,0 +1,164 @@
+/* Medieval Theme CSS - ULTIMATE OVERRIDE */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=MedievalSharp&display=swap');
+
+/* Force button styling - ULTIMATE OVERRIDE */
+button,
+.stButton > button,
+button[data-testid="baseButton-primary"],
+button[data-testid="baseButton-secondary"],
+.stButton button[type="button"],
+button[class*="stButton"],
+button[class*="css-"],
+button[class*="baseButton"],
+button[class*="primary"],
+button[class*="secondary"],
+button[type="submit"],
+button[type="button"],
+.main .block-container button,
+.main .block-container .stButton button,
+.main .block-container .stForm button,
+.main .block-container .stForm .stButton button,
+.stForm button,
+.stForm .stButton button,
+.stFormSubmitButton button,
+button[data-baseweb="button"],
+button[aria-label],
+button[title],
+div[data-testid="stButton"] button,
+div[data-testid="stForm"] button,
+div[data-testid="stFormSubmitButton"] button,
+button[data-baseweb="button"][aria-label],
+button[data-baseweb="button"][title],
+button[aria-label="Submit"],
+button[title="Submit"] {
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
+    background-color: #8B4513 !important;
+    background-image: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
+    color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 8px !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    box-shadow: 
+        inset 0 1px 3px rgba(255,255,255,0.2),
+        0 2px 4px rgba(0,0,0,0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+button:hover,
+.stButton > button:hover,
+button[data-testid="baseButton-primary"]:hover,
+button[data-testid="baseButton-secondary"]:hover,
+.stButton button[type="button"]:hover,
+button[class*="stButton"]:hover,
+button[class*="css-"]:hover,
+button[class*="baseButton"]:hover,
+button[class*="primary"]:hover,
+button[class*="secondary"]:hover,
+button[type="submit"]:hover,
+button[type="button"]:hover,
+.main .block-container button:hover,
+.main .block-container .stButton button:hover,
+.main .block-container .stForm button:hover,
+.main .block-container .stForm .stButton button:hover,
+.stForm button:hover,
+.stForm .stButton button:hover,
+.stFormSubmitButton button:hover,
+button[data-baseweb="button"]:hover,
+button[aria-label]:hover,
+button[title]:hover,
+div[data-testid="stButton"] button:hover,
+div[data-testid="stForm"] button:hover,
+div[data-testid="stFormSubmitButton"] button:hover {
+    background: linear-gradient(135deg, #A0522D 0%, #CD853F 50%, #DEB887 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 
+        inset 0 1px 3px rgba(255,255,255,0.3),
+        0 4px 8px rgba(0,0,0,0.4) !important;
+}
+
+/* Force header styling - MAXIMUM SPECIFICITY */
+h3,
+div[style*="background: linear-gradient(135deg, #8B4513"] h3,
+div[style*="background: linear-gradient(135deg, #8B4513"] h3 *,
+.stMarkdown h3,
+.stMarkdown h3 *,
+.main .block-container .stMarkdown h3,
+.main .block-container .stMarkdown h3 *,
+div[data-testid="stMarkdownContainer"] h3,
+div[data-testid="stMarkdownContainer"] h3 * {
+    color: #FFFACD !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* Force form labels - MAXIMUM SPECIFICITY */
+label,
+.main .block-container .stForm label,
+.main .block-container .stTextInput label,
+.main .block-container .stSelectbox label,
+.main .block-container .stNumberInput label,
+.main .block-container .stTextArea label,
+.main .block-container .stRadio label,
+div[data-testid="stForm"] label,
+div[data-testid="stTextInput"] label,
+div[data-testid="stSelectbox"] label,
+div[data-testid="stNumberInput"] label,
+div[data-testid="stTextArea"] label,
+div[data-testid="stRadio"] label {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Force radio button text - MAXIMUM SPECIFICITY */
+.main .block-container .stForm .stRadio label,
+.main .block-container .stForm .stRadio label > div,
+.main .block-container .stForm .stRadio label span,
+.main .block-container .stForm div[data-testid="stRadio"] label,
+.main .block-container .stForm div[data-testid="stRadio"] label > div,
+.main .block-container .stForm div[data-testid="stRadio"] label span,
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] label > div,
+div[data-testid="stRadio"] label span {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Force form inputs - MAXIMUM SPECIFICITY */
+input,
+textarea,
+select,
+.main .block-container .stForm .stTextInput > div > div > input,
+.main .block-container .stForm .stTextArea > div > div > textarea,
+.main .block-container .stForm .stSelectbox > div > div > div,
+.main .block-container .stForm .stNumberInput > div > div > input,
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea,
+div[data-testid="stSelectbox"] select,
+div[data-testid="stNumberInput"] input {
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 8px !important;
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+}
+
+/* Force dropdown containers - MAXIMUM SPECIFICITY */
+.main .block-container .stForm .stSelectbox > div,
+.main .block-container .stForm .stSelectbox > div > div,
+div[data-testid="stSelectbox"] > div,
+div[data-testid="stSelectbox"] > div > div {
+    background-color: transparent !important;
+    background: transparent !important;
+    background-image: none !important;
+}

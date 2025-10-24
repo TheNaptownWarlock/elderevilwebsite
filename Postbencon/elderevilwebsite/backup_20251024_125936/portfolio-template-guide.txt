@@ -1,0 +1,159 @@
+PORTFOLIO TEMPLATE GUIDE
+=======================
+
+This guide explains how to add new portfolio sections and items to the website.
+
+1. PORTFOLIO SECTION TEMPLATE
+----------------------------
+A portfolio section is a container for related portfolio items. For example, "Elder Cuisine" is a section containing food-related projects.
+
+Template:
+```html
+<section id="section-id" class="portfolio-section">
+    <h2>Section Title</h2>
+    <div class="portfolio-grid">
+        <!-- Portfolio items go here -->
+    </div>
+</section>
+```
+
+Usage:
+- Replace "section-id" with a unique identifier (e.g., "food", "clay", "cellar")
+- Replace "Section Title" with your desired heading
+- Add portfolio items inside the portfolio-grid div
+
+2. PORTFOLIO ITEM TEMPLATE
+-------------------------
+A portfolio item represents a single project with its own slideshow.
+
+Template:
+```html
+<div class="portfolio-item">
+    <div class="slideshow-container" id="unique-slideshow-id">
+        <!-- Slides go here -->
+        <div class="slide">
+            <img src="assets/images/path/to/image.jpg" alt="Image Description">
+            <div class="slide-description">
+                <p class="image-date">Date</p>
+                <p>Description of the image or project</p>
+            </div>
+        </div>
+        <!-- Navigation buttons -->
+        <button class="prev-btn" aria-label="Previous image">❮</button>
+        <button class="next-btn" aria-label="Next image">❯</button>
+    </div>
+    <div class="project-icon">
+        <i class="fas fa-icon-class"></i>
+    </div>
+    <h3>Project Title</h3>
+    <p class="project-description"><em>Brief description of the project</em></p>
+</div>
+```
+
+3. ADDING A NEW SECTION
+----------------------
+1. Open index.html
+2. Find the main content area (inside the <main> tags)
+3. Add the section template where you want it to appear
+4. Add a link to the new section in the navigation menu:
+   ```html
+   <li><a href="#section-id">Section Title</a></li>
+   ```
+
+4. ADDING A NEW PORTFOLIO ITEM
+-----------------------------
+1. Inside your portfolio section, add the portfolio item template
+2. Replace the following:
+   - unique-slideshow-id: Give it a unique name (e.g., "new-project-slideshow")
+   - Image paths: Update to point to your images
+   - Image descriptions: Add relevant text
+   - Dates: Use the format "Month Day, Year"
+   - Project icon: Choose from available Font Awesome icons
+   - Project title: Name of your project
+   - Project description: Brief overview in italics
+
+5. IMAGE GUIDELINES
+------------------
+- Place images in the assets/images directory
+- Use descriptive filenames
+- Keep image sizes reasonable (recommended max: 2000px width)
+- Use .jpg or .png format
+- Include alt text for accessibility
+
+6. AVAILABLE ICONS
+-----------------
+Common Font Awesome icons for different project types:
+- Coffee: fa-coffee
+- Food: fa-utensils
+- Ice Cream: fa-ice-cream
+- Wine: fa-wine-bottle
+- Art: fa-palette
+- Music: fa-music
+- Book: fa-book
+- Camera: fa-camera
+- Magic: fa-magic
+- Flask: fa-flask
+
+7. EXAMPLE USAGE
+---------------
+Here's a complete example of adding a new coffee project:
+
+```html
+<section id="coffee" class="portfolio-section">
+    <h2>Coffee Projects</h2>
+    <div class="portfolio-grid">
+        <div class="portfolio-item">
+            <div class="slideshow-container" id="new-coffee-slideshow">
+                <div class="slide">
+                    <img src="assets/images/coffee/project1/image1.jpg" alt="Coffee Project 1">
+                    <div class="slide-description">
+                        <p class="image-date">April 10, 2025</p>
+                        <p>First attempt at a new brewing method</p>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="assets/images/coffee/project1/image2.jpg" alt="Coffee Project 1 - Detail">
+                    <div class="slide-description">
+                        <p class="image-date">April 10, 2025</p>
+                        <p>Close-up of the brewing process</p>
+                    </div>
+                </div>
+                <button class="prev-btn" aria-label="Previous image">❮</button>
+                <button class="next-btn" aria-label="Next image">❯</button>
+            </div>
+            <div class="project-icon">
+                <i class="fas fa-coffee"></i>
+            </div>
+            <h3>New Brew Method</h3>
+            <p class="project-description"><em>Experimenting with alternative brewing techniques</em></p>
+        </div>
+    </div>
+</section>
+```
+
+8. TROUBLESHOOTING
+-----------------
+Common issues and solutions:
+- Images not showing: Check file paths and case sensitivity
+- Slideshow not working: Ensure unique ID for each slideshow
+- Description not visible: Check CSS classes and structure
+- Navigation not working: Verify button placement and JavaScript initialization
+
+9. BEST PRACTICES
+----------------
+1. Keep section IDs unique
+2. Use descriptive image alt text
+3. Maintain consistent date formatting
+4. Keep project descriptions concise
+5. Use appropriate icons for project types
+6. Test new additions in different browsers
+7. Check mobile responsiveness
+8. Verify image loading times
+
+10. MAINTENANCE
+--------------
+- Regularly update image paths if moving files
+- Keep backup of original files
+- Document any custom styles added
+- Test new additions thoroughly
+- Update this guide as needed 
