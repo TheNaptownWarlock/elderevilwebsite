@@ -2581,6 +2581,35 @@ section[data-testid="stSidebar"] {
 </style>
 """)
 
+# Add collapse button under the banner
+st.markdown("""
+<div style="text-align: center; margin: 10px 0;">
+    <button id="sidebarToggle" onclick="toggleSidebar()" style="
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%);
+        color: #FFFACD;
+        border: 2px solid #654321;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-family: 'Cinzel', serif;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    ">☰ Toggle Navigation</button>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+    if (sidebar) {
+        const isHidden = sidebar.getAttribute('aria-hidden') === 'true';
+        sidebar.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+        sidebar.style.display = isHidden ? 'block' : 'none';
+        sidebar.style.visibility = isHidden ? 'visible' : 'hidden';
+    }
+}
+</script>
+""", unsafe_allow_html=True)
+
 # Tavern-specific sidebar styling removed (no longer needed)
 
 # Custom CSS for button styling with neon purple theme
@@ -2932,38 +2961,10 @@ section[data-testid="stSidebar"] {
     min-width: 300px !important;
 }
 
-/* Hide sidebar minimize button to prevent collapsing */
-section[data-testid="stSidebar"] button[title="Close sidebar"] {
-    display: none !important;
-}
-
-/* Hide the sidebar collapse button */
-button[data-testid="stSidebarCollapseButton"] {
-    display: none !important;
-}
-
-/* Hide any other potential collapse buttons */
-button[aria-label*="close"] {
-    display: none !important;
-}
-
-/* Additional sidebar collapse prevention */
-.stSidebar .stButton button[title*="close"],
-.stSidebar .stButton button[title*="collapse"],
-.stSidebar .stButton button[title*="minimize"] {
-    display: none !important;
-}
-
-/* Ensure sidebar container stays visible */
-div[data-testid="stSidebar"] {
-    display: block !important;
-    visibility: visible !important;
-}
-
-/* Prevent sidebar from being hidden */
+/* Allow sidebar to be collapsed and hide it when collapsed */
 section[data-testid="stSidebar"][aria-hidden="true"] {
-    display: block !important;
-    visibility: visible !important;
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* Sidebar content styling */
@@ -3477,15 +3478,6 @@ else:
     # User profile section
     user = st.session_state.current_user
     
-    # Add a simple navigation reminder in the main content area
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #8B4513, #A0522D); 
-                color: #FFFACD; padding: 10px; border-radius: 10px; 
-                margin-bottom: 20px; text-align: center; border: 2px solid #654321;">
-        <strong>🗺️ Navigation Tip:</strong> If you can't see the navigation sidebar on the left, 
-        look for the hamburger menu (☰) in the top-left corner to reopen it! (Updated)
-    </div>
-    """, unsafe_allow_html=True)
     
     # Profile button with avatar
     profile_col1, profile_col2 = st.sidebar.columns([1, 3])
@@ -4309,6 +4301,8 @@ if st.session_state.current_page == "Profile":
     with col1:
         st.markdown('<div class="fantasy-day-header">📅 Your Schedule 📅</div>', unsafe_allow_html=True)
         
+        # Check for overlapping events and show warning
+        user_events = []
         user_rsvps = []
         hosted_events = get_user_hosted_events(user["email"])
         
@@ -4321,6 +4315,38 @@ if st.session_state.current_page == "Profile":
         for hosted_event in hosted_events:
             if not any(rsvp["email"] == user["email"] for rsvp in hosted_event.get("rsvps", [])):
                 all_user_events.append(hosted_event)
+        
+        # Check for overlapping events
+        overlapping_events = []
+        if all_user_events:
+            for i, event1 in enumerate(all_user_events):
+                for j, event2 in enumerate(all_user_events):
+                    if i < j and event1.get("day") == event2.get("day"):
+                        # Parse times
+                        try:
+                            start1 = datetime.strptime(event1.get("start", "12:00 AM"), "%I:%M %p")
+                            end1_str = event1.get("end", event1.get("end_time", "12:00 AM"))
+                            if end1_str == event1.get("start", "12:00 AM"):
+                                end1 = start1.replace(hour=(start1.hour + 2) % 24)
+                            else:
+                                end1 = datetime.strptime(end1_str, "%I:%M %p")
+                            
+                            start2 = datetime.strptime(event2.get("start", "12:00 AM"), "%I:%M %p")
+                            end2_str = event2.get("end", event2.get("end_time", "12:00 AM"))
+                            if end2_str == event2.get("start", "12:00 AM"):
+                                end2 = start2.replace(hour=(start2.hour + 2) % 24)
+                            else:
+                                end2 = datetime.strptime(end2_str, "%I:%M %p")
+                            
+                            # Check for overlap
+                            if (start1 < end2 and start2 < end1):
+                                overlapping_events.append((event1, event2))
+                        except:
+                            pass
+        
+        # Show overlap warning if found
+        if overlapping_events:
+            st.warning("⚠️ **Warning: You have overlapping events!** Some of your scheduled events conflict with each other.")
         
         if all_user_events:
             current_day = None
@@ -4629,174 +4655,139 @@ if st.session_state.current_page == "Create Quest":
         elif not description.strip():
             st.error("Description is required.")
         else:
-            # Check for overlapping events with the same host
-            user_email = st.session_state.current_user['email']
-            overlapping_events = []
+            event_id = str(uuid.uuid4())
+            new_event = {
+                "id": event_id,
+                "name": event_name.strip(),
+                "host": event_host.strip(),
+                "day": day[0],
+                "start": start_time,
+                "end": end_time,
+                "tags": tag,
+                "game_system": game_system.strip(),
+                "seat_min": seat_min,
+                "seat_max": seat_max,
+                "description": description.strip(),
+                "creator_email": st.session_state.current_user['email'],
+                "creator_name": st.session_state.current_user['display_name'],
+                "rsvps": []
+            }
             
-            # Get all events from Supabase
-            try:
-                events_data = get_events_from_supabase()
-                for existing_event in events_data:
-                    # Check if it's the same day and same host
-                    if (existing_event.get('day') == day[0] and 
-                        existing_event.get('creator_email') == user_email):
-                        
-                        # Parse existing event times
-                        existing_start = datetime.strptime(existing_event.get('start', '12:00 AM'), "%I:%M %p")
-                        # If no end_time, assume 2-hour duration
-                        existing_end_str = existing_event.get('end_time', existing_event.get('time', '12:00 AM'))
-                        if existing_end_str == existing_event.get('time', '12:00 AM'):
-                            # No end time specified, assume 2-hour duration
-                            existing_end = existing_start.replace(hour=(existing_start.hour + 2) % 24)
-                        else:
-                            existing_end = datetime.strptime(existing_end_str, "%I:%M %p")
-                        
-                        # Check for overlap - new event start time can't be between existing event's start and end
-                        if existing_start <= start_dt < existing_end:
-                            overlapping_events.append(existing_event)
-            except Exception as e:
-                st.error(f"Error checking for overlapping events: {str(e)}")
-                st.stop()
+            # Auto-join if participating
+            if participation == "I'm participating and part of the headcount":
+                user_rsvp = {
+                    "email": st.session_state.current_user["email"], 
+                    "display_name": st.session_state.current_user["display_name"],
+                    "avatar": st.session_state.current_user.get("avatar", "🧙‍♂️")
+                }
+                new_event["rsvps"].append(user_rsvp)
             
-            if overlapping_events:
-                st.error(f"❌ You already have an overlapping event on {day[1]}! Please choose a different time or day.")
-                st.write("**Your existing events on this day:**")
-                for event in overlapping_events:
-                    st.write(f"• {event.get('name', 'Unnamed Event')} ({event.get('start', '')} - {event.get('end', event.get('time', ''))})")
-            else:
-                event_id = str(uuid.uuid4())
-                new_event = {
-                    "id": event_id,
-                    "name": event_name.strip(),
-                    "host": event_host.strip(),
-                    "day": day[0],
-                    "start": start_time,
-                    "end": end_time,
-                    "tags": tag,
-                    "game_system": game_system.strip(),
-                    "seat_min": seat_min,
-                    "seat_max": seat_max,
-                    "description": description.strip(),
-                    "creator_email": st.session_state.current_user['email'],
-                    "creator_name": st.session_state.current_user['display_name'],
-                    "rsvps": []
+            st.session_state.events.append(new_event)
+            
+            # Save event to database
+            save_to_database("events", {
+                "id": new_event["id"],
+                "title": new_event["name"],  # Map "name" to "title"
+                "description": new_event["description"],
+                "date": new_event["day"],    # Map "day" to "date"
+                "time": new_event["start"],  # Map "start" to "time"
+                "end_time": new_event["end"], # Add end time
+                "location": new_event.get("location", ""),
+                "host_email": new_event["creator_email"],
+                "tags": new_event.get("tags", ""),
+                "game_system": new_event.get("game_system", "Not specified"),
+                "seat_min": new_event.get("seat_min", 1),
+                "seat_max": new_event.get("seat_max", 1),
+                # Backwards-compatible max_attendees field (Supabase expects this)
+                "max_attendees": new_event.get("seat_max", new_event.get("max_attendees", 50))
+            })
+            
+            # Save RSVP if auto-joining
+            if new_event.get("rsvps"):
+                for rsvp in new_event["rsvps"]:
+                    save_to_database("rsvps", {
+                        "id": str(uuid.uuid4()),
+                        "event_id": new_event["id"],
+                        "user_email": rsvp["email"],
+                        "status": "yes"
+                    })
+            
+            # Show balloons first
+            st.balloons()
+            
+            # Add dragon and sword confetti effect
+            st.components.v1.html("""
+                <div id="confetti-container"></div>
+                <script>
+                function createDragonSwordConfetti() {
+                    const symbols = ['🐉', '⚔️', '🗡️', '🛡️', '🏹', '🔥'];
+                    
+                    for (let i = 0; i < 50; i++) {
+                        setTimeout(() => {
+                            const confetti = document.createElement('div');
+                            confetti.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+                            confetti.style.position = 'fixed';
+                            confetti.style.left = Math.random() * 100 + 'vw';
+                            confetti.style.top = '-50px';
+                            confetti.style.fontSize = (Math.random() * 30 + 25) + 'px';
+                            confetti.style.zIndex = '999999';
+                            confetti.style.pointerEvents = 'none';
+                            confetti.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+                            
+                            // Add to body
+                            document.body.appendChild(confetti);
+                            
+                            // Animate the fall
+                            let pos = -50;
+                            let rotation = Math.random() * 360;
+                            const fall = setInterval(() => {
+                                pos += 8;
+                                rotation += 10;
+                                confetti.style.top = pos + 'px';
+                                confetti.style.transform = 'rotate(' + rotation + 'deg)';
+                                
+                                if (pos > window.innerHeight + 100) {
+                                    clearInterval(fall);
+                                    if (confetti.parentNode) {
+                                        confetti.parentNode.removeChild(confetti);
+                                    }
+                                }
+                            }, 50);
+                            
+                        }, i * 150);
+                    }
                 }
                 
-                # Auto-join if participating
-                if participation == "I'm participating and part of the headcount":
-                    user_rsvp = {
-                        "email": st.session_state.current_user["email"], 
-                        "display_name": st.session_state.current_user["display_name"],
-                        "avatar": st.session_state.current_user.get("avatar", "🧙‍♂️")
-                    }
-                    new_event["rsvps"].append(user_rsvp)
+                // Start the confetti immediately
+                createDragonSwordConfetti();
+                </script>
+                """, height=0)
+            
+            # Create a popup-style message with close button using session state
+            if st.session_state.get('show_success_popup', True):
+                st.markdown("""
+                    <div style="background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; 
+                   padding: 20px 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                   text-align: center; font-size: 18px; font-weight: bold; z-index: 9999;
+                               border: 3px solid #FFD700; margin: 20px 0;">
+            🎉 Quest Created Successfully! 🎯<br/>
+            <span style="font-size: 14px; font-weight: normal;">Your epic adventure awaits!</span>
+        </div>
+        """, unsafe_allow_html=True)
                 
-                st.session_state.events.append(new_event)
-                
-                # Save event to database
-                save_to_database("events", {
-                    "id": new_event["id"],
-                    "title": new_event["name"],  # Map "name" to "title"
-                    "description": new_event["description"],
-                    "date": new_event["day"],    # Map "day" to "date"
-                    "time": new_event["start"],  # Map "start" to "time"
-                    "end_time": new_event["end"], # Add end time
-                    "location": new_event.get("location", ""),
-                    "host_email": new_event["creator_email"],
-                    "tags": new_event.get("tags", ""),
-                    "game_system": new_event.get("game_system", "Not specified"),
-                    "seat_min": new_event.get("seat_min", 1),
-                    "seat_max": new_event.get("seat_max", 1),
-                    # Backwards-compatible max_attendees field (Supabase expects this)
-                    "max_attendees": new_event.get("seat_max", new_event.get("max_attendees", 50))
-                })
-                
-                # Save RSVP if auto-joining
-                if new_event.get("rsvps"):
-                    for rsvp in new_event["rsvps"]:
-                        save_to_database("rsvps", {
-                            "id": str(uuid.uuid4()),
-                            "event_id": new_event["id"],
-                            "user_email": rsvp["email"],
-                            "status": "yes"
-                        })
-                
-                # Show balloons first
-                st.balloons()
-                
-                # Add dragon and sword confetti effect
-                st.components.v1.html("""
-                    <div id="confetti-container"></div>
-                    <script>
-                    function createDragonSwordConfetti() {
-                        const symbols = ['🐉', '⚔️', '🗡️', '🛡️', '🏹', '🔥'];
-                        
-                        for (let i = 0; i < 50; i++) {
-                            setTimeout(() => {
-                                const confetti = document.createElement('div');
-                                confetti.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-                                confetti.style.position = 'fixed';
-                                confetti.style.left = Math.random() * 100 + 'vw';
-                                confetti.style.top = '-50px';
-                                confetti.style.fontSize = (Math.random() * 30 + 25) + 'px';
-                                confetti.style.zIndex = '999999';
-                                confetti.style.pointerEvents = 'none';
-                                confetti.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
-                                
-                                // Add to body
-                                document.body.appendChild(confetti);
-                                
-                                // Animate the fall
-                                let pos = -50;
-                                let rotation = Math.random() * 360;
-                                const fall = setInterval(() => {
-                                    pos += 8;
-                                    rotation += 10;
-                                    confetti.style.top = pos + 'px';
-                                    confetti.style.transform = 'rotate(' + rotation + 'deg)';
-                                    
-                                    if (pos > window.innerHeight + 100) {
-                                        clearInterval(fall);
-                                        if (confetti.parentNode) {
-                                            confetti.parentNode.removeChild(confetti);
-                                        }
-                                    }
-                                }, 50);
-                                
-                            }, i * 150);
-                        }
-                    }
-                    
-                    // Start the confetti immediately
-                    createDragonSwordConfetti();
-                    </script>
-                    """, height=0)
-                
-                # Create a popup-style message with close button using session state
-                if st.session_state.get('show_success_popup', True):
-                    st.markdown("""
-                        <div style="background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; 
-                       padding: 20px 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                       text-align: center; font-size: 18px; font-weight: bold; z-index: 9999;
-                                   border: 3px solid #FFD700; margin: 20px 0;">
-                🎉 Quest Created Successfully! 🎯<br/>
-                <span style="font-size: 14px; font-weight: normal;">Your epic adventure awaits!</span>
-            </div>
-            """, unsafe_allow_html=True)
-                    
-                    # Center the close button
-                    col1, col2, col3 = st.columns([1, 1, 1])
-                    with col2:
-                        if st.button("✨ Close ✨", key="close_success_popup", use_container_width=True):
-                            st.session_state.show_success_popup = False
-                            st.rerun()
-                
-                # Set flag to clear form on next render and show success popup
-                st.session_state.form_submitted = True
-                st.session_state.show_success_popup = True
-                
-                # Auto-clear the popup on next render; avoid blocking sleep and forced rerun
-                # The UI will update naturally on user interaction or manual refresh
+                # Center the close button
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col2:
+                    if st.button("✨ Close ✨", key="close_success_popup", use_container_width=True):
+                        st.session_state.show_success_popup = False
+                        st.rerun()
+            
+            # Set flag to clear form on next render and show success popup
+            st.session_state.form_submitted = True
+            st.session_state.show_success_popup = True
+            
+            # Auto-clear the popup on next render; avoid blocking sleep and forced rerun
+            # The UI will update naturally on user interaction or manual refresh
 
     st.stop()
 
@@ -5044,45 +5035,5 @@ if st.session_state.current_page == "Quest Counter":
         # Close the wide container
         st.markdown('</div>', unsafe_allow_html=True)
 
-# Add JavaScript to prevent sidebar collapse
-st.markdown("""
-<script>
-// Prevent sidebar collapse
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide any collapse buttons
-    const collapseButtons = document.querySelectorAll('button[title*="close"], button[title*="collapse"], button[title*="minimize"]');
-    collapseButtons.forEach(button => {
-        button.style.display = 'none';
-    });
-    
-    // Ensure sidebar stays visible
-    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-    if (sidebar) {
-        sidebar.style.display = 'block';
-        sidebar.style.visibility = 'visible';
-        sidebar.setAttribute('aria-hidden', 'false');
-    }
-    
-    // Monitor for any attempts to hide the sidebar
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
-                const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-                if (sidebar && sidebar.getAttribute('aria-hidden') === 'true') {
-                    sidebar.setAttribute('aria-hidden', 'false');
-                    sidebar.style.display = 'block';
-                    sidebar.style.visibility = 'visible';
-                }
-            }
-        });
-    });
-    
-    // Start observing
-    if (sidebar) {
-        observer.observe(sidebar, { attributes: true, attributeFilter: ['aria-hidden'] });
-    }
-});
-</script>
-""", unsafe_allow_html=True)
 
 
