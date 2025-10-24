@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/Bencon",
-      "destination": "/Bencon.html"
+      "destination": "/fantasy-calendar.html"
     }
   ]
 } 
