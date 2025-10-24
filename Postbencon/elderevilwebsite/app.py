@@ -357,6 +357,7 @@ def save_to_supabase(table, data):
                 "description": data["description"],
                 "date": data["date"],
                 "time": data["time"],
+                "end_time": data.get("end_time", ""),  # Add end_time field
                 "location": data["location"],
                 "host_email": data["host_email"],
                 "tags": json.dumps(data["tags"]) if isinstance(data["tags"], list) else data["tags"],
