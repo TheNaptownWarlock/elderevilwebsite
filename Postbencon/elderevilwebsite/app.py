@@ -3764,7 +3764,23 @@ if st.session_state.viewing_user_schedule:
 
 # Inbox Page
 if st.session_state.current_page == "Inbox":
-    st.header("📨 Adventurer's Inbox")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #A0522D 75%, #8B4513 100%);
+                border: 3px solid #654321;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 20px 0;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.2),
+                    inset 0 -1px 3px rgba(0,0,0,0.3);
+                text-align: center;">
+        <h1 style="color: #FFFACD; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
+                   font-weight: bold; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+            📨 Adventurer's Inbox
+        </h1>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Messaging tabs
     tab_names = ["📥 Inbox", "📤 Sent"]
@@ -4235,7 +4251,23 @@ if st.session_state.current_page == "Profile":
                 break
         
         if event_to_edit:
-            st.header("✏️ Edit Quest")
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #A0522D 75%, #8B4513 100%);
+                        border: 3px solid #654321;
+                        border-radius: 15px;
+                        padding: 20px;
+                        margin: 20px 0;
+                        box-shadow: 
+                            0 4px 8px rgba(0,0,0,0.3),
+                            inset 0 1px 3px rgba(255,255,255,0.2),
+                            inset 0 -1px 3px rgba(0,0,0,0.3);
+                        text-align: center;">
+                <h1 style="color: #FFFACD; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
+                           font-weight: bold; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                    ✏️ Edit Quest
+                </h1>
+            </div>
+            """, unsafe_allow_html=True)
             
             with st.form("edit_event_form"):
                 edit_name = st.text_input("Quest Name:", value=event_to_edit["name"])
@@ -4816,8 +4848,27 @@ if st.session_state.current_page == "Create Quest":
 
 # Quest Counter Page  
 if st.session_state.current_page == "Quest Counter":
-    st.header("🗓️ Quest Counter - Browse Adventures")
-    st.markdown("*Browse all available quests and join adventures!*")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #A0522D 75%, #8B4513 100%);
+                border: 3px solid #654321;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 20px 0;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.2),
+                    inset 0 -1px 3px rgba(0,0,0,0.3);
+                text-align: center;">
+        <h1 style="color: #FFFACD; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
+                   font-weight: bold; margin: 0 0 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+            🗓️ Quest Counter - Browse Adventures
+        </h1>
+        <p style="color: #FFFACD; font-family: 'Cinzel', serif; 
+                  font-style: italic; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+            "Browse all available quests and join adventures!"
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Add live RSVP update script
     st.markdown("""
