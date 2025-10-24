@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bencon - The Naptown Warlock</title>
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .streamlit-container {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="glow-effect">
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#projects">Projects</a></li>
+                    <li><a href="index.html#blog">Blog</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li><a href="fantasy-calendar.html">Bencon</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <!-- Embedded Streamlit App with ALL your original features -->
+        <iframe 
+            id="benconFrame"
+            src="http://localhost:8501" 
+            class="streamlit-container"
+            frameborder="0"
+            allow="clipboard-write">
+        </iframe>
+        
+        <script>
+        // Auto-detect if running locally or on deployed site
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // When deployed, use your Streamlit Cloud URL
+            document.getElementById('benconFrame').src = 'https://bencon-2026.streamlit.app';
+        }
+        </script>
+    </div>
+</body>
+</html>
