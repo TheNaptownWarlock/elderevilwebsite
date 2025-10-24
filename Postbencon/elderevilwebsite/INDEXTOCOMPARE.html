@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Naptown Warlock</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="glow-effect">
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#food">Elder Cuisine</a></li>
+                    <li><a href="#clay">The Lil Guys</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section id="home" class="section">
+                <h2>Welcome to The Naptown Warlock</h2>
+                <p>Where culinary magic meets eldritch horror...</p>
+            </section>
+            <section id="food" class="section">
+                <h2>Elder Cuisine</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="project-icon">
+                            <img src="assets/images/elder-evil-coffee.jpg" alt="Elder Evil Coffee">
+                        </div>
+                        <h3>Elder Evil Coffee</h3>
+                        <p>Dark roast coffee with a hint of madness...</p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="project-icon">
+                            <img src="assets/images/necro-nom-icon.jpg" alt="Necro-NOM-icon">
+                        </div>
+                        <h3>Necro-NOM-icon</h3>
+                        <p>Delicious treats from beyond the grave...</p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="project-icon">
+                            <img src="assets/images/elder-cow.jpg" alt="The Elder Cow">
+                        </div>
+                        <h3>The Elder Cow</h3>
+                        <p>Dairy products with a touch of the unknown...</p>
+                    </div>
+                </div>
+            </section>
+            <section id="clay" class="section">
+                <h2>The Lil Guys</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="project-icon">
+                            <img src="assets/images/clay-creature-1.jpg" alt="Clay Creature 1">
+                        </div>
+                        <h3>Clay Creature 1</h3>
+                        <p>A small eldritch being...</p>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="project-icon">
+                            <img src="assets/images/clay-creature-2.jpg" alt="Clay Creature 2">
+                        </div>
+                        <h3>Clay Creature 2</h3>
+                        <p>Another small eldritch being...</p>
+                    </div>
+                </div>
+            </section>
+            <section id="blog" class="section">
+                <h2>Blog</h2>
+                <div class="blog-posts">
+                    <article class="blog-post">
+                <h3>test</h3>
+                <p class="blog-date">April 7, 2025</p>
+                <p>Read the full post...</p>
+                <a href="blog-posts/test/" class="read-more">Read More</a>
+            </article>
+                </div>
+            </section>
+            <section id="about" class="section">
+                <h2>About</h2>
+                <p>Welcome to The Naptown Warlock, where culinary magic meets eldritch horror...</p>
+            </section>
+            <section id="contact" class="section">
+                <h2>Contact</h2>
+                <form id="contactForm">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <button type="submit">Send Message</button>
+                </form>
+            </section>
+            <section id="chat" class="section">
+                <h2>Chat with The Warlock</h2>
+                <div id="chatContainer"></div>
+                <form id="chatForm">
+                    <input type="text" id="chatInput" placeholder="Ask me anything...">
+                    <button type="submit">Send</button>
+                </form>
+            </section>
+        </main>
+        <footer class="glow-effect">
+            <div class="social-links">
+                <a href="https://www.instagram.com/TheNaptownWarlock" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <p>&copy; 2024 The Naptown Warlock. All rights reserved.</p>
+        </footer>
+    </div>
+    <div id="image-popup" class="popup">
+        <span class="close">&times;</span>
+        <img class="popup-content" id="popupImage">
+    </div>
+    <script src="assets/js/slideshow.js"></script>
+    <script src="assets/js/chat.js"></script>
+</body>
+</html>

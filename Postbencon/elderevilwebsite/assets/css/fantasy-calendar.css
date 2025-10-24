@@ -1,0 +1,357 @@
+/* Fantasy Calendar Specific Styles */
+.fantasy-main {
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.fantasy-title {
+    font-family: 'Germania One', cursive;
+    font-size: 3rem;
+    text-align: center;
+    color: #8B4513;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.fantasy-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #D2691E;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.calendar-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Calendar Section */
+.calendar-section {
+    background: rgba(139, 69, 19, 0.1);
+    border: 2px solid #8B4513;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-header h2 {
+    font-family: 'Germania One', cursive;
+    color: #8B4513;
+    font-size: 1.8rem;
+}
+
+.nav-btn {
+    background: #8B4513;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #A0522D;
+    transform: scale(1.05);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #8B4513;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.calendar-day {
+    background: white;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-day:hover {
+    background: #F5DEB3;
+    transform: scale(1.02);
+}
+
+.calendar-day.today {
+    background: #D2691E;
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.has-event {
+    background: #90EE90;
+    position: relative;
+}
+
+.calendar-day.has-event::after {
+    content: "⚔️";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.8rem;
+}
+
+.calendar-day.selected {
+    background: #8B4513;
+    color: white;
+}
+
+.calendar-day.other-month {
+    color: #ccc;
+    background: #f9f9f9;
+}
+
+.day-header {
+    background: #8B4513;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+/* Event Section */
+.event-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.add-event-form, .rsvp-section {
+    background: rgba(139, 69, 19, 0.1);
+    border: 2px solid #8B4513;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.add-event-form h3, .rsvp-section h3 {
+    font-family: 'Germania One', cursive;
+    color: #8B4513;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.add-event-form input, .add-event-form textarea {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 2px solid #D2691E;
+    border-radius: 5px;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.add-event-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.fantasy-btn {
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.fantasy-btn:hover {
+    background: linear-gradient(45deg, #A0522D, #CD853F);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Event Details */
+.event-details {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.event-item {
+    background: white;
+    border: 1px solid #D2691E;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.event-title {
+    font-weight: bold;
+    color: #8B4513;
+    font-size: 1.1rem;
+}
+
+.event-time {
+    color: #D2691E;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}
+
+.event-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* RSVP Controls */
+.rsvp-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.rsvp-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.rsvp-yes {
+    background: #28a745;
+    color: white;
+}
+
+.rsvp-maybe {
+    background: #ffc107;
+    color: black;
+}
+
+.rsvp-no {
+    background: #dc3545;
+    color: white;
+}
+
+.rsvp-btn:hover {
+    transform: scale(1.05);
+}
+
+.name-input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    width: 120px;
+}
+
+/* RSVP List and Activity */
+.rsvp-list-section, .activity-section {
+    background: rgba(139, 69, 19, 0.1);
+    border: 2px solid #8B4513;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.rsvp-list-section h3, .activity-section h3 {
+    font-family: 'Germania One', cursive;
+    color: #8B4513;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+}
+
+.rsvp-list, .activity-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.rsvp-item, .activity-item {
+    background: white;
+    border: 1px solid #D2691E;
+    border-radius: 5px;
+    padding: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rsvp-status {
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.rsvp-status.yes {
+    background: #d4edda;
+    color: #155724;
+}
+
+.rsvp-status.maybe {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.rsvp-status.no {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .calendar-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .fantasy-title {
+        font-size: 2rem;
+    }
+    
+    .calendar-grid {
+        font-size: 0.8rem;
+    }
+    
+    .calendar-day {
+        min-height: 40px;
+        padding: 0.3rem;
+    }
+    
+    .rsvp-controls {
+        justify-content: center;
+    }
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+    .calendar-day {
+        background: #2c2c2c;
+        color: #fff;
+    }
+    
+    .event-item, .rsvp-item, .activity-item {
+        background: #3c3c3c;
+        color: #fff;
+        border-color: #A0522D;
+    }
+}

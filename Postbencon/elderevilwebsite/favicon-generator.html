@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="favicon" width="32" height="32"></canvas>
+    <script>
+        const canvas = document.getElementById('favicon');
+        const ctx = canvas.getContext('2d');
+        
+        // Set background to transparent
+        ctx.fillStyle = 'transparent';
+        ctx.fillRect(0, 0, 32, 32);
+        
+        // Set text properties
+        ctx.fillStyle = 'black';
+        ctx.font = '20px "Germania One"';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        
+        // Draw the two E's
+        ctx.fillText('EE', 16, 16);
+        
+        // Convert to favicon
+        const link = document.createElement('a');
+        link.download = 'favicon.ico';
+        link.href = canvas.toDataURL('image/x-icon');
+        document.body.appendChild(link);
+        link.click();
+    </script>
+</body>
+</html> 

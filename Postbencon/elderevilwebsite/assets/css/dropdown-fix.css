@@ -1,0 +1,29 @@
+/* Fix for dropdown menu display */
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown-menu.active {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Ensure dropdown positioning works properly */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 0.5rem;
+    min-width: 200px;
+    border-radius: 5px;
+    padding: 0.5rem 0;
+}
