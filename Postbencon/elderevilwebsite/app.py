@@ -2928,6 +2928,41 @@ section[data-testid="stSidebar"] {
         inset 0 2px 4px rgba(255,255,255,0.2),
         inset 0 -2px 4px rgba(101, 67, 33, 0.3),
         0 4px 8px rgba(0,0,0,0.3) !important;
+    min-width: 300px !important;
+}
+
+/* Hide sidebar minimize button to prevent collapsing */
+section[data-testid="stSidebar"] button[title="Close sidebar"] {
+    display: none !important;
+}
+
+/* Hide the sidebar collapse button */
+button[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
+/* Hide any other potential collapse buttons */
+button[aria-label*="close"] {
+    display: none !important;
+}
+
+/* Additional sidebar collapse prevention */
+.stSidebar .stButton button[title*="close"],
+.stSidebar .stButton button[title*="collapse"],
+.stSidebar .stButton button[title*="minimize"] {
+    display: none !important;
+}
+
+/* Ensure sidebar container stays visible */
+div[data-testid="stSidebar"] {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Prevent sidebar from being hidden */
+section[data-testid="stSidebar"][aria-hidden="true"] {
+    display: block !important;
+    visibility: visible !important;
 }
 
 /* Sidebar content styling */
@@ -5007,5 +5042,46 @@ if st.session_state.current_page == "Quest Counter":
     
         # Close the wide container
         st.markdown('</div>', unsafe_allow_html=True)
+
+# Add JavaScript to prevent sidebar collapse
+st.markdown("""
+<script>
+// Prevent sidebar collapse
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide any collapse buttons
+    const collapseButtons = document.querySelectorAll('button[title*="close"], button[title*="collapse"], button[title*="minimize"]');
+    collapseButtons.forEach(button => {
+        button.style.display = 'none';
+    });
+    
+    // Ensure sidebar stays visible
+    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+    if (sidebar) {
+        sidebar.style.display = 'block';
+        sidebar.style.visibility = 'visible';
+        sidebar.setAttribute('aria-hidden', 'false');
+    }
+    
+    // Monitor for any attempts to hide the sidebar
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+                if (sidebar && sidebar.getAttribute('aria-hidden') === 'true') {
+                    sidebar.setAttribute('aria-hidden', 'false');
+                    sidebar.style.display = 'block';
+                    sidebar.style.visibility = 'visible';
+                }
+            }
+        });
+    });
+    
+    // Start observing
+    if (sidebar) {
+        observer.observe(sidebar, { attributes: true, attributeFilter: ['aria-hidden'] });
+    }
+});
+</script>
+""", unsafe_allow_html=True)
 
 
