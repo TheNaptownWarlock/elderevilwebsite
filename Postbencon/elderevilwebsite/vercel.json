@@ -3,11 +3,10 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "redirects": [
+  "rewrites": [
     {
       "source": "/Bencon",
-      "destination": "/Bencon/",
-      "permanent": false
+      "destination": "/Bencon.html"
     }
   ]
 } 
