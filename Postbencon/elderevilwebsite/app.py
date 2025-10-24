@@ -2581,34 +2581,40 @@ section[data-testid="stSidebar"] {
 </style>
 """)
 
-# Add collapse button under the banner
-st.markdown("""
-<div style="text-align: center; margin: 10px 0;">
-    <button id="sidebarToggle" onclick="toggleSidebar()" style="
-        background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%);
-        color: #FFFACD;
-        border: 2px solid #654321;
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-family: 'Cinzel', serif;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    ">☰ Toggle Navigation</button>
-</div>
+# Add collapse button under the banner using Streamlit button
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    if st.button("☰ Toggle Navigation", key="sidebar_toggle", use_container_width=True):
+        # Toggle sidebar state
+        if 'sidebar_collapsed' not in st.session_state:
+            st.session_state.sidebar_collapsed = False
+        st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
+        st.rerun()
 
-<script>
-function toggleSidebar() {
-    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-    if (sidebar) {
-        const isHidden = sidebar.getAttribute('aria-hidden') === 'true';
-        sidebar.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
-        sidebar.style.display = isHidden ? 'block' : 'none';
-        sidebar.style.visibility = isHidden ? 'visible' : 'hidden';
+# Add CSS to hide sidebar when collapsed
+if st.session_state.get('sidebar_collapsed', False):
+    st.markdown("""
+    <style>
+    section[data-testid="stSidebar"] {
+        display: none !important;
+        visibility: hidden !important;
     }
-}
-</script>
-""", unsafe_allow_html=True)
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Also add JavaScript to ensure sidebar is hidden
+    st.markdown("""
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.display = 'none';
+            sidebar.style.visibility = 'hidden';
+            sidebar.classList.add('sidebar-collapsed');
+        }
+    });
+    </script>
+    """, unsafe_allow_html=True)
 
 # Tavern-specific sidebar styling removed (no longer needed)
 
@@ -2962,7 +2968,8 @@ section[data-testid="stSidebar"] {
 }
 
 /* Allow sidebar to be collapsed and hide it when collapsed */
-section[data-testid="stSidebar"][aria-hidden="true"] {
+section[data-testid="stSidebar"][aria-hidden="true"],
+section[data-testid="stSidebar"].sidebar-collapsed {
     display: none !important;
     visibility: hidden !important;
 }
