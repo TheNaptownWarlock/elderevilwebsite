@@ -3,10 +3,11 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "rewrites": [
+  "redirects": [
     {
       "source": "/Bencon",
-      "destination": "/fantasy-calendar.html"
+      "destination": "/Bencon/",
+      "permanent": false
     }
   ]
 } 
