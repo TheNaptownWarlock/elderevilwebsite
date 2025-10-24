@@ -33,15 +33,24 @@
         </header>
         
         <!-- Embedded Streamlit App with ALL your original features -->
-        <iframe 
-            id="benconFrame"
-            src="https://bencon-2026.streamlit.app/" 
-            class="streamlit-container"
-            frameborder="0"
-            allow="clipboard-write">
-        </iframe>
+        <!-- Redirect to Streamlit Cloud App -->
+        <div class="streamlit-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center;">
+            <h2 style="color: var(--primary-color); margin-bottom: 20px;">🏰 BENCON 2026 🗡️</h2>
+            <p style="color: var(--primary-color); margin-bottom: 30px;">Your Fantasy Calendar is loading...</p>
+            <a href="https://bencon-2026.streamlit.app/" target="_blank" style="background-color: var(--primary-color); color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">
+                Open BENCON Calendar
+            </a>
+            <p style="color: var(--primary-color); margin-top: 20px; font-size: 14px;">
+                If the calendar doesn't open automatically, click the button above.
+            </p>
+        </div>
         
-        <!-- Streamlit Cloud URL is hardcoded for deployed version -->
+        <script>
+        // Auto-redirect to Streamlit Cloud app
+        setTimeout(function() {
+            window.open('https://bencon-2026.streamlit.app/', '_blank');
+        }, 2000);
+        </script>
     </div>
 </body>
 </html>
