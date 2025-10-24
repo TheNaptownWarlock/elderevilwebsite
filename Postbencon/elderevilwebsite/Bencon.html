@@ -41,13 +41,7 @@
             allow="clipboard-write">
         </iframe>
         
-        <script>
-        // Auto-detect if running locally or on deployed site
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            // When running locally, use localhost
-            document.getElementById('benconFrame').src = 'http://localhost:8501';
-        }
-        </script>
+        <!-- Streamlit Cloud URL is hardcoded for deployed version -->
     </div>
 </body>
 </html>
