@@ -6,7 +6,8 @@
   "rewrites": [
     {
       "source": "/Bencon",
-      "destination": "/Bencon.html"
+      "destination": "/Bencon.html",
+      "permanent": false
     }
   ]
 } 
