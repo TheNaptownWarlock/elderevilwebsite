@@ -4861,7 +4861,7 @@ if st.session_state.current_page == "Quest Counter":
                 text-align: center;">
         <h1 style="color: #FFFACD; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
                    font-weight: bold; margin: 0 0 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-            🗓️ Quest Counter - Browse Adventures
+            🗓️ Quest Counter 🗓️
         </h1>
         <p style="color: #FFFACD; font-family: 'Cinzel', serif; 
                   font-style: italic; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
