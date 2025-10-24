@@ -418,7 +418,8 @@ def save_to_supabase(table, data):
                 "sender_email": data["sender_email"],
                 "recipient_email": data["recipient_email"],
                 "subject": data["subject"],
-                "message": data["message"]
+                "message": data["message"],
+                "created_at": datetime.now().isoformat()
             }
             # Direct API call to Supabase
             url = f"{base_url}/rest/v1/{table}"
@@ -792,7 +793,7 @@ def get_events_from_supabase():
                     "day": event_data.get("date"),  # Compatibility
                     "time": event_data.get("time"),
                     "start": event_data.get("time"),  # Compatibility
-                    "end": event_data.get("time"),  # Compatibility
+                    "end": event_data.get("end_time", event_data.get("time")),  # Use end_time if available, fallback to time
                     "location": event_data.get("location", ""),
                     "host_email": host_email,
                     "host": host_display_name,
@@ -1217,7 +1218,7 @@ def reset_password(email, new_password=None, reset_code=None):
             
             return True, "Password updated successfully! You can now login with your new password."
     
-    return False, "Email not found!"
+            return False, "Email not found!"
 
 def logout_user():
     st.session_state.current_user = None
@@ -2003,164 +2004,52 @@ def generate_pdf_content(user_email):
     
     return content
 
-# Import medieval fonts and custom CSS
+# CSS is now loaded from .streamlit/style.css file
+
+# CSS injection using st.components.v1.html to inject into parent window
 st.components.v1.html("""
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=MedievalSharp&display=swap" rel="stylesheet">
-<style>
-/* Medieval font styling for entire app */
-.stApp {
-    font-family: 'Cinzel', 'Times New Roman', serif !important;
-}
+<script>
+// Inject CSS into parent window
+const parentWindow = window.parent;
+const parentDocument = parentWindow.document;
 
-/* Headers use more decorative medieval fonts */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Uncial Antiqua', 'Cinzel', 'Old English Text MT', serif !important;
-    color: #9D4EDD !important;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-}
-
-/* Main title styling */
-h1 {
-    font-family: 'MedievalSharp', 'Uncial Antiqua', cursive !important;
-    font-size: 2.5rem !important;
-    color: #7B2CBF !important;
-    text-align: center !important;
-    text-shadow: 3px 3px 6px rgba(157, 78, 221, 0.5) !important;
-}
-
-/* Sidebar styling */
-.css-1d391kg, .css-1lcbmhc {
-    font-family: 'Cinzel', serif !important;
-}
-
-/* Hide sidebar toggle tooltip */
-[data-testid="collapsedControl"] [title],
-[data-testid="collapsedControl"] [aria-label],
-button[title*="keyboard"]::after,
-button[aria-label*="keyboard"]::after,
-[title="keyboard shortcuts"]::after {
-    display: none !important;
-    visibility: hidden !important;
-}
-
-/* Button text */
-.stButton button {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 600 !important;
-}
-
-/* Form elements */
-.stTextInput input, .stTextArea textarea, .stSelectbox select {
-    font-family: 'Cinzel', serif !important;
-}
-
-/* Sidebar text elements with fantasy fonts */
-.css-1d391kg .markdown-text-container, 
-.css-1lcbmhc .markdown-text-container,
-.css-1d391kg div[data-testid="stMarkdownContainer"],
-.css-1lcbmhc div[data-testid="stMarkdownContainer"],
-.css-1d391kg .stMarkdown,
-.css-1lcbmhc .stMarkdown,
-section[data-testid="stSidebar"] .stMarkdown,
-section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"],
-section[data-testid="stSidebar"] p,
-section[data-testid="stSidebar"] strong,
-section[data-testid="stSidebar"] .markdown-text-container {
-    font-family: 'Cinzel', serif !important;
-}
-
-/* User names and registered adventurers */
-.css-1d391kg .stMarkdown p,
-.css-1lcbmhc .stMarkdown p,
-.css-1d391kg .stMarkdown strong,
-.css-1lcbmhc .stMarkdown strong,
-section[data-testid="stSidebar"] .stMarkdown p,
-section[data-testid="stSidebar"] .stMarkdown strong,
-section[data-testid="stSidebar"] p,
-section[data-testid="stSidebar"] strong {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 600 !important;
-}
-
-/* All sidebar text */
-section[data-testid="stSidebar"] * {
-    font-family: 'Cinzel', serif !important;
-}
-
-/* Sidebar headers */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3,
-section[data-testid="stSidebar"] h4,
-section[data-testid="stSidebar"] h5,
-section[data-testid="stSidebar"] h6 {
-    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
-}
-
-/* Navigation buttons - consistent styling for all */
-div[data-testid="column"] .stButton button {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    height: 40px !important;
-    vertical-align: top !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* Navigation button width adjustments */
-/* Use nth-child to target specific navigation buttons by position */
-/* Quest Counter (1st button) - wider */
-div[data-testid="column"]:nth-child(1) .stButton button {
-    width: 140px !important;
-    min-width: 140px !important;
-}
-
-/* Create Quest (2nd button) - wider */
-div[data-testid="column"]:nth-child(2) .stButton button {
-    width: 140px !important;
-    min-width: 140px !important;
-}
-
-/* Inbox (3rd button) - narrower */
-div[data-testid="column"]:nth-child(3) .stButton button {
-    width: 100px !important;
-    min-width: 100px !important;
-}
-
-/* Profile (4th button) - narrower */
-div[data-testid="column"]:nth-child(4) .stButton button {
-    width: 100px !important;
-    min-width: 100px !important;
-}
-
-/* Profile page button alignment fixes - more specific targeting */
-/* Only target buttons in the profile page print/download section */
-div[data-testid="column"]:has(.stDownloadButton) .stDownloadButton button,
-div[data-testid="column"]:has(.stButton) .stButton button {
-    height: 40px !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* Ensure columns are properly aligned */
-div[data-testid="column"]:has(.stDownloadButton),
-div[data-testid="column"]:has(.stButton) {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-
-/* Quest Counter right column button alignment - more specific targeting */
-/* Quest Counter button styling - now below events */
-.main .block-container .stButton button {
-    font-family: 'Cinzel', serif !important;
-    font-weight: bold !important;
+// Create style element
+const style = parentDocument.createElement('style');
+style.textContent = `
+/* ULTIMATE CSS OVERRIDE - Loaded in main page */
+button,
+.stButton > button,
+button[data-testid="baseButton-primary"],
+button[data-testid="baseButton-secondary"],
+.stButton button[type="button"],
+button[class*="stButton"],
+button[class*="css-"],
+button[class*="baseButton"],
+button[class*="primary"],
+button[class*="secondary"],
+button[type="submit"],
+button[type="button"],
+.main .block-container button,
+.main .block-container .stButton button,
+.main .block-container .stForm button,
+.main .block-container .stForm .stButton button,
+.stForm button,
+.stForm .stButton button,
+.stFormSubmitButton button,
+button[data-baseweb="button"],
+button[aria-label],
+button[title],
+div[data-testid="stButton"] button,
+div[data-testid="stForm"] button,
+div[data-testid="stFormSubmitButton"] button {
     background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
+    background-color: #8B4513 !important;
+    background-image: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
     color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: bold !important;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
     box-shadow: 
         inset 0 1px 3px rgba(255,255,255,0.2),
@@ -2168,7 +2057,31 @@ div[data-testid="column"]:has(.stButton) {
     transition: all 0.3s ease !important;
 }
 
-.main .block-container .stButton button:hover {
+button:hover,
+.stButton > button:hover,
+button[data-testid="baseButton-primary"]:hover,
+button[data-testid="baseButton-secondary"]:hover,
+.stButton button[type="button"]:hover,
+button[class*="stButton"]:hover,
+button[class*="css-"]:hover,
+button[class*="baseButton"]:hover,
+button[class*="primary"]:hover,
+button[class*="secondary"]:hover,
+button[type="submit"]:hover,
+button[type="button"]:hover,
+.main .block-container button:hover,
+.main .block-container .stButton button:hover,
+.main .block-container .stForm button:hover,
+.main .block-container .stForm .stButton button:hover,
+.stForm button:hover,
+.stForm .stButton button:hover,
+.stFormSubmitButton button:hover,
+button[data-baseweb="button"]:hover,
+button[aria-label]:hover,
+button[title]:hover,
+div[data-testid="stButton"] button:hover,
+div[data-testid="stForm"] button:hover,
+div[data-testid="stFormSubmitButton"] button:hover {
     background: linear-gradient(135deg, #A0522D 0%, #CD853F 50%, #DEB887 100%) !important;
     transform: translateY(-1px) !important;
     box-shadow: 
@@ -2176,173 +2089,363 @@ div[data-testid="column"]:has(.stButton) {
         0 4px 8px rgba(0,0,0,0.4) !important;
 }
 
-/* Sidebar buttons for users */
-section[data-testid="stSidebar"] .stButton button {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 500 !important;
+/* Force header styling */
+h3,
+div[style*="background: linear-gradient(135deg, #8B4513"] h3,
+div[style*="background: linear-gradient(135deg, #8B4513"] h3 *,
+.stMarkdown h3,
+.stMarkdown h3 *,
+.main .block-container .stMarkdown h3,
+.main .block-container .stMarkdown h3 *,
+div[data-testid="stMarkdownContainer"] h3,
+div[data-testid="stMarkdownContainer"] h3 * {
+    color: #FFFACD !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
 }
 
-/* Enhanced Medieval Theme */
-.stApp {
-    background: linear-gradient(135deg, #E8F4FD 0%, #D1E7DD 25%, #F8D7DA 50%, #FFF3CD 75%, #D4E6F1 100%) !important;
-    background-size: 400% 400% !important;
-    animation: gradientShift 15s ease infinite !important;
-    color: #2C1810 !important;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Main content area */
-.main .block-container {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border-radius: 15px !important;
-    border: 3px solid #8B4513 !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
-    margin: 20px !important;
-    padding: 30px !important;
-}
-
-/* Sidebar styling */
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #E8F4FD 0%, #D1E7DD 25%, #F8D7DA 50%, #FFF3CD 75%, #D4E6F1 100%) !important;
-    background-size: 200% 200% !important;
-    animation: gradientShift 20s ease infinite !important;
-    border-right: 4px solid #7B2CBF !important;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.1) !important;
-    width: 300px !important;
-    min-width: 300px !important;
-}
-
-section[data-testid="stSidebar"] .css-1d391kg {
-    background: transparent !important;
-}
-
-/* Pronouns styling to match avatar/name color */
-section[data-testid="stSidebar"] .stMarkdown em {
+/* Force form labels */
+label,
+.main .block-container .stForm label,
+.main .block-container .stTextInput label,
+.main .block-container .stSelectbox label,
+.main .block-container .stNumberInput label,
+.main .block-container .stTextArea label,
+.main .block-container .stRadio label,
+div[data-testid="stForm"] label,
+div[data-testid="stTextInput"] label,
+div[data-testid="stSelectbox"] label,
+div[data-testid="stNumberInput"] label,
+div[data-testid="stTextArea"] label,
+div[data-testid="stRadio"] label {
     color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Force radio button text */
+.main .block-container .stForm .stRadio label,
+.main .block-container .stForm .stRadio label > div,
+.main .block-container .stForm .stRadio label span,
+.main .block-container .stForm div[data-testid="stRadio"] label,
+.main .block-container .stForm div[data-testid="stRadio"] label > div,
+.main .block-container .stForm div[data-testid="stRadio"] label span,
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] label > div,
+div[data-testid="stRadio"] label span {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Force form inputs */
+input,
+textarea,
+select,
+.main .block-container .stForm .stTextInput > div > div > input,
+.main .block-container .stForm .stTextArea > div > div > textarea,
+.main .block-container .stForm .stSelectbox > div > div > div,
+.main .block-container .stForm .stNumberInput > div > div > input,
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea,
+div[data-testid="stSelectbox"] select,
+div[data-testid="stNumberInput"] input {
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 8px !important;
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
 }
 
-/* Buttons with medieval styling */
-.stButton > button {
-    background: linear-gradient(135deg, #8B4513, #A0522D) !important;
-    color: #F4E4BC !important;
+/* Force dropdown containers */
+.main .block-container .stForm .stSelectbox > div,
+.main .block-container .stForm .stSelectbox > div > div,
+div[data-testid="stSelectbox"] > div,
+div[data-testid="stSelectbox"] > div > div {
+    background-color: transparent !important;
+    background: transparent !important;
+    background-image: none !important;
+}
+
+/* Remove brown box behind sidebar */
+.sidebar .sidebar-content {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Fix radio buttons - make them visible - ULTRA AGGRESSIVE */
+.main .block-container .stForm .stRadio,
+div[data-testid="stRadio"],
+div[data-testid="stRadio"] > div,
+div[data-testid="stRadio"] > div > div,
+div[data-testid="stRadio"] > div > div > div {
+    background: transparent !important;
+    border: none !important;
+    padding: 10px 0 !important;
+    margin: 5px 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Radio button options - make them visible - ULTRA AGGRESSIVE */
+.main .block-container .stForm .stRadio label,
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] label > div,
+div[data-testid="stRadio"] label > div > div,
+div[data-testid="stRadio"] label span,
+div[data-testid="stRadio"] label p {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+    padding: 5px 0 !important;
+    margin: 5px 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+}
+
+/* Radio button input circles - ULTRA AGGRESSIVE */
+.main .block-container .stForm .stRadio input[type="radio"],
+div[data-testid="stRadio"] input[type="radio"],
+div[data-testid="stRadio"] input[type="radio"]:checked,
+div[data-testid="stRadio"] input[type="radio"]:not(:checked) {
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 50% !important;
+    margin-right: 8px !important;
+    width: 16px !important;
+    height: 16px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+}
+
+/* Force radio button containers to be visible */
+div[data-testid="stRadio"] * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Dropdown styling - make them white background */
+.main .block-container .stForm .stSelectbox > div > div > div,
+div[data-testid="stSelectbox"] > div > div > div {
+    background-color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
-    font-family: 'Cinzel', serif !important;
-    font-weight: 600 !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5) !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
-    transition: all 0.2s ease !important;
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+}
+`;
+
+// Add the style to the parent document head
+parentDocument.head.appendChild(style);
+
+// Also inject fonts
+const fontLink = parentDocument.createElement('link');
+fontLink.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=MedievalSharp&display=swap';
+fontLink.rel = 'stylesheet';
+parentDocument.head.appendChild(fontLink);
+
+console.log('CSS injected into parent window');
+</script>
+""", height=0)
+
+# JavaScript injection using st.components.v1.html but targeting parent window
+st.components.v1.html("""
+<script>
+// Access the parent window (main Streamlit page)
+function forceMedievalStyling() {
+    try {
+        // Try to access parent window
+        const parentWindow = window.parent;
+        const parentDocument = parentWindow.document;
+        
+        // Force ALL buttons in parent window
+        const buttons = parentDocument.querySelectorAll('button');
+        console.log('Found buttons in parent:', buttons.length);
+        buttons.forEach(button => {
+            button.style.setProperty('background', 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%)', 'important');
+            button.style.setProperty('background-color', '#8B4513', 'important');
+            button.style.setProperty('background-image', 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%)', 'important');
+            button.style.setProperty('color', '#FFFACD', 'important');
+            button.style.setProperty('border', '2px solid #654321', 'important');
+            button.style.setProperty('border-radius', '8px', 'important');
+            button.style.setProperty('font-family', "'Cinzel', serif", 'important');
+            button.style.setProperty('font-weight', 'bold', 'important');
+            button.style.setProperty('text-shadow', '1px 1px 2px rgba(0,0,0,0.8)', 'important');
+            button.style.setProperty('box-shadow', 'inset 0 1px 3px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.3)', 'important');
+        });
+        
+        // Force ALL h3 headers in parent window
+        const headers = parentDocument.querySelectorAll('h3');
+        headers.forEach(header => {
+            if (header.textContent.includes('Create a New Quest')) {
+                header.style.setProperty('color', '#FFFACD', 'important');
+                header.style.setProperty('text-shadow', '2px 2px 4px rgba(0,0,0,0.8)', 'important');
+            }
+        });
+        
+        // Force ALL labels in parent window
+        const labels = parentDocument.querySelectorAll('label');
+        labels.forEach(label => {
+            label.style.setProperty('color', '#8B4513', 'important');
+            label.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+            label.style.setProperty('font-weight', 'bold', 'important');
+            label.style.setProperty('font-size', '18px', 'important');
+            label.style.setProperty('background', 'transparent', 'important');
+            label.style.setProperty('text-shadow', '1px 1px 2px rgba(255,255,255,0.5)', 'important');
+            label.style.setProperty('font-style', 'normal', 'important');
+        });
+        
+        // Force ALL label text elements in parent window
+        const labelTexts = parentDocument.querySelectorAll('label span, label div, label p');
+        labelTexts.forEach(text => {
+            text.style.setProperty('color', '#8B4513', 'important');
+            text.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+            text.style.setProperty('font-weight', 'bold', 'important');
+            text.style.setProperty('font-size', '18px', 'important');
+            text.style.setProperty('background', 'transparent', 'important');
+            text.style.setProperty('text-shadow', '1px 1px 2px rgba(255,255,255,0.5)', 'important');
+        });
+        
+        // Force ALL inputs in parent window
+        const inputs = parentDocument.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            if (input.type === 'radio') {
+                // Radio buttons - special styling
+                input.style.setProperty('background-color', '#FFFACD', 'important');
+                input.style.setProperty('border', '2px solid #654321', 'important');
+                input.style.setProperty('border-radius', '50%', 'important');
+                input.style.setProperty('margin-right', '8px', 'important');
+            } else {
+                // Regular inputs
+                input.style.setProperty('background-color', '#FFFACD', 'important');
+                input.style.setProperty('border', '2px solid #654321', 'important');
+                input.style.setProperty('border-radius', '8px', 'important');
+                input.style.setProperty('color', '#8B4513', 'important');
+                input.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+                input.style.setProperty('font-weight', 'bold', 'important');
+            }
+        });
+        
+        // Force radio button labels to be visible - ULTRA AGGRESSIVE
+        const radioLabels = parentDocument.querySelectorAll('div[data-testid="stRadio"] label, div[data-testid="stRadio"] label > div, div[data-testid="stRadio"] label span, div[data-testid="stRadio"] label p');
+        radioLabels.forEach(label => {
+            label.style.setProperty('color', '#8B4513', 'important');
+            label.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+            label.style.setProperty('font-weight', 'bold', 'important');
+            label.style.setProperty('background', 'transparent', 'important');
+            label.style.setProperty('text-shadow', '1px 1px 2px rgba(255,255,255,0.5)', 'important');
+            label.style.setProperty('padding', '5px 0', 'important');
+            label.style.setProperty('margin', '5px 0', 'important');
+            label.style.setProperty('display', 'block', 'important');
+            label.style.setProperty('visibility', 'visible', 'important');
+            label.style.setProperty('opacity', '1', 'important');
+            label.style.setProperty('font-size', '16px', 'important');
+        });
+        
+        // Force radio button containers to be visible
+        const radioContainers = parentDocument.querySelectorAll('div[data-testid="stRadio"], div[data-testid="stRadio"] > div, div[data-testid="stRadio"] > div > div');
+        radioContainers.forEach(container => {
+            container.style.setProperty('background', 'transparent', 'important');
+            container.style.setProperty('border', 'none', 'important');
+            container.style.setProperty('padding', '10px 0', 'important');
+            container.style.setProperty('margin', '5px 0', 'important');
+            container.style.setProperty('display', 'block', 'important');
+            container.style.setProperty('visibility', 'visible', 'important');
+            container.style.setProperty('opacity', '1', 'important');
+        });
+        
+         // Force login form labels to be cream colored - ULTRA AGGRESSIVE
+         const loginLabels = parentDocument.querySelectorAll('section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stForm label, section[data-testid="stSidebar"] .stTextInput label');
+         loginLabels.forEach(label => {
+             label.style.setProperty('color', '#FFFACD', 'important');
+             label.style.setProperty('background', 'transparent', 'important');
+             label.style.setProperty('background-color', 'transparent', 'important');
+             label.style.setProperty('background-image', 'none', 'important');
+             label.style.setProperty('-webkit-text-fill-color', '#FFFACD', 'important');
+             label.style.setProperty('text-fill-color', '#FFFACD', 'important');
+             
+             // Also target any child elements
+             const childElements = label.querySelectorAll('span, div, p');
+             childElements.forEach(child => {
+                 child.style.setProperty('color', '#FFFACD', 'important');
+                 child.style.setProperty('background', 'transparent', 'important');
+                 child.style.setProperty('background-color', 'transparent', 'important');
+                 child.style.setProperty('background-image', 'none', 'important');
+                 child.style.setProperty('-webkit-text-fill-color', '#FFFACD', 'important');
+                 child.style.setProperty('text-fill-color', '#FFFACD', 'important');
+             });
+         });
+         
+        // Force password field to match email field width
+        const passwordInputs = parentDocument.querySelectorAll('section[data-testid="stSidebar"] input[type="password"]');
+        passwordInputs.forEach(input => {
+            input.style.setProperty('width', '98%', 'important');
+            input.style.setProperty('max-width', '280px', 'important');
+            
+            // Also target the parent containers
+            const parentDiv = input.closest('div');
+            if (parentDiv) {
+                parentDiv.style.setProperty('width', '98%', 'important');
+                parentDiv.style.setProperty('max-width', '280px', 'important');
+            }
+            
+            const grandParentDiv = parentDiv?.parentElement;
+            if (grandParentDiv) {
+                grandParentDiv.style.setProperty('width', '98%', 'important');
+                grandParentDiv.style.setProperty('max-width', '280px', 'important');
+            }
+        });
+         
+         // Force input field widths to align with buttons
+         const loginInputs = parentDocument.querySelectorAll('section[data-testid="stSidebar"] .stTextInput, section[data-testid="stSidebar"] .stTextInput > div, section[data-testid="stSidebar"] .stTextInput > div > div');
+         loginInputs.forEach(input => {
+             input.style.setProperty('width', '98%', 'important');
+             input.style.setProperty('max-width', '280px', 'important');
+         });
+        
+        // Force dropdown styling
+        const dropdowns = parentDocument.querySelectorAll('div[data-testid="stSelectbox"] > div > div > div');
+        dropdowns.forEach(dropdown => {
+            dropdown.style.setProperty('background-color', '#FFFACD', 'important');
+            dropdown.style.setProperty('border', '2px solid #654321', 'important');
+            dropdown.style.setProperty('border-radius', '8px', 'important');
+            dropdown.style.setProperty('color', '#8B4513', 'important');
+            dropdown.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+            dropdown.style.setProperty('font-weight', 'bold', 'important');
+        });
+        
+    } catch (error) {
+        console.log('Error accessing parent window:', error);
+    }
 }
 
-.stButton > button:hover {
-    background: linear-gradient(135deg, #A0522D, #8B4513) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3) !important;
-}
+// Run immediately and continuously
+forceMedievalStyling();
+setInterval(forceMedievalStyling, 200); // Run every 200ms for more aggressive override
 
-/* Primary buttons */
-.stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #7B2CBF, #9D4EDD) !important;
-    border-color: #6A1B9A !important;
+// Also run when DOM changes in parent
+try {
+    const parentWindow = window.parent;
+    const parentDocument = parentWindow.document;
+    const observer = new MutationObserver(forceMedievalStyling);
+    observer.observe(parentDocument.body, { childList: true, subtree: true });
+} catch (error) {
+    console.log('Error setting up observer:', error);
 }
-
-/* Secondary buttons */
-.stButton > button[kind="secondary"] {
-    background: linear-gradient(135deg, #654321, #8B4513) !important;
-    border-color: #5D4037 !important;
-}
-
-/* Form inputs */
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea,
-.stSelectbox > div > div > select {
-    background: #F4E4BC !important;
-    border: 2px solid #8B4513 !important;
-    border-radius: 6px !important;
-    color: #2C1810 !important;
-    font-family: 'Cinzel', serif !important;
-}
-
-.stTextInput > div > div > input:focus,
-.stTextArea > div > div > textarea:focus,
-.stSelectbox > div > div > select:focus {
-    border-color: #7B2CBF !important;
-    box-shadow: 0 0 5px rgba(123, 44, 191, 0.3) !important;
-}
-
-/* Tables */
-.stDataFrame {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 2px solid #8B4513 !important;
-    border-radius: 8px !important;
-}
-
-/* Alerts and messages */
-.stAlert {
-    border: 2px solid #8B4513 !important;
-    border-radius: 8px !important;
-    font-family: 'Cinzel', serif !important;
-}
-
-.stSuccess {
-    background: linear-gradient(135deg, #2D5016, #4A7C59) !important;
-    color: #E8F5E8 !important;
-}
-
-.stWarning {
-    background: linear-gradient(135deg, #8B4513, #A0522D) !important;
-    color: #F4E4BC !important;
-}
-
-.stError {
-    background: linear-gradient(135deg, #8B0000, #A52A2A) !important;
-    color: #FFE4E1 !important;
-}
-
-/* Markdown content */
-.stMarkdown {
-    font-family: 'Cinzel', serif !important;
-    color: #2C1810 !important;
-}
-
-/* Code blocks */
-.stCode {
-    background: #2C1810 !important;
-    color: #F4E4BC !important;
-    border: 2px solid #8B4513 !important;
-    border-radius: 6px !important;
-    font-family: 'Courier New', monospace !important;
-}
-
-/* Dividers */
-hr {
-    border: 2px solid #8B4513 !important;
-    border-radius: 2px !important;
-}
-
-/* Checkboxes and radio buttons */
-.stCheckbox > label,
-.stRadio > label {
-    font-family: 'Cinzel', serif !important;
-    color: #2C1810 !important;
-    font-weight: 500 !important;
-}
-
-/* Selectbox dropdown */
-.stSelectbox > div > div > div {
-    background: #F4E4BC !important;
-    border: 2px solid #8B4513 !important;
-    border-radius: 6px !important;
-    font-family: 'Cinzel', serif !important;
-}
-</style>
-""")
+</script>
+""", height=0)
 
 # Apply the fantasy title styling directly with better font loading
 st.components.v1.html("""
@@ -2533,41 +2636,22 @@ div[data-testid="stSelectbox"] > div > div > div > label,
     background-image: none !important;
 }
 
-/* Force all label containers to be transparent - but keep input field white */
-div[data-testid="stSelectbox"] > div > div,
-.stSelectbox > div > div,
-div[data-testid="stSelectbox"] > div,
-.stSelectbox > div {
+/* Dropdown containers - transparent for Create Quest form only */
+.main .block-container .stForm .stSelectbox > div,
+.main .block-container .stForm .stSelectbox > div > div {
     background-color: transparent !important;
     background: transparent !important;
     background-image: none !important;
 }
 
-/* Only the actual input field should have white background with rounded corners */
-div[data-testid="stSelectbox"] > div > div > div,
-.stSelectbox > div > div > div {
-    background-color: white !important;
+/* Radio button options text - Create Quest form only */
+.main .block-container .stForm .stRadio label > div,
+.main .block-container .stForm .stRadio label span,
+.main .block-container .stForm div[data-testid="stRadio"] label > div,
+.main .block-container .stForm div[data-testid="stRadio"] label span {
     color: #8B4513 !important;
-    border: 2px solid #8B4513 !important;
-    border-radius: 8px !important;
-}
-
-/* Style radio button text with brown color */
-div[data-testid="stRadio"] label,
-.stRadio label,
-div[data-testid="stRadio"] > div > label,
-.stRadio > div > label {
-    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
-    background-color: transparent !important;
-}
-
-/* Style radio button options text */
-div[data-testid="stRadio"] label > div,
-.stRadio label > div,
-div[data-testid="stRadio"] label span,
-.stRadio label span {
-    color: #8B4513 !important;
 }
 
 /* Make dropdown arrows visible (not transparent) */
@@ -2585,6 +2669,55 @@ input[type="text"], input[type="number"], textarea, select {
     background-color: white !important;
     color: #8B4513 !important;
     border: 2px solid #8B4513 !important;
+}
+
+/* Make text cursor (caret) black in input fields */
+input[type="text"], input[type="number"], textarea {
+    caret-color: black !important;
+}
+
+/* Make dropdown search box transparent */
+div[data-testid="stSelectbox"] input[type="text"],
+.stSelectbox input[type="text"] {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Quest Host/GM field styling - brown and bold text */
+div[data-testid="stTextInput"] input[disabled],
+.stTextInput input[disabled] {
+    color: #8B4513 !important;
+    font-weight: bold !important;
+    background-color: #f5f5f5 !important;
+    opacity: 1 !important;
+}
+
+/* Make sure disabled text is visible across all browsers */
+input[disabled] {
+    color: #8B4513 !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #8B4513 !important;
+    text-fill-color: #8B4513 !important;
+}
+
+/* Additional specificity for Streamlit disabled inputs */
+div[data-testid="stTextInput"] input[disabled],
+.stTextInput input[disabled],
+div[data-testid="stTextInput"] input[readonly],
+.stTextInput input[readonly] {
+    color: #8B4513 !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #8B4513 !important;
+    text-fill-color: #8B4513 !important;
+    font-weight: bold !important;
+}
+
+/* Make Quest Name field text brown */
+div[data-testid="stTextInput"] input:not([disabled]),
+.stTextInput input:not([disabled]) {
+    color: #8B4513 !important;
 }
 
 /* Additional Streamlit-specific overrides */
@@ -2612,7 +2745,7 @@ div[data-testid="stSelectbox"] .stSelectbox > div > div > div,
     border: 2px solid #8B4513 !important;
 }
 
-/* Target the dropdown input field specifically */
+/* Target the dropdown input field specifically - make white to match other fields */
 div[data-testid="stSelectbox"] input,
 .stSelectbox input,
 div[data-testid="stSelectbox"] .stSelectbox input {
@@ -2629,7 +2762,7 @@ div[data-testid="stSelectbox"] .stSelectbox [role="option"] {
     color: #8B4513 !important;
 }
 
-/* Target the dropdown container */
+/* Target the dropdown container - make white to match other fields */
 div[data-testid="stSelectbox"] > div,
 .stSelectbox > div {
     background-color: white !important;
@@ -2649,7 +2782,7 @@ div[data-testid="stSelectbox"] label[data-testid="stSelectboxLabel"],
     font-weight: bold !important;
 }
 
-/* Completely disable typing and searching in dropdown input fields */
+/* Completely disable typing and searching in dropdown input fields - keep white background */
 div[data-testid="stSelectbox"] input,
 .stSelectbox input {
     background-color: white !important;
@@ -2664,13 +2797,23 @@ div[data-testid="stSelectbox"] input,
     /* Don't hide completely - just make it non-typeable */
 }
 
-/* Disable the search/filter functionality completely */
+/* Make dropdown search box completely transparent and remove borders */
 div[data-testid="stSelectbox"] input[type="text"],
 .stSelectbox input[type="text"] {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: transparent !important;
+}
+
+/* Hide the search input completely when not focused */
+div[data-testid="stSelectbox"] input[type="text"]:not(:focus),
+.stSelectbox input[type="text"]:not(:focus) {
     display: none !important;
 }
 
-/* Make sure the dropdown container is clickable but not typeable */
+/* Make sure the dropdown container is clickable but not typeable - white background to match other fields */
 div[data-testid="stSelectbox"] > div > div > div,
 .stSelectbox > div > div > div {
     background-color: white !important;
@@ -2765,7 +2908,7 @@ div[data-testid="stSelectbox"] > div > div > div,
     animation: gradientShift 8s ease infinite !important;
 }
 
-/* Main content area background */
+/* Main content area background - yellowish color */
 .main .block-container {
     background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 50%, #D4C4A8 100%) !important;
     border: 3px solid #8B4513 !important;
@@ -2850,7 +2993,7 @@ section[data-testid="stSidebar"] .stButton button:hover {
     font-family: 'Cinzel', serif !important;
 }
 
-/* Create Quest form styling */
+/* Create Quest form styling - bold fantasy font for all text */
 .main .block-container .stForm label,
 .main .block-container .stTextInput label,
 .main .block-container .stSelectbox label,
@@ -2858,32 +3001,74 @@ section[data-testid="stSidebar"] .stButton button:hover {
 .main .block-container .stTextArea label,
 .main .block-container .stRadio label {
     color: #8B4513 !important;
-    font-family: 'Cinzel', serif !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
-    font-size: 16px !important;
+    font-size: 18px !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8) !important;
 }
 
-/* Create Quest form inputs */
-.main .block-container .stTextInput input,
-.main .block-container .stTextInput > div > div > input,
-.main .block-container .stSelectbox select,
-.main .block-container .stNumberInput input,
-.main .block-container .stTextArea textarea {
-    color: #654321 !important;
-    font-family: 'Cinzel', serif !important;
-    border: 2px solid #8B4513 !important;
+/* FRESH CREATE QUEST FORM STYLING - Clean slate */
+/* Form container - completely transparent */
+.main .block-container .stForm {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Form labels - brown text and BOLD for better readability */
+.main .block-container .stForm label,
+.main .block-container .stTextInput label,
+.main .block-container .stSelectbox label,
+.main .block-container .stNumberInput label,
+.main .block-container .stTextArea label,
+.main .block-container .stRadio label {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Radio buttons - transparent background, brown text */
+.main .block-container .stForm .stRadio {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.main .block-container .stForm .stRadio label {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    background: transparent !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+/* Brown container form inputs - cream background for contrast */
+.main .block-container .stForm .stTextInput > div > div > input,
+.main .block-container .stForm .stTextArea > div > div > textarea,
+.main .block-container .stForm .stSelectbox > div > div > div,
+.main .block-container .stForm .stNumberInput > div > div > input {
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
     border-radius: 8px !important;
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
 }
 
-.main .block-container .stTextInput input:focus,
-.main .block-container .stSelectbox select:focus,
-.main .block-container .stNumberInput input:focus,
-.main .block-container .stTextArea textarea:focus {
-    border-color: #A0522D !important;
-    box-shadow: 0 0 8px rgba(160, 82, 45, 0.3) !important;
+/* Dropdown containers - transparent for Create Quest form only */
+.main .block-container .stForm .stSelectbox > div,
+.main .block-container .stForm .stSelectbox > div > div {
+    background-color: transparent !important;
+    background: transparent !important;
+    background-image: none !important;
 }
 
-/* Create Quest form submit button */
+/* Create Quest button - matches overall theme */
 .main .block-container .stForm .stButton button {
     background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
     color: #FFFACD !important;
@@ -2906,7 +3091,16 @@ section[data-testid="stSidebar"] .stButton button:hover {
         0 4px 8px rgba(0,0,0,0.4) !important;
 }
 
-/* Login form styling */
+/* Focus states for Create Quest form inputs - brown container */
+.main .block-container .stForm .stTextInput input:focus,
+.main .block-container .stForm .stSelectbox select:focus,
+.main .block-container .stForm .stNumberInput input:focus,
+.main .block-container .stForm .stTextArea textarea:focus {
+    border-color: #FFFACD !important;
+    box-shadow: 0 0 8px rgba(255, 250, 205, 0.5) !important;
+}
+
+/* Login form container - styled box */
 section[data-testid="stSidebar"] .stForm {
     background: linear-gradient(135deg, #654321 0%, #8B4513 50%, #A0522D 100%) !important;
     border: 3px solid #4A2C17 !important;
@@ -2916,6 +3110,47 @@ section[data-testid="stSidebar"] .stForm {
     box-shadow: 
         0 4px 8px rgba(0,0,0,0.5),
         inset 0 1px 3px rgba(255,255,255,0.2) !important;
+}
+
+/* Additional styling for the Adventurer's Gate container */
+section[data-testid="stSidebar"] .stMarkdown > div {
+    background: transparent !important;
+}
+
+/* Ensure tabs are styled properly within the container */
+section[data-testid="stSidebar"] .stTabs {
+    background: transparent !important;
+}
+
+section[data-testid="stSidebar"] .stTabs > div {
+    background: transparent !important;
+}
+
+/* Login form labels - cream color - ULTRA SPECIFIC */
+section[data-testid="stSidebar"] .stForm .stTextInput label,
+section[data-testid="stSidebar"] .stTextInput label,
+section[data-testid="stSidebar"] .stForm label,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] .stForm .stTextInput > div > div > label,
+section[data-testid="stSidebar"] .stTextInput > div > div > label,
+section[data-testid="stSidebar"] .stForm .stTextInput > div > label,
+section[data-testid="stSidebar"] .stTextInput > div > label,
+section[data-testid="stSidebar"] .stForm .stTextInput label span,
+section[data-testid="stSidebar"] .stTextInput label span,
+section[data-testid="stSidebar"] .stForm .stTextInput label div,
+section[data-testid="stSidebar"] .stTextInput label div,
+section[data-testid="stSidebar"] .stForm .stTextInput label p,
+section[data-testid="stSidebar"] .stTextInput label p {
+    color: #FFFACD !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    -webkit-text-fill-color: #FFFACD !important;
+    text-fill-color: #FFFACD !important;
 }
 
 /* Login form inputs */
@@ -2934,13 +3169,49 @@ section[data-testid="stSidebar"] .stTextInput input:focus {
     box-shadow: 0 0 8px rgba(160, 82, 45, 0.3) !important;
 }
 
-/* Login form labels */
-section[data-testid="stSidebar"] .stTextInput label {
-    color: #FFFACD !important;
-    font-family: 'Cinzel', serif !important;
-    font-weight: bold !important;
-    font-size: 14px !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+/* Password field specific width - match email field width */
+section[data-testid="stSidebar"] .stTextInput input[type="password"],
+section[data-testid="stSidebar"] .stTextInput input[type="password"] + div,
+section[data-testid="stSidebar"] .stTextInput > div:has(input[type="password"]),
+section[data-testid="stSidebar"] .stTextInput > div:has(input[type="password"]) > div {
+    width: 98% !important;
+    max-width: 280px !important;
+}
+
+/* Password container width - make it wider to align with buttons */
+section[data-testid="stSidebar"] .stTextInput > div > div {
+    position: relative;
+    width: 98% !important;
+    max-width: 280px !important;
+}
+
+section[data-testid="stSidebar"] .stTextInput > div {
+    width: 98% !important;
+    max-width: 280px !important;
+}
+
+section[data-testid="stSidebar"] .stTextInput {
+    width: 98% !important;
+    max-width: 280px !important;
+}
+
+/* Hide Streamlit deploy button */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+.stDeployButton {display:none;}
+div[data-testid="stToolbar"] {display:none;}
+
+/* Password visibility icon positioning */
+section[data-testid="stSidebar"] .stTextInput button {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 4px !important;
+    z-index: 10 !important;
 }
 
 /* Login form buttons */
@@ -3130,8 +3401,8 @@ elif st.session_state.current_user is None:
                 st.rerun()
     
     with register_tab:
-        # Show regular registration form
-        with st.form("register_form"):
+            # Show regular registration form
+            with st.form("register_form"):
                 reg_email = st.text_input("Email:")
                 reg_password = st.text_input("Password (Goblin Security is Shit Use a Random Pass):", type="password")
                 display_name = st.text_input("Adventurer Name:")
@@ -3292,7 +3563,7 @@ if st.session_state.users and st.session_state.current_user:
     unread_count = get_unread_count(st.session_state.current_user["email"])
     inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
     if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
-            type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
+                type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
         if st.session_state.current_page != "Inbox":
             st.session_state.current_page = "Inbox"
             st.session_state.viewing_user_schedule = None
@@ -3302,7 +3573,7 @@ if st.session_state.users and st.session_state.current_user:
 
     user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
     if st.sidebar.button(f"{user_avatar} Profile", use_container_width=True, key="nav_profile",
-            type="primary" if st.session_state.current_page == "Profile" else "secondary"):
+                type="primary" if st.session_state.current_page == "Profile" else "secondary"):
         st.session_state.current_page = "Profile"
         st.session_state.viewing_user_schedule = None
         st.session_state.editing_event = None
@@ -3317,7 +3588,33 @@ if st.session_state.users and st.session_state.current_user:
 
 # Only show content if user is logged in
 if st.session_state.current_user is None:
-    st.warning("🚪 Please scream into the void to join the festivities!")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #FFF3CD 0%, #F8D7DA 100%); 
+                border: 2px solid #8B4513; border-radius: 10px; padding: 15px; 
+                text-align: center; margin: 20px 0;">
+        <h3 style="color: #8B4513; font-family: 'Cinzel', serif; font-weight: bold; margin: 0;
+                   animation: screamPulse 2s ease-in-out infinite;">
+            🚪 Please scream into the void to join the festivities!
+        </h3>
+    </div>
+    
+    <style>
+    @keyframes screamPulse {
+        0% { 
+            transform: scale(1);
+            text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.3);
+        }
+        50% { 
+            transform: scale(1.05);
+            text-shadow: 2px 2px 8px rgba(139, 69, 19, 0.6), 0 0 15px rgba(139, 69, 19, 0.4);
+        }
+        100% { 
+            transform: scale(1);
+            text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.3);
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
     st.stop()
 
 # Navigation moved to sidebar
@@ -3551,7 +3848,7 @@ if st.session_state.current_page == "Inbox":
                                     st.session_state.replying_to = new_replying
                                     st.session_state.current_page = "Inbox"  # Stay on inbox but show send form
                                     st.session_state.active_inbox_tab = "✉️ Send Message"  # Switch to send message tab
-                                    st.rerun()
+                                st.rerun()
                         with col_delete:
                             if st.button("🗑️", key=f"delete_msg_{message['id']}", 
                                        help="Delete message"):
@@ -3559,7 +3856,7 @@ if st.session_state.current_page == "Inbox":
                                 # Use a flag to prevent multiple rapid clicks
                                 if 'last_deleted_message' not in st.session_state or st.session_state.last_deleted_message != message['id']:
                                     st.session_state.last_deleted_message = message['id']
-                                    st.rerun()
+                                st.rerun()
                     
                     # Show original message if this is a reply
                     if message.get("reply_to_id"):
@@ -3603,7 +3900,7 @@ if st.session_state.current_page == "Inbox":
             # Get other users for recipient selection
             other_users = {email: user for email, user in st.session_state.users.items() 
                           if email != st.session_state.current_user["email"]}
-            
+        
             if not other_users:
                 st.warning("No other adventurers registered yet!")
             else:
@@ -3631,7 +3928,7 @@ if st.session_state.current_page == "Inbox":
                     message_text = st.text_area("Message:", placeholder="Your reply message...", max_chars=500)
                 else:
                     placeholder_text = "Greetings, fellow adventurer! Want to join my quest?"
-                    message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
+                message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
                 
                 # Send button
                 button_text = "↩️ Send Reply" if st.session_state.replying_to else "🦅 Send Message"
@@ -3652,7 +3949,9 @@ if st.session_state.current_page == "Inbox":
                         }
                         
                         # Save to database
-                        if save_to_database("private_messages", message_data):
+                        result = save_to_database("private_messages", message_data)
+                        
+                        if result:
                             st.success("Message sent! 🎉")
                             # Clear reply state if replying
                             if st.session_state.replying_to:
@@ -4210,9 +4509,6 @@ if st.session_state.current_page == "Profile":
 
 # Create Quest Page
 if st.session_state.current_page == "Create Quest":
-    st.header("⚔️ Create a New Quest")
-    st.markdown("*Forge your adventure and rally fellow adventurers!*")
-        
     # Use form_submitted flag to generate a unique key to clear the form
     form_key = f"event_form_{st.session_state.form_submitted}"
     
@@ -4220,17 +4516,41 @@ if st.session_state.current_page == "Create Quest":
     if st.session_state.form_submitted:
         st.session_state.form_submitted = False
 
+    # Create Quest form in a brown container
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #A0522D 75%, #8B4513 100%);
+                border: 3px solid #654321;
+                border-radius: 15px;
+                padding: 25px;
+                margin: 20px 0;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.2),
+                    inset 0 -1px 3px rgba(0,0,0,0.3);">
+        <h3 style="color: #FFFACD; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
+                   font-weight: bold; margin-bottom: 15px; text-align: center;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+            ⚔️ Create a New Quest ⚔️
+        </h3>
+        <p style="color: #FFFACD; font-family: 'Cinzel', serif; 
+                  font-style: italic; text-align: center; margin-bottom: 20px;
+                  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+            "Forge your adventure and rally fellow adventurers!"
+        </p>
+    """, unsafe_allow_html=True)
+
     with st.form(form_key):
             event_name = st.text_input("Quest Name:", placeholder="e.g., Dragons & Dungeons Adventure")
-            event_host = st.text_input("Quest Host/GM:", value=st.session_state.current_user['display_name'])
+            # Make Quest Host/GM read-only and auto-filled
+            event_host = st.text_input("Quest Host/GM:", value=st.session_state.current_user['display_name'], disabled=True)
             day = st.selectbox("Select Day", DAYS, format_func=lambda x: x[1])
             start_time = st.selectbox("Start Time", TIME_SLOTS)
             end_time = st.selectbox("End Time", TIME_SLOTS, index=min(len(TIME_SLOTS)-1, 2))
             tag = st.selectbox("Event Tag", list(TAGS.keys()))
             game_system = st.text_input("Game System:", placeholder="e.g., D&D 5e, Pathfinder, etc.")
             
-            # Participation option
-            participation = st.radio(
+            # Participation option - changed to dropdown for better styling
+            participation = st.selectbox(
                 "Are You Just Hosting This Event or Are You In the Headcount?",
                 ["I'm just hosting", "I'm participating and part of the headcount"],
                 help="Choose whether you count toward the minimum/maximum seats"
@@ -4239,7 +4559,14 @@ if st.session_state.current_page == "Create Quest":
             seat_min = st.number_input("Minimum Seats", min_value=1, max_value=100, value=2)
             seat_max = st.number_input("Maximum Seats", min_value=seat_min, max_value=100, value=6)
             description = st.text_area("Quest Description (include what is happening and any materials needed)", max_chars=300)
-            submit = st.form_submit_button("Create Quest")
+            
+            # Center the Create Quest button
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col2:
+                submit = st.form_submit_button("Create Quest", use_container_width=True)
+    
+    # Close the brown container div
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # Validation
     if submit:
@@ -4256,13 +4583,48 @@ if st.session_state.current_page == "Create Quest":
         elif not description.strip():
             st.error("Description is required.")
         else:
-            event_id = str(uuid.uuid4())
-            new_event = {
-                "id": event_id,
-                "name": event_name.strip(),
-                "host": event_host.strip(),
-                "day": day[0],
-                "start": start_time,
+            # Check for overlapping events with the same host
+            user_email = st.session_state.current_user['email']
+            overlapping_events = []
+            
+            # Get all events from Supabase
+            try:
+                events_data = get_events_from_supabase()
+                for existing_event in events_data:
+                    # Check if it's the same day and same host
+                    if (existing_event.get('day') == day[0] and 
+                        existing_event.get('creator_email') == user_email):
+                        
+                        # Parse existing event times
+                        existing_start = datetime.strptime(existing_event.get('start', '12:00 AM'), "%I:%M %p")
+                        # If no end_time, assume 2-hour duration
+                        existing_end_str = existing_event.get('end_time', existing_event.get('time', '12:00 AM'))
+                        if existing_end_str == existing_event.get('time', '12:00 AM'):
+                            # No end time specified, assume 2-hour duration
+                            existing_end = existing_start.replace(hour=(existing_start.hour + 2) % 24)
+                        else:
+                            existing_end = datetime.strptime(existing_end_str, "%I:%M %p")
+                        
+                        # Check for overlap
+                        if (start_dt < existing_end and end_dt > existing_start):
+                            overlapping_events.append(existing_event)
+            except Exception as e:
+                st.error(f"Error checking for overlapping events: {str(e)}")
+                st.stop()
+            
+            if overlapping_events:
+                st.error(f"❌ You already have an overlapping event on {day[1]}! Please choose a different time or day.")
+                st.write("**Your existing events on this day:**")
+                for event in overlapping_events:
+                    st.write(f"• {event.get('name', 'Unnamed Event')} ({event.get('start', '')} - {event.get('end', event.get('time', ''))})")
+            else:
+                event_id = str(uuid.uuid4())
+                new_event = {
+                    "id": event_id,
+                    "name": event_name.strip(),
+                    "host": event_host.strip(),
+                    "day": day[0],
+                    "start": start_time,
                 "end": end_time,
                 "tags": tag,
                 "game_system": game_system.strip(),
@@ -4292,10 +4654,11 @@ if st.session_state.current_page == "Create Quest":
                 "description": new_event["description"],
                 "date": new_event["day"],    # Map "day" to "date"
                 "time": new_event["start"],  # Map "start" to "time"
+                    "end_time": new_event["end"], # Add end time
                 "location": new_event.get("location", ""),
                 "host_email": new_event["creator_email"],
                 "tags": new_event.get("tags", ""),
-                "game_system": new_event.get("game_system", "Not specified"),
+                    "game_system": new_event.get("game_system", "Not specified"),
                 "seat_min": new_event.get("seat_min", 1),
                 "seat_max": new_event.get("seat_max", 1),
                 # Backwards-compatible max_attendees field (Supabase expects this)
@@ -4363,20 +4726,28 @@ if st.session_state.current_page == "Create Quest":
                 </script>
                 """, height=0)
             
-            # Create a popup-style message
-            st.markdown("""
-            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                       background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; 
-                       padding: 20px 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                       text-align: center; font-size: 18px; font-weight: bold; z-index: 9999;
-                       border: 3px solid #FFD700;">
-                🎉 Quest Created Successfully! 🎯<br/>
-                <span style="font-size: 14px; font-weight: normal;">Your epic adventure awaits!</span>
-            </div>
-            """, unsafe_allow_html=True)
+            # Create a popup-style message with close button using session state
+            if st.session_state.get('show_success_popup', True):
+                st.markdown("""
+                    <div style="background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; 
+                   padding: 20px 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                   text-align: center; font-size: 18px; font-weight: bold; z-index: 9999;
+                               border: 3px solid #FFD700; margin: 20px 0;">
+            🎉 Quest Created Successfully! 🎯<br/>
+            <span style="font-size: 14px; font-weight: normal;">Your epic adventure awaits!</span>
+        </div>
+        """, unsafe_allow_html=True)
+                
+                # Center the close button
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col2:
+                    if st.button("✨ Close ✨", key="close_success_popup", use_container_width=True):
+                        st.session_state.show_success_popup = False
+                        st.rerun()
             
-            # Set flag to clear form on next render
+            # Set flag to clear form on next render and show success popup
             st.session_state.form_submitted = True
+            st.session_state.show_success_popup = True
             
             # Auto-clear the popup on next render; avoid blocking sleep and forced rerun
             # The UI will update naturally on user interaction or manual refresh
@@ -4603,17 +4974,17 @@ if st.session_state.current_page == "Quest Counter":
                     elif is_user_rsvped:
                         # Show only "IN PARTY" status without cancel button (moved to Profile page)
                         st.markdown(f"""
-                        <div style="text-align: center; padding: 10px; background: linear-gradient(45deg, #8B4513, #654321); 
-                               color: white; border-radius: 5px; font-size: 14px; font-weight: bold;
-                               background-image: 
-                                   radial-gradient(circle at 20% 50%, transparent 20%, rgba(139, 69, 19, 0.3) 21%, rgba(139, 69, 19, 0.3) 34%, transparent 35%),
-                                   linear-gradient(0deg, rgba(160, 82, 45, 0.8) 50%, rgba(139, 69, 19, 0.8) 50%);
-                               background-size: 15px 15px, 20px 20px;
-                               text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-                               border: 2px solid #654321;">
-                                🗡️ IN PARTY 🛡️
-                        </div>
-                        """, unsafe_allow_html=True)
+                        <div style="text-align: center; padding: 10px; background: linear-gradient(45deg, #28a745, #20c997); 
+                                   color: white; border-radius: 5px; font-size: 14px; font-weight: bold;
+                                   background-image: 
+                                   radial-gradient(circle at 20% 50%, transparent 20%, rgba(40, 167, 69, 0.3) 21%, rgba(40, 167, 69, 0.3) 34%, transparent 35%),
+                                   linear-gradient(0deg, rgba(32, 201, 151, 0.8) 50%, rgba(40, 167, 69, 0.8) 50%);
+                                   background-size: 15px 15px, 20px 20px;
+                                   text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+                               border: 2px solid #1e7e34;">
+                                    🗡️ IN PARTY 🛡️
+                            </div>
+                            """, unsafe_allow_html=True)
                     elif is_full:
                         st.markdown("""
                         <div style="text-align: center; padding: 10px; background-color: #6c757d; 
@@ -4621,7 +4992,7 @@ if st.session_state.current_page == "Quest Counter":
                             🚫 PARTY FULL 🚫
                         </div>
                         """, unsafe_allow_html=True)
-                    
+                
                     st.divider()
     
         # Close the wide container

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     date TEXT NOT NULL,
     time TEXT NOT NULL,
+    end_time TEXT,
     location TEXT,
     host_email TEXT REFERENCES users(email),
     tags TEXT,
