@@ -306,6 +306,13 @@ def save_to_database(table, data):
 def save_to_supabase(table, data):
     """Save data to Supabase using direct API calls (bypassing the Python client)"""
     
+    # Prevent recursion by checking if we're already saving
+    save_key = f'saving_{table}'
+    if st.session_state.get(save_key, False):
+        return False
+    
+    st.session_state[save_key] = True
+    
     try:
         st.info(f"🔄 Attempting to save to Supabase table: {table} using direct API")
         
@@ -447,6 +454,8 @@ def save_to_supabase(table, data):
             st.info("� We need to resolve the SSL issue to save to Supabase cloud database.")
         
         return False
+    finally:
+        st.session_state[save_key] = False
 
 def save_to_sqlite(table, data):
     """Save data to SQLite as fallback"""
@@ -489,6 +498,14 @@ def load_from_database(table, conditions=None):
 
 def load_from_supabase(table, conditions=None):
     """Load data from Supabase using direct API calls"""
+    
+    # Prevent recursion by checking if we're already loading
+    load_key = f'loading_{table}'
+    if st.session_state.get(load_key, False):
+        return []
+    
+    st.session_state[load_key] = True
+    
     try:
         import requests
         
@@ -528,6 +545,8 @@ def load_from_supabase(table, conditions=None):
         st.error(f"❌ Error loading from Supabase {table} via API: {e}")
         st.error(f"🔍 Full error details: {type(e).__name__}: {str(e)}")
         return []
+    finally:
+        st.session_state[load_key] = False
 
 def load_from_sqlite(table, conditions=None):
     """Load data from SQLite as fallback"""
