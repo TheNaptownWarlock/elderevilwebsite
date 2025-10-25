@@ -2642,21 +2642,109 @@ if st.session_state.get('sidebar_collapsed', False):
     st.markdown("""
     <style>
     section[data-testid="stSidebar"] {
-        display: none !important;
-        visibility: hidden !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        pointer-events: none !important;
+        z-index: -1 !important;
+    }
+    
+    /* Ensure main content takes full width when sidebar is collapsed */
+    .main .block-container {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Mobile-specific fixes */
+    @media (max-width: 768px) {
+        section[data-testid="stSidebar"] {
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+        }
+        
+        .main .block-container {
+            margin-left: 0 !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
     
-    # Also add JavaScript to ensure sidebar is hidden
+    # Also add JavaScript to ensure sidebar is properly hidden/shown
     st.markdown("""
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sidebar = document.querySelector('section[data-testid="stSidebar"]');
         if (sidebar) {
-            sidebar.style.display = 'none';
-            sidebar.style.visibility = 'hidden';
+            sidebar.style.transform = 'translateX(-100%)';
+            sidebar.style.transition = 'transform 0.3s ease';
+            sidebar.style.pointerEvents = 'none';
+            sidebar.style.zIndex = '-1';
             sidebar.classList.add('sidebar-collapsed');
+        }
+        
+        // Ensure main content takes full width
+        const mainContent = document.querySelector('.main .block-container');
+        if (mainContent) {
+            mainContent.style.maxWidth = '100%';
+            mainContent.style.paddingLeft = '1rem';
+            mainContent.style.paddingRight = '1rem';
+        }
+    });
+    </script>
+    """, unsafe_allow_html=True)
+else:
+    # Add CSS to ensure sidebar is properly shown when not collapsed
+    st.markdown("""
+    <style>
+    section[data-testid="stSidebar"] {
+        transform: translateX(0) !important;
+        transition: transform 0.3s ease !important;
+        pointer-events: auto !important;
+        z-index: auto !important;
+    }
+    
+    /* Reset main content when sidebar is shown */
+    .main .block-container {
+        max-width: none !important;
+        padding-left: inherit !important;
+        padding-right: inherit !important;
+    }
+    
+    /* Mobile-specific fixes for expanded sidebar */
+    @media (max-width: 768px) {
+        section[data-testid="stSidebar"] {
+            width: inherit !important;
+            min-width: inherit !important;
+            max-width: inherit !important;
+        }
+        
+        .main .block-container {
+            margin-left: inherit !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Add JavaScript to ensure sidebar is properly shown
+    st.markdown("""
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.transform = 'translateX(0)';
+            sidebar.style.transition = 'transform 0.3s ease';
+            sidebar.style.pointerEvents = 'auto';
+            sidebar.style.zIndex = 'auto';
+            sidebar.classList.remove('sidebar-collapsed');
+        }
+        
+        // Reset main content
+        const mainContent = document.querySelector('.main .block-container');
+        if (mainContent) {
+            mainContent.style.maxWidth = '';
+            mainContent.style.paddingLeft = '';
+            mainContent.style.paddingRight = '';
         }
     });
     </script>
