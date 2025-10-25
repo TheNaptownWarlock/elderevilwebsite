@@ -367,11 +367,16 @@ def save_to_supabase(table, data):
                 "seat_max": data.get("seat_max", data.get("max_attendees", 1)),
                 "max_attendees": data.get("max_attendees", data.get("seat_max", 1))
             }
+            print(f"DEBUG: Event data being sent: {event_data}")
             # Direct API call to Supabase
             url = f"{base_url}/rest/v1/{table}"
+            print(f"DEBUG: Making POST request to: {url}")
             response = requests.post(url, headers=headers, json=event_data, verify=False)
+            print(f"DEBUG: Response status: {response.status_code}")
+            print(f"DEBUG: Response text: {response.text}")
             
             if response.status_code in [200, 201]:
+                print("DEBUG: Event saved successfully!")
                 return True
             else:
                 print(f"❌ API Error {response.status_code}: {response.text}")
@@ -422,11 +427,16 @@ def save_to_supabase(table, data):
                 "message": data["message"],
                 "created_at": datetime.now().isoformat()
             }
+            print(f"DEBUG: Private message data being sent: {pm_data}")
             # Direct API call to Supabase
             url = f"{base_url}/rest/v1/{table}"
+            print(f"DEBUG: Making POST request to: {url}")
             response = requests.post(url, headers=headers, json=pm_data, verify=False)
+            print(f"DEBUG: Response status: {response.status_code}")
+            print(f"DEBUG: Response text: {response.text}")
             
             if response.status_code in [200, 201]:
+                print("DEBUG: Private message saved successfully!")
                 return True
             else:
                 print(f"❌ API Error {response.status_code}: {response.text}")
