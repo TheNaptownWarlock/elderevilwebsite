@@ -314,7 +314,7 @@ def save_to_supabase(table, data):
     st.session_state[save_key] = True
     
     try:
-        st.info(f"🔄 Attempting to save to Supabase table: {table} using direct API")
+        print(f"🔄 Attempting to save to Supabase table: {table} using direct API")
         
         # Use direct requests API calls instead of Supabase client
         import requests
@@ -440,18 +440,18 @@ def save_to_supabase(table, data):
                 return False
         
         else:
-            st.warning(f"⚠️ Unknown table: {table}")
+            print(f"⚠️ Unknown table: {table}")
             return False
         
         return True
     except Exception as e:
-        st.error(f"❌ Error saving to Supabase {table}: {e}")
-        st.error(f"� Full error details: {type(e).__name__}: {str(e)}")
+        print(f"❌ Error saving to Supabase {table}: {e}")
+        print(f"🔍 Full error details: {type(e).__name__}: {str(e)}")
         
         # Show debug info for SSL errors
         if "SSL" in str(e) or "certificate" in str(e):
-            st.error("🔐 This is an SSL certificate error. The data was NOT saved to Supabase.")
-            st.info("� We need to resolve the SSL issue to save to Supabase cloud database.")
+            print("🔐 This is an SSL certificate error. The data was NOT saved to Supabase.")
+            print("ℹ️ We need to resolve the SSL issue to save to Supabase cloud database.")
         
         return False
     finally:
@@ -542,8 +542,8 @@ def load_from_supabase(table, conditions=None):
             return []
             
     except Exception as e:
-        st.error(f"❌ Error loading from Supabase {table} via API: {e}")
-        st.error(f"🔍 Full error details: {type(e).__name__}: {str(e)}")
+        print(f"❌ Error loading from Supabase {table} via API: {e}")
+        print(f"🔍 Full error details: {type(e).__name__}: {str(e)}")
         return []
     finally:
         st.session_state[load_key] = False
