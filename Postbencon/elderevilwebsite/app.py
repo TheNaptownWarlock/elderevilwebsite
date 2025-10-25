@@ -2640,52 +2640,69 @@ with col2:
 # Add JavaScript to intercept Streamlit's built-in collapse button
 st.markdown("""
 <script>
-// Wait for the page to load
-setTimeout(function() {
-    // Find the built-in Streamlit collapse button
-    const collapseButton = document.querySelector('button[kind="header"]');
+function setupCollapseButton() {
+    // Try multiple selectors to find the collapse button
+    const selectors = [
+        'button[kind="header"]',
+        'section[data-testid="stSidebar"] button[kind="header"]',
+        'button[aria-label*="collapse"]',
+        'button[aria-label*="Collapse"]',
+        'section[data-testid="stSidebar"] button',
+        '[data-testid="collapsedControl"]'
+    ];
     
-    if (collapseButton) {
-        // Remove Streamlit's default click handler by cloning the button
-        const newButton = collapseButton.cloneNode(true);
-        collapseButton.parentNode.replaceChild(newButton, collapseButton);
+    let collapseButton = null;
+    for (const selector of selectors) {
+        collapseButton = document.querySelector(selector);
+        if (collapseButton) {
+            console.log('Found collapse button with selector:', selector);
+            break;
+        }
+    }
+    
+    if (collapseButton && !collapseButton.hasAttribute('data-custom-handler')) {
+        console.log('Setting up custom handler for collapse button');
+        collapseButton.setAttribute('data-custom-handler', 'true');
         
-        // Add our custom click handler
-        newButton.addEventListener('click', function(e) {
+        // Add click handler
+        collapseButton.addEventListener('click', function(e) {
+            console.log('Collapse button clicked');
             e.preventDefault();
             e.stopPropagation();
             
-            // Find and click the Toggle Navigation button instead
-            const toggleButton = document.querySelector('button[data-testid="baseButton-secondary"]');
-            if (toggleButton && toggleButton.textContent.includes('Toggle Navigation')) {
-                toggleButton.click();
-            }
-        });
-    }
-    
-    // Also monitor for dynamically added collapse buttons
-    const observer = new MutationObserver(function(mutations) {
-        const collapseBtn = document.querySelector('button[kind="header"]');
-        if (collapseBtn && !collapseBtn.hasAttribute('data-custom-handler')) {
-            collapseBtn.setAttribute('data-custom-handler', 'true');
+            // Find the Toggle Navigation button
+            const buttons = document.querySelectorAll('button');
+            let toggleButton = null;
             
-            const newBtn = collapseBtn.cloneNode(true);
-            collapseBtn.parentNode.replaceChild(newBtn, collapseBtn);
-            
-            newBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const toggleButton = document.querySelector('button[data-testid="baseButton-secondary"]');
-                if (toggleButton && toggleButton.textContent.includes('Toggle Navigation')) {
-                    toggleButton.click();
+            for (const btn of buttons) {
+                if (btn.textContent.includes('Toggle Navigation')) {
+                    toggleButton = btn;
+                    break;
                 }
-            });
-        }
-    });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
-}, 500);
+            }
+            
+            if (toggleButton) {
+                console.log('Clicking Toggle Navigation button');
+                toggleButton.click();
+            } else {
+                console.log('Toggle Navigation button not found');
+            }
+        }, true); // Use capture phase
+    }
+}
+
+// Run setup multiple times to catch dynamically loaded elements
+setTimeout(setupCollapseButton, 100);
+setTimeout(setupCollapseButton, 500);
+setTimeout(setupCollapseButton, 1000);
+setTimeout(setupCollapseButton, 2000);
+
+// Also monitor for dynamically added collapse buttons
+const observer = new MutationObserver(function(mutations) {
+    setupCollapseButton();
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
 </script>
 """, unsafe_allow_html=True)
 
