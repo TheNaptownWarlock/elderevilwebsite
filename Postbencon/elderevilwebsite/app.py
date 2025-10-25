@@ -306,13 +306,6 @@ def save_to_database(table, data):
 def save_to_supabase(table, data):
     """Save data to Supabase using direct API calls (bypassing the Python client)"""
     
-    # Prevent recursion by checking if we're already saving
-    save_key = f'saving_{table}'
-    if st.session_state.get(save_key, False):
-        return False
-    
-    st.session_state[save_key] = True
-    
     try:
         print(f"🔄 Attempting to save to Supabase table: {table} using direct API")
         
@@ -454,8 +447,6 @@ def save_to_supabase(table, data):
             print("ℹ️ We need to resolve the SSL issue to save to Supabase cloud database.")
         
         return False
-    finally:
-        st.session_state[save_key] = False
 
 def save_to_sqlite(table, data):
     """Save data to SQLite as fallback"""
@@ -499,13 +490,6 @@ def load_from_database(table, conditions=None):
 def load_from_supabase(table, conditions=None):
     """Load data from Supabase using direct API calls"""
     
-    # Prevent recursion by checking if we're already loading
-    load_key = f'loading_{table}'
-    if st.session_state.get(load_key, False):
-        return []
-    
-    st.session_state[load_key] = True
-    
     try:
         import requests
         
@@ -545,8 +529,6 @@ def load_from_supabase(table, conditions=None):
         print(f"❌ Error loading from Supabase {table} via API: {e}")
         print(f"🔍 Full error details: {type(e).__name__}: {str(e)}")
         return []
-    finally:
-        st.session_state[load_key] = False
 
 def load_from_sqlite(table, conditions=None):
     """Load data from SQLite as fallback"""
@@ -690,11 +672,6 @@ CANCEL_MESSAGES = [
 # Functions to sync session state with database
 def load_users_from_db():
     """Load users from database into session state"""
-    # Prevent recursion
-    if st.session_state.get('loading_users', False):
-        return {}
-    
-    st.session_state.loading_users = True
     
     try:
         users = {}
@@ -721,8 +698,9 @@ def load_users_from_db():
                     "bio": bio or ""
                 }
         return users
-    finally:
-        st.session_state.loading_users = False
+    except Exception as e:
+        print(f"Error loading users: {e}")
+        return {}
 
 def get_events_from_supabase():
     """Fetch events directly from Supabase with all fields including tags and game_system"""
@@ -845,11 +823,6 @@ def get_events_from_supabase():
         return []
 def load_events_from_db():
     """Load events from database into session state"""
-    # Prevent recursion
-    if st.session_state.get('loading_events', False):
-        return []
-    
-    st.session_state.loading_events = True
     
     try:
         events = []
@@ -911,17 +884,12 @@ def load_events_from_db():
                 "rsvps": []     # Initialize empty rsvps list
             })
         return events
-    finally:
-        st.session_state.loading_events = False
+    except Exception as e:
+        print(f"Error loading events: {e}")
+        return []
 
 def load_rsvps_from_db():
     """Load RSVPs from database and attach them to events"""
-    # Prevent recursion
-    if st.session_state.get('loading_rsvps', False):
-        return {}
-    
-    st.session_state.loading_rsvps = True
-    
     try:
         db_rsvps = load_from_database("rsvps")
         rsvps_by_event = {}
@@ -970,17 +938,9 @@ def load_rsvps_from_db():
     except Exception as e:
         st.error(f"Error loading RSVPs: {e}")
         return {}
-    finally:
-        st.session_state.loading_rsvps = False
 
 def refresh_event_rsvps(event_id):
     """Refresh RSVPs for a specific event from database"""
-    # Prevent recursion
-    if st.session_state.get('refreshing_rsvps', False):
-        return []
-    
-    st.session_state.refreshing_rsvps = True
-    
     try:
         db_rsvps = load_from_database("rsvps", f"event_id='{event_id}'")
         event_rsvps = []
@@ -1029,16 +989,9 @@ def refresh_event_rsvps(event_id):
     except Exception as e:
         st.error(f"Error refreshing RSVPs for event {event_id}: {e}")
         return []
-    finally:
-        st.session_state.refreshing_rsvps = False
 
 def sync_session_with_db():
     """Sync session state with database on app start"""
-    # Prevent recursion by checking if we're already syncing
-    if st.session_state.get('syncing_db', False):
-        return {}, []
-    
-    st.session_state.syncing_db = True
     
     try:
         # Load data from database
@@ -1095,8 +1048,6 @@ def sync_session_with_db():
         st.session_state.users = {}
         st.session_state.events = []
         return {}, []
-    finally:
-        st.session_state.syncing_db = False
 
 def refresh_data():
     """Refresh data from database only when needed"""
