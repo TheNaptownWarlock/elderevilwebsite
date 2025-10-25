@@ -2636,84 +2636,20 @@ with col2:
         st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
         st.rerun()
 
-# Add JavaScript to intercept Streamlit's built-in collapse button
+# Add CSS to hide the built-in Streamlit collapse button
 st.markdown("""
-<script>
-function setupCollapseButton() {
-    // Search in both current window and parent window
-    const windows = [window];
-    try {
-        if (window.parent && window.parent !== window) {
-            windows.push(window.parent);
-        }
-    } catch (e) {
-        // Cross-origin, can't access parent
-    }
-    
-    for (const win of windows) {
-        const doc = win.document;
-        
-        // Try multiple selectors to find the collapse button
-        const selectors = [
-            'button[kind="header"]',
-            'section[data-testid="stSidebar"] button[kind="header"]',
-            'button[aria-label*="collapse"]',
-            'button[aria-label*="Collapse"]',
-            'button[title*="collapse"]',
-            'button[title*="Collapse"]',
-            '[data-testid="collapsedControl"]',
-            'section[data-testid="stSidebar"] > div > button'
-        ];
-        
-        for (const selector of selectors) {
-            const buttons = doc.querySelectorAll(selector);
-            buttons.forEach(collapseButton => {
-                if (collapseButton && !collapseButton.hasAttribute('data-custom-handler')) {
-                    collapseButton.setAttribute('data-custom-handler', 'true');
-                    
-                    // Add click handler
-                    collapseButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Find the Toggle Navigation button in all windows
-                        let toggleButton = null;
-                        for (const searchWin of windows) {
-                            const allButtons = searchWin.document.querySelectorAll('button');
-                            for (const btn of allButtons) {
-                                if (btn.textContent.includes('Toggle Navigation')) {
-                                    toggleButton = btn;
-                                    break;
-                                }
-                            }
-                            if (toggleButton) break;
-                        }
-                        
-                        if (toggleButton) {
-                            toggleButton.click();
-                        }
-                    }, true); // Use capture phase
-                }
-            });
-        }
-    }
+<style>
+/* Hide the built-in << collapse button */
+button[kind="header"] {
+    display: none !important;
 }
-
-// Run setup multiple times to catch dynamically loaded elements
-setTimeout(setupCollapseButton, 100);
-setTimeout(setupCollapseButton, 500);
-setTimeout(setupCollapseButton, 1000);
-setTimeout(setupCollapseButton, 2000);
-
-// Also monitor for dynamically added collapse buttons (throttled)
-let setupTimeout = null;
-const observer = new MutationObserver(function(mutations) {
-    if (setupTimeout) clearTimeout(setupTimeout);
-    setupTimeout = setTimeout(setupCollapseButton, 100);
-});
-
-observer.observe(document.body, { childList: true, subtree: true });
-</script>
+section[data-testid="stSidebar"] > div > button {
+    display: none !important;
+}
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+</style>
 """, unsafe_allow_html=True)
 
 # Add CSS to hide sidebar when collapsed
@@ -3664,6 +3600,14 @@ document.addEventListener('DOMContentLoaded', function() {
 """, unsafe_allow_html=True)
 
 # User Login Section
+# Add Toggle Navigation button at the top of sidebar
+if st.sidebar.button("☰ Toggle Navigation", key="sidebar_toggle_top", use_container_width=True):
+    # Toggle sidebar state
+    if 'sidebar_collapsed' not in st.session_state:
+        st.session_state.sidebar_collapsed = False
+    st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
+    st.rerun()
+
 st.sidebar.header("🎭 Knave Check")
 
 # Show password reset dialog if requested
