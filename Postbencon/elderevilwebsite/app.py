@@ -3377,6 +3377,103 @@ section[data-testid="stSidebar"] .stTextInput {
 /* Hide Streamlit deploy button */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+
+/* Mobile-specific sizing fixes */
+@media (max-width: 768px) {
+    /* Ensure proper mobile viewport */
+    .main .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        max-width: 100% !important;
+    }
+    
+    /* Fix form containers on mobile */
+    .stForm {
+        padding: 0.5rem !important;
+    }
+    
+    /* Fix button sizing on mobile */
+    .stButton button {
+        width: 100% !important;
+        min-height: 44px !important; /* iOS touch target minimum */
+        font-size: 16px !important; /* Prevent zoom on iOS */
+    }
+    
+    /* Fix input field sizing on mobile */
+    .stTextInput input,
+    .stTextArea textarea,
+    .stSelectbox select,
+    .stNumberInput input {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+        min-height: 44px !important; /* iOS touch target minimum */
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Fix sidebar width on mobile */
+    section[data-testid="stSidebar"] {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+    
+    /* Fix quest cards on mobile */
+    .quest-card {
+        margin: 0.5rem 0 !important;
+        padding: 1rem !important;
+    }
+    
+    /* Fix table responsiveness */
+    .stDataFrame {
+        overflow-x: auto !important;
+        width: 100% !important;
+    }
+    
+    /* Fix markdown containers */
+    .stMarkdownContainer {
+        padding: 0.5rem !important;
+    }
+    
+    /* Fix tabs on mobile */
+    .stTabs [role="tablist"] {
+        flex-wrap: wrap !important;
+    }
+    
+    .stTabs [role="tab"] {
+        min-width: auto !important;
+        flex: 1 !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+    .main .block-container {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    
+    .stForm {
+        padding: 0.25rem !important;
+    }
+    
+    /* Smaller sidebar for very small screens */
+    section[data-testid="stSidebar"] {
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+    
+    /* Adjust banner text for very small screens */
+    .stApp h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .fantasy-subtitle {
+        font-size: 0.6rem !important;
+    }
+}
 header {visibility: hidden;}
 .stDeployButton {display:none;}
 div[data-testid="stToolbar"] {display:none;}
