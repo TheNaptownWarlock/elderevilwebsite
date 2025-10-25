@@ -2639,15 +2639,32 @@ with col2:
 # Add CSS to hide the built-in Streamlit collapse button
 st.markdown("""
 <style>
-/* Hide the built-in << collapse button */
-button[kind="header"] {
+/* Hide the built-in << collapse button - comprehensive selectors */
+button[kind="header"],
+section[data-testid="stSidebar"] button[kind="header"],
+section[data-testid="stSidebar"] > div > button:first-child,
+section[data-testid="stSidebar"] > div > div > button:first-child,
+[data-testid="collapsedControl"],
+button[aria-label*="collapse"],
+button[aria-label*="Collapse"],
+button[title*="collapse"],
+button[title*="Collapse"] {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: none !important;
 }
-section[data-testid="stSidebar"] > div > button {
+
+/* Also hide it in the sidebar header area */
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] button:first-child,
+section[data-testid="stSidebar"] header button,
+.css-1cypcdb button:first-child {
     display: none !important;
-}
-[data-testid="collapsedControl"] {
-    display: none !important;
+    visibility: hidden !important;
 }
 </style>
 """, unsafe_allow_html=True)
