@@ -237,18 +237,18 @@ def init_database():
         response = requests.get(url, headers=headers, verify=False)
         
         if response.status_code == 200:
-            st.success("✅ Supabase connected via direct API!")
+            print("✅ Supabase connected via direct API!")
             return True
         else:
-            st.error(f"❌ Supabase API test failed: {response.status_code}")
+            print(f"❌ Supabase API test failed: {response.status_code}")
             return False
             
     except Exception as e:
-        st.error(f"❌ Database connection failed: {e}")
+        print(f"❌ Database connection failed: {e}")
         return False
     else:
         # Fallback to SQLite for local development
-        st.warning("🔄 Using local SQLite database (Supabase not available)")
+        print("🔄 Using local SQLite database (Supabase not available)")
         import sqlite3
         conn = sqlite3.connect("bencon_calendar.db")
         cursor = conn.cursor()
@@ -557,7 +557,7 @@ def load_from_sqlite(table, conditions=None):
         conn.close()
         return results
     except Exception as e:
-        st.error(f"Error loading from SQLite {table}: {e}")
+        print(f"Error loading from SQLite {table}: {e}")
         return []
 
 # Initialize database on app start
@@ -946,7 +946,7 @@ def load_rsvps_from_db():
         
         return rsvps_by_event
     except Exception as e:
-        st.error(f"Error loading RSVPs: {e}")
+        print(f"Error loading RSVPs: {e}")
         return {}
 
 def refresh_event_rsvps(event_id):
@@ -1053,7 +1053,7 @@ def sync_session_with_db():
         return db_users, db_events
         
     except Exception as e:
-        st.error(f"Error syncing with database: {e}")
+        print(f"Error syncing with database: {e}")
         # Initialize with empty data if sync fails
         st.session_state.users = {}
         st.session_state.events = []
@@ -3696,7 +3696,7 @@ try:
     user_class = st.session_state.get('current_user', {}).get('user_class', 'Adventurer')
     render_working_chat(user_email, user_display_name, user_avatar, user_class)
 except Exception as e:
-    st.error(f"Error loading chat component: {e}")
+    print(f"Error loading chat component: {e}")
 
 # Show user schedule if viewing someone's profile
 if st.session_state.viewing_user_schedule:
