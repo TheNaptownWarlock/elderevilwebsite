@@ -2473,7 +2473,14 @@ function forceMedievalStyling() {
 
 // Run immediately and continuously
 forceMedievalStyling();
-setInterval(forceMedievalStyling, 200); // Run every 200ms for more aggressive override
+const medievalInterval = setInterval(forceMedievalStyling, 200); // Run every 200ms for more aggressive override
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (medievalInterval) {
+        clearInterval(medievalInterval);
+    }
+});
 
 // Also run when DOM changes in parent
 try {
@@ -3366,7 +3373,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Continuously monitor for new selectbox inputs
-    setInterval(function() {
+    const selectboxInterval = setInterval(function() {
         const newInputs = document.querySelectorAll('div[data-testid="stSelectbox"] input, .stSelectbox input');
         newInputs.forEach(input => {
             if (!input.readOnly) {
@@ -3379,7 +3386,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.style.cursor = 'pointer';
             }
         });
-    }, 100);
+    }, 1000); // Reduced frequency from 100ms to 1 second
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        if (selectboxInterval) {
+            clearInterval(selectboxInterval);
+        }
+    });
 });
 </script>
 """, unsafe_allow_html=True)
@@ -3513,7 +3527,6 @@ elif st.session_state.current_user is None:
                 register_btn = st.form_submit_button("Create Account")
                 
                 if register_btn:
-                    print(f"🔍 DEBUG: Registration form submitted! Starting validation...")
                     result, message = register_user(reg_email, reg_password, display_name, selected_avatar, pronouns, bio)
                     if result == True:
                         st.sidebar.success(message)
@@ -4036,7 +4049,6 @@ if st.session_state.current_page == "Inbox":
                 send_button = st.form_submit_button(button_text, type="primary")
                 
                 if send_button:
-                    print(f"🔍 DEBUG: Private message form submitted! Starting validation...")
                     if not message_text.strip():
                         st.error("Please enter a message!")
                     else:
@@ -4739,7 +4751,6 @@ if st.session_state.current_page == "Create Quest":
 
     # Validation
     if submit:
-        print(f"🔍 DEBUG: Event form submitted! Starting validation...")
         start_dt = datetime.strptime(start_time, "%I:%M %p")
         end_dt = datetime.strptime(end_time, "%I:%M %p")
         if end_dt <= start_dt:
