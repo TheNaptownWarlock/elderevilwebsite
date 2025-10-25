@@ -845,68 +845,83 @@ def get_events_from_supabase():
         return []
 def load_events_from_db():
     """Load events from database into session state"""
-    events = []
-    db_events = load_from_database("events")
-    for event_data in db_events:
-        if isinstance(event_data, dict):
-            # Supabase returns dictionaries
-            event_id = event_data.get("id")
-            title = event_data.get("title")
-            description = event_data.get("description")
-            date = event_data.get("date") 
-            time = event_data.get("time")
-            location = event_data.get("location")
-            host_email = event_data.get("host_email")
-            tags = event_data.get("tags")
-            seat_min = event_data.get("seat_min", 1)
-            seat_max = event_data.get("seat_max", 1)
-            max_attendees = event_data.get("max_attendees")
-        else:
-            # Fallback for SQLite format (tuple)
-            event_id, title, description, date, time, location, host_email, tags, seat_min, seat_max, max_attendees, created_at = event_data
+    # Prevent recursion
+    if st.session_state.get('loading_events', False):
+        return []
+    
+    st.session_state.loading_events = True
+    
+    try:
+        events = []
+        db_events = load_from_database("events")
+        for event_data in db_events:
+            if isinstance(event_data, dict):
+                # Supabase returns dictionaries
+                event_id = event_data.get("id")
+                title = event_data.get("title")
+                description = event_data.get("description")
+                date = event_data.get("date") 
+                time = event_data.get("time")
+                location = event_data.get("location")
+                host_email = event_data.get("host_email")
+                tags = event_data.get("tags")
+                seat_min = event_data.get("seat_min", 1)
+                seat_max = event_data.get("seat_max", 1)
+                max_attendees = event_data.get("max_attendees")
+            else:
+                # Fallback for SQLite format (tuple)
+                event_id, title, description, date, time, location, host_email, tags, seat_min, seat_max, max_attendees, created_at = event_data
         
-        try:
-            parsed_tags = json.loads(tags) if tags and tags.strip() else []
-        except (json.JSONDecodeError, TypeError):
-            parsed_tags = []
+            try:
+                parsed_tags = json.loads(tags) if tags and tags.strip() else []
+            except (json.JSONDecodeError, TypeError):
+                parsed_tags = []
         
-        # Look up host display name from users
-        host_display_name = ""
-        if host_email:
-            db_users = load_from_database("users", f"email='{host_email}'")
-            if db_users and len(db_users) > 0:
-                user_data = db_users[0]
-                if isinstance(user_data, dict):
-                    host_display_name = user_data.get("display_name", "")
-                else:
-                    host_display_name = user_data[2]  # display_name is 3rd column in SQLite
-        
-        events.append({
-            "id": event_id,
-            "title": title,
-            "name": title,  # Add name field for compatibility
-            "description": description,
-            "date": date,
-            "day": date,    # Map date to day for Quest Counter compatibility
-            "time": time,
-            "start": time,  # Map time to start for compatibility
-            "end": time,    # Add end time (using same time for now)
-            "location": location,
-            "host_email": host_email,
-            "host": host_display_name,  # Add host display name
-            "creator_email": host_email,  # Add creator_email for compatibility
-            "tags": parsed_tags,
-            "tag": parsed_tags[0] if parsed_tags else "",  # Add single tag for compatibility
-            "game_system": event_data.get("game_system", "Not specified"),
-            "seat_min": seat_min,
-            "seat_max": seat_max,
-            "max_attendees": max_attendees,
-            "rsvps": []     # Initialize empty rsvps list
-        })
-    return events
+            # Look up host display name from users
+            host_display_name = ""
+            if host_email:
+                db_users = load_from_database("users", f"email='{host_email}'")
+                if db_users and len(db_users) > 0:
+                    user_data = db_users[0]
+                    if isinstance(user_data, dict):
+                        host_display_name = user_data.get("display_name", "")
+                    else:
+                        host_display_name = user_data[2]  # display_name is 3rd column in SQLite
+            
+            events.append({
+                "id": event_id,
+                "title": title,
+                "name": title,  # Add name field for compatibility
+                "description": description,
+                "date": date,
+                "day": date,    # Map date to day for Quest Counter compatibility
+                "time": time,
+                "start": time,  # Map time to start for compatibility
+                "end": time,    # Add end time (using same time for now)
+                "location": location,
+                "host_email": host_email,
+                "host": host_display_name,  # Add host display name
+                "creator_email": host_email,  # Add creator_email for compatibility
+                "tags": parsed_tags,
+                "tag": parsed_tags[0] if parsed_tags else "",  # Add single tag for compatibility
+                "game_system": event_data.get("game_system", "Not specified"),
+                "seat_min": seat_min,
+                "seat_max": seat_max,
+                "max_attendees": max_attendees,
+                "rsvps": []     # Initialize empty rsvps list
+            })
+        return events
+    finally:
+        st.session_state.loading_events = False
 
 def load_rsvps_from_db():
     """Load RSVPs from database and attach them to events"""
+    # Prevent recursion
+    if st.session_state.get('loading_rsvps', False):
+        return {}
+    
+    st.session_state.loading_rsvps = True
+    
     try:
         db_rsvps = load_from_database("rsvps")
         rsvps_by_event = {}
@@ -955,9 +970,17 @@ def load_rsvps_from_db():
     except Exception as e:
         st.error(f"Error loading RSVPs: {e}")
         return {}
+    finally:
+        st.session_state.loading_rsvps = False
 
 def refresh_event_rsvps(event_id):
     """Refresh RSVPs for a specific event from database"""
+    # Prevent recursion
+    if st.session_state.get('refreshing_rsvps', False):
+        return []
+    
+    st.session_state.refreshing_rsvps = True
+    
     try:
         db_rsvps = load_from_database("rsvps", f"event_id='{event_id}'")
         event_rsvps = []
@@ -1006,6 +1029,8 @@ def refresh_event_rsvps(event_id):
     except Exception as e:
         st.error(f"Error refreshing RSVPs for event {event_id}: {e}")
         return []
+    finally:
+        st.session_state.refreshing_rsvps = False
 
 def sync_session_with_db():
     """Sync session state with database on app start"""
