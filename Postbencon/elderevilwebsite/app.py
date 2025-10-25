@@ -1174,6 +1174,7 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
         }
         
         # Save to database
+        print(f"🔍 DEBUG: About to call save_to_database for users (registration)")
         save_to_database("users", {
             "email": email,
             "password_hash": password_hash,
@@ -4048,6 +4049,7 @@ if st.session_state.current_page == "Inbox":
                         }
                         
                         # Save to database
+                        print(f"🔍 DEBUG: About to call save_to_database for private_messages")
                         result = save_to_database("private_messages", message_data)
                         
                         if result:
@@ -4778,6 +4780,7 @@ if st.session_state.current_page == "Create Quest":
             st.session_state.events.append(new_event)
             
             # Save event to database
+            print(f"🔍 DEBUG: About to call save_to_database for events")
             save_to_database("events", {
                 "id": new_event["id"],
                 "title": new_event["name"],  # Map "name" to "title"
