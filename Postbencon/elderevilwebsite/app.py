@@ -671,30 +671,39 @@ CANCEL_MESSAGES = [
 # Functions to sync session state with database
 def load_users_from_db():
     """Load users from database into session state"""
-    users = {}
-    db_users = load_from_database("users")
-    for user_data in db_users:
-        # Supabase returns dictionaries, not tuples
-        if isinstance(user_data, dict):
-            email = user_data.get("email")
-            users[email] = {
-                "password": user_data.get("password_hash"),
-                "display_name": user_data.get("display_name"),
-                "avatar": user_data.get("avatar"),
-                "pronouns": user_data.get("pronouns"),
-                "bio": user_data.get("bio", "")
-            }
-        else:
-            # Fallback for SQLite format (tuple)
-            email, password_hash, display_name, avatar, pronouns, bio, created_at = user_data
-            users[email] = {
-                "password": password_hash,
-                "display_name": display_name,
-                "avatar": avatar,
-                "pronouns": pronouns,
-                "bio": bio or ""
-            }
-    return users
+    # Prevent recursion
+    if st.session_state.get('loading_users', False):
+        return {}
+    
+    st.session_state.loading_users = True
+    
+    try:
+        users = {}
+        db_users = load_from_database("users")
+        for user_data in db_users:
+            # Supabase returns dictionaries, not tuples
+            if isinstance(user_data, dict):
+                email = user_data.get("email")
+                users[email] = {
+                    "password": user_data.get("password_hash"),
+                    "display_name": user_data.get("display_name"),
+                    "avatar": user_data.get("avatar"),
+                    "pronouns": user_data.get("pronouns"),
+                    "bio": user_data.get("bio", "")
+                }
+            else:
+                # Fallback for SQLite format (tuple)
+                email, password_hash, display_name, avatar, pronouns, bio, created_at = user_data
+                users[email] = {
+                    "password": password_hash,
+                    "display_name": display_name,
+                    "avatar": avatar,
+                    "pronouns": pronouns,
+                    "bio": bio or ""
+                }
+        return users
+    finally:
+        st.session_state.loading_users = False
 
 def get_events_from_supabase():
     """Fetch events directly from Supabase with all fields including tags and game_system"""
@@ -981,6 +990,12 @@ def refresh_event_rsvps(event_id):
 
 def sync_session_with_db():
     """Sync session state with database on app start"""
+    # Prevent recursion by checking if we're already syncing
+    if st.session_state.get('syncing_db', False):
+        return {}, []
+    
+    st.session_state.syncing_db = True
+    
     try:
         # Load data from database
         db_users = load_users_from_db()
@@ -998,43 +1013,46 @@ def sync_session_with_db():
         # Update session state
         st.session_state.users = db_users
         st.session_state.events = db_events
+        
+        # If database is empty, create test users
+        if not db_users:
+            test_users = {
+                "Test": {
+                    "password": hashlib.md5("Test".encode()).hexdigest(),
+                    "display_name": "Test",
+                    "avatar": "🧙‍♂️",
+                    "pronouns": "they/them",
+                    "bio": ""
+                },
+                "Test2": {
+                    "password": hashlib.md5("Test2".encode()).hexdigest(),
+                    "display_name": "Test2", 
+                    "avatar": "⚔️",
+                    "pronouns": "she/her",
+                    "bio": ""
+                }
+            }
+            # Save test users to database
+            for email, user_data in test_users.items():
+                save_to_database("users", {
+                    "email": email,
+                    "password_hash": user_data["password"],
+                    "display_name": user_data["display_name"],
+                    "avatar": user_data["avatar"],
+                    "pronouns": user_data["pronouns"]
+                })
+            return test_users, []
+        
+        return db_users, db_events
+        
     except Exception as e:
         st.error(f"Error syncing with database: {e}")
         # Initialize with empty data if sync fails
         st.session_state.users = {}
         st.session_state.events = []
-        db_users = {}
-    
-    # If database is empty, create test users
-    if not db_users:
-        test_users = {
-            "Test": {
-                "password": hashlib.md5("Test".encode()).hexdigest(),
-                "display_name": "Test",
-                "avatar": "🧙‍♂️",
-                "pronouns": "they/them",
-                "bio": ""
-            },
-            "Test2": {
-                "password": hashlib.md5("Test2".encode()).hexdigest(),
-                "display_name": "Test2", 
-                "avatar": "⚔️",
-                "pronouns": "she/her",
-                "bio": ""
-            }
-        }
-        # Save test users to database
-        for email, user_data in test_users.items():
-            save_to_database("users", {
-                "email": email,
-                "password_hash": user_data["password"],
-                "display_name": user_data["display_name"],
-                "avatar": user_data["avatar"],
-                "pronouns": user_data["pronouns"]
-            })
-        return test_users, []
-    
-    return db_users, db_events
+        return {}, []
+    finally:
+        st.session_state.syncing_db = False
 
 def refresh_data():
     """Refresh data from database only when needed"""
