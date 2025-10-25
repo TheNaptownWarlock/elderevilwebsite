@@ -2701,7 +2701,7 @@ else:
         transform: translateX(0) !important;
         transition: transform 0.3s ease !important;
         pointer-events: auto !important;
-        z-index: auto !important;
+        z-index: 9999 !important;
     }
     
     /* Reset main content when sidebar is shown */
@@ -2717,6 +2717,7 @@ else:
             width: inherit !important;
             min-width: inherit !important;
             max-width: inherit !important;
+            z-index: 99999 !important;  /* Even higher z-index on mobile */
         }
         
         .main .block-container {
@@ -2735,7 +2736,7 @@ else:
             sidebar.style.transform = 'translateX(0)';
             sidebar.style.transition = 'transform 0.3s ease';
             sidebar.style.pointerEvents = 'auto';
-            sidebar.style.zIndex = 'auto';
+            sidebar.style.zIndex = '9999';
             sidebar.classList.remove('sidebar-collapsed');
         }
         
