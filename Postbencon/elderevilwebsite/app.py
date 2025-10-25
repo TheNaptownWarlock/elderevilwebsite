@@ -2312,7 +2312,6 @@ function forceMedievalStyling() {
         
         // Force ALL buttons in parent window
         const buttons = parentDocument.querySelectorAll('button');
-        console.log('Found buttons in parent:', buttons.length);
         buttons.forEach(button => {
             button.style.setProperty('background', 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%)', 'important');
             button.style.setProperty('background-color', '#8B4513', 'important');
@@ -2641,53 +2640,62 @@ with col2:
 st.markdown("""
 <script>
 function setupCollapseButton() {
-    // Try multiple selectors to find the collapse button
-    const selectors = [
-        'button[kind="header"]',
-        'section[data-testid="stSidebar"] button[kind="header"]',
-        'button[aria-label*="collapse"]',
-        'button[aria-label*="Collapse"]',
-        'section[data-testid="stSidebar"] button',
-        '[data-testid="collapsedControl"]'
-    ];
-    
-    let collapseButton = null;
-    for (const selector of selectors) {
-        collapseButton = document.querySelector(selector);
-        if (collapseButton) {
-            console.log('Found collapse button with selector:', selector);
-            break;
+    // Search in both current window and parent window
+    const windows = [window];
+    try {
+        if (window.parent && window.parent !== window) {
+            windows.push(window.parent);
         }
+    } catch (e) {
+        // Cross-origin, can't access parent
     }
     
-    if (collapseButton && !collapseButton.hasAttribute('data-custom-handler')) {
-        console.log('Setting up custom handler for collapse button');
-        collapseButton.setAttribute('data-custom-handler', 'true');
+    for (const win of windows) {
+        const doc = win.document;
         
-        // Add click handler
-        collapseButton.addEventListener('click', function(e) {
-            console.log('Collapse button clicked');
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Find the Toggle Navigation button
-            const buttons = document.querySelectorAll('button');
-            let toggleButton = null;
-            
-            for (const btn of buttons) {
-                if (btn.textContent.includes('Toggle Navigation')) {
-                    toggleButton = btn;
-                    break;
+        // Try multiple selectors to find the collapse button
+        const selectors = [
+            'button[kind="header"]',
+            'section[data-testid="stSidebar"] button[kind="header"]',
+            'button[aria-label*="collapse"]',
+            'button[aria-label*="Collapse"]',
+            'button[title*="collapse"]',
+            'button[title*="Collapse"]',
+            '[data-testid="collapsedControl"]',
+            'section[data-testid="stSidebar"] > div > button'
+        ];
+        
+        for (const selector of selectors) {
+            const buttons = doc.querySelectorAll(selector);
+            buttons.forEach(collapseButton => {
+                if (collapseButton && !collapseButton.hasAttribute('data-custom-handler')) {
+                    collapseButton.setAttribute('data-custom-handler', 'true');
+                    
+                    // Add click handler
+                    collapseButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Find the Toggle Navigation button in all windows
+                        let toggleButton = null;
+                        for (const searchWin of windows) {
+                            const allButtons = searchWin.document.querySelectorAll('button');
+                            for (const btn of allButtons) {
+                                if (btn.textContent.includes('Toggle Navigation')) {
+                                    toggleButton = btn;
+                                    break;
+                                }
+                            }
+                            if (toggleButton) break;
+                        }
+                        
+                        if (toggleButton) {
+                            toggleButton.click();
+                        }
+                    }, true); // Use capture phase
                 }
-            }
-            
-            if (toggleButton) {
-                console.log('Clicking Toggle Navigation button');
-                toggleButton.click();
-            } else {
-                console.log('Toggle Navigation button not found');
-            }
-        }, true); // Use capture phase
+            });
+        }
     }
 }
 
@@ -2697,9 +2705,11 @@ setTimeout(setupCollapseButton, 500);
 setTimeout(setupCollapseButton, 1000);
 setTimeout(setupCollapseButton, 2000);
 
-// Also monitor for dynamically added collapse buttons
+// Also monitor for dynamically added collapse buttons (throttled)
+let setupTimeout = null;
 const observer = new MutationObserver(function(mutations) {
-    setupCollapseButton();
+    if (setupTimeout) clearTimeout(setupTimeout);
+    setupTimeout = setTimeout(setupCollapseButton, 100);
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
