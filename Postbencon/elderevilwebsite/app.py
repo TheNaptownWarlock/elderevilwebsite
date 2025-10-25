@@ -339,11 +339,16 @@ def save_to_supabase(table, data):
                 "password_hint": data.get("password_hint", ""),
                 "email_verified": data.get("email_verified", True)
             }
+            print(f"DEBUG: User data being sent: {user_data}")
             # Direct API call to Supabase
             url = f"{base_url}/rest/v1/{table}"
+            print(f"DEBUG: Making POST request to: {url}")
             response = requests.post(url, headers=headers, json=user_data, verify=False)
+            print(f"DEBUG: Response status: {response.status_code}")
+            print(f"DEBUG: Response text: {response.text}")
             
             if response.status_code in [200, 201]:
+                print("DEBUG: User saved successfully!")
                 return True
             else:
                 print(f"❌ API Error {response.status_code}: {response.text}")
@@ -407,11 +412,16 @@ def save_to_supabase(table, data):
                 "user_email": data["user_email"],
                 "message": data["message"]
             }
+            print(f"DEBUG: Tavern message data being sent: {message_data}")
             # Direct API call to Supabase
             url = f"{base_url}/rest/v1/{table}"
+            print(f"DEBUG: Making POST request to: {url}")
             response = requests.post(url, headers=headers, json=message_data, verify=False)
+            print(f"DEBUG: Response status: {response.status_code}")
+            print(f"DEBUG: Response text: {response.text}")
             
             if response.status_code in [200, 201]:
+                print("DEBUG: Tavern message saved successfully!")
                 return True
             else:
                 print(f"❌ API Error {response.status_code}: {response.text}")
