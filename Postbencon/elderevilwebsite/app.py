@@ -3513,6 +3513,7 @@ elif st.session_state.current_user is None:
                 register_btn = st.form_submit_button("Create Account")
                 
                 if register_btn:
+                    print(f"🔍 DEBUG: Registration form submitted! Starting validation...")
                     result, message = register_user(reg_email, reg_password, display_name, selected_avatar, pronouns, bio)
                     if result == True:
                         st.sidebar.success(message)
@@ -4035,6 +4036,7 @@ if st.session_state.current_page == "Inbox":
                 send_button = st.form_submit_button(button_text, type="primary")
                 
                 if send_button:
+                    print(f"🔍 DEBUG: Private message form submitted! Starting validation...")
                     if not message_text.strip():
                         st.error("Please enter a message!")
                     else:
@@ -4737,6 +4739,7 @@ if st.session_state.current_page == "Create Quest":
 
     # Validation
     if submit:
+        print(f"🔍 DEBUG: Event form submitted! Starting validation...")
         start_dt = datetime.strptime(start_time, "%I:%M %p")
         end_dt = datetime.strptime(end_time, "%I:%M %p")
         if end_dt <= start_dt:
