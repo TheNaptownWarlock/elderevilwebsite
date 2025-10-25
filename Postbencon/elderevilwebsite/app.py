@@ -300,6 +300,8 @@ def init_database():
 
 def save_to_database(table, data):
     """Save data to Supabase using direct API calls"""
+    print(f"🔍 DEBUG: save_to_database called for table: {table}")
+    print(f"🔍 DEBUG: Data received: {data}")
     # Always use direct API calls to avoid SSL issues with the client
     return save_to_supabase(table, data)
 
@@ -695,7 +697,9 @@ def load_users_from_db():
     
     try:
         users = {}
+        print(f"🔍 DEBUG: Loading users from database...")
         db_users = load_from_database("users")
+        print(f"🔍 DEBUG: Raw users data from DB: {db_users}")
         for user_data in db_users:
             # Supabase returns dictionaries, not tuples
             if isinstance(user_data, dict):
@@ -717,6 +721,7 @@ def load_users_from_db():
                     "pronouns": pronouns,
                     "bio": bio or ""
                 }
+        print(f"🔍 DEBUG: Processed users: {list(users.keys())}")
         return users
     except Exception as e:
         print(f"Error loading users: {e}")
