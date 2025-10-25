@@ -2637,6 +2637,58 @@ with col2:
         st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
         st.rerun()
 
+# Add JavaScript to intercept Streamlit's built-in collapse button
+st.markdown("""
+<script>
+// Wait for the page to load
+setTimeout(function() {
+    // Find the built-in Streamlit collapse button
+    const collapseButton = document.querySelector('button[kind="header"]');
+    
+    if (collapseButton) {
+        // Remove Streamlit's default click handler by cloning the button
+        const newButton = collapseButton.cloneNode(true);
+        collapseButton.parentNode.replaceChild(newButton, collapseButton);
+        
+        // Add our custom click handler
+        newButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Find and click the Toggle Navigation button instead
+            const toggleButton = document.querySelector('button[data-testid="baseButton-secondary"]');
+            if (toggleButton && toggleButton.textContent.includes('Toggle Navigation')) {
+                toggleButton.click();
+            }
+        });
+    }
+    
+    // Also monitor for dynamically added collapse buttons
+    const observer = new MutationObserver(function(mutations) {
+        const collapseBtn = document.querySelector('button[kind="header"]');
+        if (collapseBtn && !collapseBtn.hasAttribute('data-custom-handler')) {
+            collapseBtn.setAttribute('data-custom-handler', 'true');
+            
+            const newBtn = collapseBtn.cloneNode(true);
+            collapseBtn.parentNode.replaceChild(newBtn, collapseBtn);
+            
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const toggleButton = document.querySelector('button[data-testid="baseButton-secondary"]');
+                if (toggleButton && toggleButton.textContent.includes('Toggle Navigation')) {
+                    toggleButton.click();
+                }
+            });
+        }
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+}, 500);
+</script>
+""", unsafe_allow_html=True)
+
 # Add CSS to hide sidebar when collapsed
 if st.session_state.get('sidebar_collapsed', False):
     st.markdown("""
