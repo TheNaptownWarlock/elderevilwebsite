@@ -85,6 +85,8 @@ except ImportError:
 
 # Supabase imports
 from supabase import create_client, Client
+import threading
+import time
 
 # Initialize Supabase client (no caching to avoid SSL issues)
 def init_supabase():
@@ -572,6 +574,230 @@ def load_from_sqlite(table, conditions=None):
 
 # Initialize database on app start
 init_database()
+
+# ============================================================================
+# SUPABASE REALTIME / WEBSOCKET FUNCTIONALITY
+# ============================================================================
+
+def init_realtime_client():
+    """Initialize Supabase Realtime client for WebSocket connections"""
+    try:
+        base_url = "https://uvsdbuonyfzajhtrgnxq.supabase.co"
+        api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
+        
+        # Create Supabase client with Realtime enabled
+        supabase_client = create_client(base_url, api_key)
+        
+        print("✅ Supabase Realtime client initialized!")
+        return supabase_client
+    except Exception as e:
+        print(f"❌ Error initializing Realtime client: {e}")
+        return None
+
+def handle_users_change(payload):
+    """Handle real-time changes to users table"""
+    print(f"🔄 Users table changed: {payload}")
+    event_type = payload.get('eventType')
+    new_record = payload.get('new')
+    old_record = payload.get('old')
+    
+    if event_type == 'INSERT' and new_record:
+        email = new_record.get('email')
+        st.session_state.users[email] = {
+            "password": new_record.get('password_hash'),
+            "display_name": new_record.get('display_name'),
+            "avatar": new_record.get('avatar'),
+            "pronouns": new_record.get('pronouns'),
+            "bio": new_record.get('bio', '')
+        }
+        print(f"✅ User added: {email}")
+    
+    elif event_type == 'UPDATE' and new_record:
+        email = new_record.get('email')
+        if email in st.session_state.users:
+            st.session_state.users[email].update({
+                "password": new_record.get('password_hash'),
+                "display_name": new_record.get('display_name'),
+                "avatar": new_record.get('avatar'),
+                "pronouns": new_record.get('pronouns'),
+                "bio": new_record.get('bio', '')
+            })
+            print(f"✅ User updated: {email}")
+    
+    elif event_type == 'DELETE' and old_record:
+        email = old_record.get('email')
+        if email in st.session_state.users:
+            del st.session_state.users[email]
+            print(f"✅ User deleted: {email}")
+
+def handle_events_change(payload):
+    """Handle real-time changes to events table"""
+    print(f"🔄 Events table changed: {payload}")
+    event_type = payload.get('eventType')
+    new_record = payload.get('new')
+    old_record = payload.get('old')
+    
+    if event_type == 'INSERT' and new_record:
+        # Add new event to session state
+        event_id = new_record.get('id')
+        new_event = {
+            "id": event_id,
+            "name": new_record.get('title'),
+            "host": new_record.get('host_email'),
+            "day": new_record.get('date'),
+            "start": new_record.get('time'),
+            "end": new_record.get('end_time', ''),
+            "description": new_record.get('description'),
+            "location": new_record.get('location', ''),
+            "tags": new_record.get('tags', ''),
+            "game_system": new_record.get('game_system', 'Not specified'),
+            "seat_min": new_record.get('seat_min', 1),
+            "seat_max": new_record.get('seat_max', 1),
+            "creator_email": new_record.get('host_email'),
+            "rsvps": []
+        }
+        st.session_state.events.append(new_event)
+        print(f"✅ Event added: {new_record.get('title')}")
+    
+    elif event_type == 'UPDATE' and new_record:
+        # Update existing event
+        event_id = new_record.get('id')
+        for i, event in enumerate(st.session_state.events):
+            if event.get('id') == event_id:
+                st.session_state.events[i].update({
+                    "name": new_record.get('title'),
+                    "host": new_record.get('host_email'),
+                    "day": new_record.get('date'),
+                    "start": new_record.get('time'),
+                    "end": new_record.get('end_time', ''),
+                    "description": new_record.get('description'),
+                    "location": new_record.get('location', ''),
+                    "tags": new_record.get('tags', ''),
+                    "game_system": new_record.get('game_system', 'Not specified'),
+                    "seat_min": new_record.get('seat_min', 1),
+                    "seat_max": new_record.get('seat_max', 1)
+                })
+                print(f"✅ Event updated: {new_record.get('title')}")
+                break
+    
+    elif event_type == 'DELETE' and old_record:
+        # Remove deleted event
+        event_id = old_record.get('id')
+        st.session_state.events = [e for e in st.session_state.events if e.get('id') != event_id]
+        print(f"✅ Event deleted: {event_id}")
+
+def handle_rsvps_change(payload):
+    """Handle real-time changes to rsvps table"""
+    print(f"🔄 RSVPs table changed: {payload}")
+    event_type = payload.get('eventType')
+    new_record = payload.get('new')
+    old_record = payload.get('old')
+    
+    if event_type in ['INSERT', 'UPDATE'] and new_record:
+        event_id = new_record.get('event_id')
+        user_email = new_record.get('user_email')
+        status = new_record.get('status')
+        
+        # Update the event's RSVP list
+        for event in st.session_state.events:
+            if event.get('id') == event_id:
+                # Remove existing RSVP from this user
+                event['rsvps'] = [r for r in event.get('rsvps', []) if r.get('email') != user_email]
+                
+                # Add new/updated RSVP
+                if status == 'yes':
+                    user_info = st.session_state.users.get(user_email, {})
+                    event['rsvps'].append({
+                        "email": user_email,
+                        "status": status,
+                        "display_name": user_info.get('display_name', user_email),
+                        "avatar": user_info.get('avatar', '🧙‍♂️')
+                    })
+                print(f"✅ RSVP updated for event {event_id}: {user_email} -> {status}")
+                break
+    
+    elif event_type == 'DELETE' and old_record:
+        event_id = old_record.get('event_id')
+        user_email = old_record.get('user_email')
+        
+        # Remove RSVP from event
+        for event in st.session_state.events:
+            if event.get('id') == event_id:
+                event['rsvps'] = [r for r in event.get('rsvps', []) if r.get('email') != user_email]
+                print(f"✅ RSVP deleted for event {event_id}: {user_email}")
+                break
+
+def handle_private_messages_change(payload):
+    """Handle real-time changes to private_messages table"""
+    print(f"🔄 Private messages table changed: {payload}")
+    # Private messages are loaded on-demand, so we just log the change
+    # The inbox will refresh when the user opens it
+
+def handle_tavern_messages_change(payload):
+    """Handle real-time changes to tavern_messages table"""
+    print(f"🔄 Tavern messages table changed: {payload}")
+    event_type = payload.get('eventType')
+    new_record = payload.get('new')
+    
+    if event_type == 'INSERT' and new_record:
+        # Add new tavern message
+        if 'tavern_messages' not in st.session_state:
+            st.session_state.tavern_messages = []
+        
+        user_email = new_record.get('user_email')
+        user_info = st.session_state.users.get(user_email, {})
+        
+        message = {
+            "id": new_record.get('id'),
+            "user_email": user_email,
+            "message": new_record.get('message'),
+            "timestamp": new_record.get('created_at'),
+            "user_avatar": user_info.get('avatar', '🧙‍♂️'),
+            "user_class": AVATAR_OPTIONS.get(user_info.get('avatar', '🧙‍♂️'), 'Adventurer'),
+            "beers": 0
+        }
+        st.session_state.tavern_messages.append(message)
+        print(f"✅ Tavern message added from {user_email}")
+
+def setup_realtime_subscriptions():
+    """Set up all Realtime subscriptions"""
+    if 'realtime_client' not in st.session_state:
+        st.session_state.realtime_client = init_realtime_client()
+    
+    if st.session_state.realtime_client and 'realtime_subscribed' not in st.session_state:
+        try:
+            client = st.session_state.realtime_client
+            
+            # Subscribe to users table
+            client.table('users').on('*', handle_users_change).subscribe()
+            print("✅ Subscribed to users table")
+            
+            # Subscribe to events table
+            client.table('events').on('*', handle_events_change).subscribe()
+            print("✅ Subscribed to events table")
+            
+            # Subscribe to rsvps table
+            client.table('rsvps').on('*', handle_rsvps_change).subscribe()
+            print("✅ Subscribed to rsvps table")
+            
+            # Subscribe to private_messages table
+            client.table('private_messages').on('*', handle_private_messages_change).subscribe()
+            print("✅ Subscribed to private_messages table")
+            
+            # Subscribe to tavern_messages table
+            client.table('tavern_messages').on('*', handle_tavern_messages_change).subscribe()
+            print("✅ Subscribed to tavern_messages table")
+            
+            st.session_state.realtime_subscribed = True
+            print("🎉 All Realtime subscriptions active!")
+            
+        except Exception as e:
+            print(f"❌ Error setting up Realtime subscriptions: {e}")
+
+# Initialize Realtime subscriptions on app start
+setup_realtime_subscriptions()
+
+# ============================================================================
 
 # Helper function for parsing tags
 def get_first_tag_icon(event):
