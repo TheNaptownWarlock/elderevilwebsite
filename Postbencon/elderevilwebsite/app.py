@@ -3753,6 +3753,7 @@ elif st.session_state.current_user is None:
                 register_btn = st.form_submit_button("Create Account")
                 
                 if register_btn:
+                    print(f"🔍 DEBUG: Registration button clicked for email: {reg_email}")
                     result, message = register_user(reg_email, reg_password, display_name, selected_avatar, pronouns, bio)
                     if result == True:
                         st.sidebar.success(message)
