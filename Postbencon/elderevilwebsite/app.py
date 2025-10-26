@@ -1174,8 +1174,11 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
         }
         
         # Save to database
+        print("=" * 80)
         print(f"🔍 DEBUG: About to call save_to_database for users (registration)")
-        save_to_database("users", {
+        print(f"🔍 DEBUG: Email: {email}, Display Name: {display_name.strip()}")
+        print("=" * 80)
+        result = save_to_database("users", {
             "email": email,
             "password_hash": password_hash,
             "display_name": display_name.strip(),
@@ -1185,6 +1188,10 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
             "password_hint": password_hint,
             "email_verified": True
         })
+        
+        print("=" * 80)
+        print(f"🔍 DEBUG: save_to_database returned: {result}")
+        print("=" * 80)
         
         # Auto-login after registration
         st.session_state.current_user = {
