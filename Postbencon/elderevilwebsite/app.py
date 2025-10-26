@@ -331,13 +331,13 @@ def save_to_supabase(table, data):
         
         if table == "users":
             # Prepare user data for Supabase (only fields that exist in the schema)
+            # Fixed: Removed bio, password_hint, and email_verified fields
             user_data = {
                 "email": data["email"],
                 "password_hash": data["password_hash"], 
                 "display_name": data["display_name"],
                 "avatar": data["avatar"],
                 "pronouns": data["pronouns"]
-                # Note: bio, password_hint, and email_verified are not in the Supabase schema
             }
             print(f"DEBUG: User data being sent: {user_data}")
             # Direct API call to Supabase
