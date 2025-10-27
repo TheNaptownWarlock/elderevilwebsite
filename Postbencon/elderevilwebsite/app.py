@@ -4266,16 +4266,19 @@ if st.session_state.current_user is None:
 
 # Navigation moved to sidebar
 
-# Working simple chat component - APPEARS ON ALL PAGES
-try:
-    from working_chat import render_working_chat
-    user_email = st.session_state.get('current_user', {}).get('email')
-    user_display_name = st.session_state.get('current_user', {}).get('display_name')
-    user_avatar = st.session_state.get('current_user', {}).get('avatar', '🧙‍♂️')
-    user_class = st.session_state.get('current_user', {}).get('user_class', 'Adventurer')
-    render_working_chat(user_email, user_display_name, user_avatar, user_class)
-except Exception as e:
-    print(f"Error loading chat component: {e}")
+# Tavern chat helper function
+def render_tavern_chat_at_bottom():
+    """Render the tavern chat component at the bottom of the page"""
+    try:
+        from working_chat import render_working_chat
+        st.markdown("---")  # Add separator
+        user_email = st.session_state.get('current_user', {}).get('email')
+        user_display_name = st.session_state.get('current_user', {}).get('display_name')
+        user_avatar = st.session_state.get('current_user', {}).get('avatar', '🧙‍♂️')
+        user_class = AVATAR_OPTIONS.get(user_avatar, 'Adventurer')
+        render_working_chat(user_email, user_display_name, user_avatar, user_class)
+    except Exception as e:
+        print(f"Error loading chat component: {e}")
 
 # Show user schedule if viewing someone's profile
 if st.session_state.viewing_user_schedule:
@@ -4839,6 +4842,9 @@ if False:  # Disabled - chat moved to sidebar
         </script>
         """, unsafe_allow_html=True)
     
+    # Tavern chat at bottom of Inbox page
+    render_tavern_chat_at_bottom()
+    
     st.stop()
 
 # Profile Page
@@ -5235,6 +5241,9 @@ if st.session_state.current_page == "Profile":
         else:
             st.write("_You haven't joined any quests yet. Time for an adventure!_ 🗺️")
     
+    # Tavern chat at bottom of Profile page
+    render_tavern_chat_at_bottom()
+    
     st.stop()
 
 # Create Quest Page
@@ -5447,6 +5456,9 @@ if st.session_state.current_page == "Create Quest":
             
             # Auto-clear the popup on next render; avoid blocking sleep and forced rerun
             # The UI will update naturally on user interaction or manual refresh
+
+    # Tavern chat at bottom of Create Quest page
+    render_tavern_chat_at_bottom()
 
     st.stop()
 
@@ -5712,6 +5724,6 @@ if st.session_state.current_page == "Quest Counter":
     
         # Close the wide container
         st.markdown('</div>', unsafe_allow_html=True)
-
-
-
+    
+    # Tavern chat at bottom of Quest Counter page
+    render_tavern_chat_at_bottom()
