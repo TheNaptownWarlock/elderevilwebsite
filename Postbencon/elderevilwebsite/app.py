@@ -4093,6 +4093,23 @@ elif st.session_state.current_user is None:
                     st.sidebar.success(message)
                     st.rerun()
                 else:
+                    # Add CSS to make error more visible
+                    st.sidebar.markdown("""
+                    <style>
+                    div[data-testid="stSidebar"] .stAlert {
+                        opacity: 1 !important;
+                        background-color: rgba(255, 75, 75, 0.95) !important;
+                    }
+                    div[data-testid="stSidebar"] .stAlert[data-baseweb="notification"][kind="error"] {
+                        background-color: rgba(255, 75, 75, 0.95) !important;
+                        opacity: 1 !important;
+                    }
+                    div[data-testid="stSidebar"] div[role="alert"] {
+                        opacity: 1 !important;
+                        background-color: rgba(255, 75, 75, 0.95) !important;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
                     st.sidebar.error(message)
             
             if forgot_btn:
