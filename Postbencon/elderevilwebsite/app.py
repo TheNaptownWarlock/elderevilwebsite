@@ -1887,9 +1887,12 @@ def get_sent_messages(user_email):
     return st.session_state.sent_messages.get(user_email, [])
 
 def get_unread_count(user_email):
-    """Get count of unread messages"""
+    """Get count of unread messages - only count received messages, not sent"""
     messages = get_user_messages(user_email)
-    return len([msg for msg in messages if not msg.get("read", False)])
+    # Only count messages where user is recipient AND message is unread
+    return len([msg for msg in messages 
+                if not msg.get("read", False) 
+                and msg.get("recipient_email") == user_email])
 
 def get_message_thread(message_id, user_email):
     """Get full conversation thread for a message"""
