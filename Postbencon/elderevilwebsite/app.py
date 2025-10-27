@@ -4194,35 +4194,24 @@ if st.session_state.current_user:
     # CSS for gold navigation buttons (active page)
     st.sidebar.markdown("""
     <style>
-    /* Style primary buttons in sidebar (active navigation) with gold color - ultra specific */
-    section[data-testid="stSidebar"] div.stButton button[kind="primary"],
-    div[data-testid="stSidebar"] div.stButton button[kind="primary"],
-    [data-testid="stSidebar"] button[kind="primary"],
-    section[data-testid="stSidebar"] button[data-testid="baseButton-primary"],
-    div[data-testid="stSidebar"] button[data-testid="baseButton-primary"] {
+    /* Style primary buttons in sidebar (active navigation) with gold color */
+    div[data-testid="stSidebar"] button[kind="primary"] {
         background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #DAA520 100%) !important;
-        background-color: #FFD700 !important;
         color: #000000 !important;
         font-weight: bold !important;
         border: 2px solid #B8860B !important;
         box-shadow: 0 4px 8px rgba(218, 165, 32, 0.4) !important;
     }
     
-    section[data-testid="stSidebar"] div.stButton button[kind="primary"]:hover,
-    div[data-testid="stSidebar"] div.stButton button[kind="primary"]:hover,
-    [data-testid="stSidebar"] button[kind="primary"]:hover {
+    div[data-testid="stSidebar"] button[kind="primary"]:hover {
         background: linear-gradient(135deg, #FDB931 0%, #FFD700 50%, #FDB931 100%) !important;
-        background-color: #FDB931 !important;
         box-shadow: 0 6px 12px rgba(218, 165, 32, 0.6) !important;
         transform: translateY(-1px);
     }
     
     /* Keep secondary buttons with brown color */
-    section[data-testid="stSidebar"] div.stButton button[kind="secondary"],
-    div[data-testid="stSidebar"] div.stButton button[kind="secondary"],
-    [data-testid="stSidebar"] button[kind="secondary"] {
+    div[data-testid="stSidebar"] button[kind="secondary"] {
         background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%) !important;
-        background-color: #8B4513 !important;
         color: #FFFACD !important;
         border: 2px solid #654321 !important;
     }
@@ -4604,20 +4593,16 @@ if st.session_state.current_page == "Inbox":
                                         st.session_state.inline_reply_to = new_reply
                                     st.rerun()
                             
-                        with col_delete:
-                            if st.button("🗑️", key=f"delete_msg_{message['id']}", 
-                                       help="Delete message", use_container_width=True):
-                                delete_message(st.session_state.current_user["email"], message["id"])
-                                st.rerun()
-                        with col_right:
-                            st.write("")  # Empty spacer
+                            with col_delete:
+                                if st.button("🗑️", key=f"delete_msg_{message['id']}", 
+                                           help="Delete message"):
+                                    delete_message(st.session_state.current_user["email"], message["id"])
+                                    st.rerun()
                         else:
                             st.warning("⚠️ Referenced event no longer exists")
                     else:
-                        # Reply and Delete buttons for regular messages - centered
-                        col_left, col_reply, col_delete, col_right = st.columns([1, 2, 1, 1])
-                        with col_left:
-                            st.write("")  # Empty spacer
+                        # Reply and Delete buttons for regular messages
+                        col_reply, col_delete = st.columns([3, 1])
                         with col_reply:
                             # Check if there are multiple messages in the thread
                             thread_id = message.get('thread_id', message['id'])
@@ -4656,14 +4641,12 @@ if st.session_state.current_page == "Inbox":
                                 st.rerun()
                         with col_delete:
                             if st.button("🗑️", key=f"delete_msg_{message['id']}", 
-                                       help="Delete message", use_container_width=True):
+                                       help="Delete message"):
                                 delete_message(st.session_state.current_user["email"], message["id"])
                                 # Use a flag to prevent multiple rapid clicks
                                 if 'last_deleted_message' not in st.session_state or st.session_state.last_deleted_message != message['id']:
                                     st.session_state.last_deleted_message = message['id']
                                 st.rerun()
-                        with col_right:
-                            st.write("")  # Empty spacer
                     
                     # Show original message if this is a reply
                     if message.get("reply_to_id"):
@@ -4769,6 +4752,11 @@ if st.session_state.current_page == "Inbox":
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+            
+            if st.button("❌ Cancel Reply"):
+                if st.session_state.get('replying_to') is not None:
+                    st.session_state.replying_to = None
+                    # Don't call st.rerun() - let the form clear naturally
         
         # Send message form
         with st.form("send_message_form", clear_on_submit=True):
@@ -4831,21 +4819,9 @@ if st.session_state.current_page == "Inbox":
                     placeholder_text = "Greetings, fellow adventurer! Want to join my quest?"
                     message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
                 
-                # Send and Cancel buttons
-                if st.session_state.replying_to:
-                    col_send, col_cancel = st.columns([3, 1])
-                    with col_send:
-                        send_button = st.form_submit_button("↩️ Send Reply", type="primary", use_container_width=True)
-                    with col_cancel:
-                        cancel_button = st.form_submit_button("❌ Cancel", use_container_width=True)
-                else:
-                    send_button = st.form_submit_button("🦅 Send Message", type="primary", use_container_width=True)
-                    cancel_button = False
-                
-                # Handle cancel button
-                if st.session_state.replying_to and cancel_button and not send_button:
-                    st.session_state.replying_to = None
-                    st.rerun()
+                # Send button
+                button_text = "↩️ Send Reply" if st.session_state.replying_to else "🦅 Send Message"
+                send_button = st.form_submit_button(button_text, type="primary")
                 
                 if send_button:
                     if not message_text.strip():
