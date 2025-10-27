@@ -4203,48 +4203,81 @@ if st.session_state.current_user:
         print_html = generate_clean_print_html(st.session_state.current_user["email"])
         st.components.v1.html(print_html, height=0, scrolling=False)
     
-    # Add gold glow effect for active navigation buttons
-    st.sidebar.markdown("""
+    # Add gold glow effect for active navigation buttons using JavaScript
+    current_page = st.session_state.current_page
+    st.sidebar.components.v1.html(f"""
     <style>
-    /* Gold glow for active navigation buttons (primary type) */
-    section[data-testid="stSidebar"] button[kind="primary"] {
+    .gold-glow-active {{
         box-shadow: 
             0 0 20px rgba(255, 215, 0, 0.8),
             0 0 40px rgba(255, 215, 0, 0.6),
             0 0 60px rgba(255, 215, 0, 0.4),
             inset 0 0 20px rgba(255, 215, 0, 0.3) !important;
         border: 2px solid #FFD700 !important;
-        animation: goldPulse 2s ease-in-out infinite;
-    }
+        animation: goldPulse 2s ease-in-out infinite !important;
+    }}
     
-    @keyframes goldPulse {
-        0%, 100% {
+    @keyframes goldPulse {{
+        0%, 100% {{
             box-shadow: 
                 0 0 20px rgba(255, 215, 0, 0.8),
                 0 0 40px rgba(255, 215, 0, 0.6),
                 0 0 60px rgba(255, 215, 0, 0.4),
                 inset 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        50% {
+        }}
+        50% {{
             box-shadow: 
                 0 0 30px rgba(255, 215, 0, 1),
                 0 0 50px rgba(255, 215, 0, 0.8),
                 0 0 70px rgba(255, 215, 0, 0.6),
                 inset 0 0 30px rgba(255, 215, 0, 0.5);
-        }
-    }
+        }}
+    }}
     
-    /* Enhance the gold glow on hover */
-    section[data-testid="stSidebar"] button[kind="primary"]:hover {
+    .gold-glow-active:hover {{
         box-shadow: 
             0 0 25px rgba(255, 215, 0, 1),
             0 0 45px rgba(255, 215, 0, 0.8),
             0 0 65px rgba(255, 215, 0, 0.6),
             inset 0 0 25px rgba(255, 215, 0, 0.4) !important;
         transform: scale(1.02) !important;
-    }
+    }}
     </style>
-    """, unsafe_allow_html=True)
+    <script>
+    (function() {{
+        const currentPage = "{current_page}";
+        const keyMap = {{
+            "Quest Counter": "nav_quest_counter",
+            "Create Quest": "nav_create_quest",
+            "Inbox": "nav_inbox",
+            "Profile": "nav_profile"
+        }};
+        
+        function addGoldGlow() {{
+            const targetKey = keyMap[currentPage];
+            if (!targetKey) return;
+            
+            // Find all buttons in sidebar
+            const sidebar = window.parent.document.querySelector('section[data-testid="stSidebar"]');
+            if (!sidebar) return;
+            
+            const buttons = sidebar.querySelectorAll('button');
+            buttons.forEach(button => {{
+                const key = button.getAttribute('data-testid');
+                if (key && key.includes(targetKey)) {{
+                    button.classList.add('gold-glow-active');
+                }} else {{
+                    button.classList.remove('gold-glow-active');
+                }}
+            }});
+        }}
+        
+        // Run immediately and on interval
+        addGoldGlow();
+        setInterval(addGoldGlow, 500);
+    }})();
+    </script>
+    """, height=0)
     
     st.sidebar.markdown("---")
 
