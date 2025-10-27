@@ -869,11 +869,13 @@ def setup_realtime_subscriptions():
         return False
 
 # Initialize Realtime subscriptions on app start
-try:
-    setup_realtime_subscriptions()
-except Exception as e:
-    print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
-    print("ℹ️ App will continue with polling fallback")
+# TEMPORARILY DISABLED - causing recursion errors
+# try:
+#     setup_realtime_subscriptions()
+# except Exception as e:
+#     print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
+#     print("ℹ️ App will continue with polling fallback")
+print("ℹ️ Realtime subscriptions temporarily disabled - using polling mode")
 
 # ============================================================================
 
