@@ -4182,7 +4182,9 @@ else:
     if st.session_state.music_playing:
         try:
             import base64
-            audio_file_path = "'Yeah!' but it's Medieval - USHER  Medieval Bardcore Version.mp3"
+            import os
+            # Use relative path from the app directory
+            audio_file_path = os.path.join(os.path.dirname(__file__), "..", "'Yeah!' but it's Medieval - USHER  Medieval Bardcore Version.mp3")
             
             with open(audio_file_path, "rb") as audio_file:
                 audio_bytes = audio_file.read()
