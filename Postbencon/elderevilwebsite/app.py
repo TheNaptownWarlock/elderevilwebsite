@@ -1670,11 +1670,12 @@ def send_message(from_email, to_email, message, event_id=None, reply_to_id=None)
     return message_id
 
 def get_user_messages(user_email):
-    """Get all messages for a user from Supabase"""
+    """Get all messages for a user from Supabase - includes full conversation threads"""
     try:
         # Try Supabase first
         SUPABASE_URL, SUPABASE_KEY = get_supabase_credentials()
         if SUPABASE_URL and SUPABASE_KEY:
+            # First, get all messages where user is recipient OR sender
             response = requests.get(
                 f"{SUPABASE_URL}/rest/v1/private_messages",
                 headers={
@@ -1683,7 +1684,7 @@ def get_user_messages(user_email):
                     "Content-Type": "application/json"
                 },
                 params={
-                    "recipient_email": f"eq.{user_email}",
+                    "or": f"(recipient_email.eq.{user_email},sender_email.eq.{user_email})",
                     "select": "*",
                     "order": "created_at.desc"
                 }
@@ -1706,6 +1707,9 @@ def get_user_messages(user_email):
                         "subject": msg.get("subject", ""),
                         "message": msg["message"],
                         "timestamp": msg["created_at"],
+                        "created_at": msg["created_at"],  # Keep original timestamp for sorting
+                        "thread_id": msg.get("thread_id", msg["id"]),  # Include thread_id
+                        "recipient_email": msg["recipient_email"],  # Keep recipient for filtering
                         "read": bool(msg.get("read_status", 0))
                     })
                 # print(f"Debug: Formatted {len(formatted_messages)} messages")
@@ -4461,9 +4465,14 @@ if st.session_state.current_page == "Inbox":
             for thread_id, thread_messages in threads.items():
                 thread_messages.sort(key=lambda x: x.get("created_at", x.get("timestamp", "")), reverse=True)
                 latest_message = thread_messages[0]
-                latest_message['thread_count'] = len(thread_messages)
-                thread_previews.append(latest_message)
-                print(f"DEBUG: Thread {thread_id[:8]}... has {len(thread_messages)} message(s)")
+                
+                # Only show threads where the latest message was RECEIVED (not sent by current user)
+                if latest_message['recipient_email'] == st.session_state.current_user["email"]:
+                    latest_message['thread_count'] = len(thread_messages)
+                    thread_previews.append(latest_message)
+                    print(f"DEBUG: Thread {thread_id[:8]}... has {len(thread_messages)} message(s) - showing (latest is received)")
+                else:
+                    print(f"DEBUG: Thread {thread_id[:8]}... has {len(thread_messages)} message(s) - hiding (latest is sent)")
             
             # Sort thread previews by most recent activity
             thread_previews.sort(key=lambda x: x.get("created_at", x.get("timestamp", "")), reverse=True)
