@@ -4158,6 +4158,52 @@ else:
     # User profile section
     user = st.session_state.current_user
     
+    # Music Player Controls
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("**🎵 Tavern Music**")
+    music_col1, music_col2 = st.sidebar.columns([1, 2])
+    
+    with music_col1:
+        if 'music_playing' not in st.session_state:
+            st.session_state.music_playing = False
+        
+        play_pause_label = "⏸️ Pause" if st.session_state.music_playing else "▶️ Play"
+        if st.button(play_pause_label, key="music_toggle", use_container_width=True):
+            st.session_state.music_playing = not st.session_state.music_playing
+            st.rerun()
+    
+    with music_col2:
+        if 'music_volume' not in st.session_state:
+            st.session_state.music_volume = 50
+        volume = st.slider("Volume", min_value=0, max_value=100, value=st.session_state.music_volume, key="music_volume_slider", label_visibility="collapsed")
+        st.session_state.music_volume = volume
+    
+    # Audio player using base64 encoded audio
+    if st.session_state.music_playing:
+        try:
+            import base64
+            audio_file_path = "'Yeah!' but it's Medieval - USHER  Medieval Bardcore Version.mp3"
+            
+            with open(audio_file_path, "rb") as audio_file:
+                audio_bytes = audio_file.read()
+                audio_base64 = base64.b64encode(audio_bytes).decode()
+            
+            st.sidebar.markdown(f"""
+            <audio id="bgMusic" loop autoplay style="display:none;">
+                <source src="data:audio/mpeg;base64,{audio_base64}" type="audio/mpeg">
+            </audio>
+            <script>
+                var audio = document.getElementById('bgMusic');
+                if (audio) {{
+                    audio.volume = {volume / 100};
+                    audio.play().catch(e => console.log('Playback prevented:', e));
+                }}
+            </script>
+            """, unsafe_allow_html=True)
+        except Exception as e:
+            st.sidebar.warning(f"⚠️ Could not load audio: {e}")
+    
+    st.sidebar.markdown("---")
     
     # Profile button with avatar
     profile_col1, profile_col2 = st.sidebar.columns([1, 3])
