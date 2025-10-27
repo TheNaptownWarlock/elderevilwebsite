@@ -4432,10 +4432,10 @@ if st.session_state.current_page == "Inbox":
     with tabs[0]:  # Received Messages
         messages = get_user_messages(st.session_state.current_user["email"])
         
-        # Debug: Show what we got (commented out to reduce spam)
-        # st.write(f"Debug: Retrieved {len(messages)} messages")
-        # if messages:
-        #     st.write(f"First message keys: {list(messages[0].keys())}")
+        # Debug: Show what we got
+        print(f"DEBUG: Retrieved {len(messages)} total messages from database")
+        for msg in messages:
+            print(f"  - Message ID: {msg['id'][:8]}... | Thread ID: {msg.get('thread_id', 'NONE')[:8] if msg.get('thread_id') else 'NONE'}... | From: {msg.get('from_email', 'unknown')}")
         
         if not messages:
             st.info("Your inbox is empty. No messages from fellow adventurers yet!")
