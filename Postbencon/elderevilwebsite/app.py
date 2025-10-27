@@ -4591,7 +4591,7 @@ if st.session_state.current_page == "Inbox":
                     message_text = st.text_area("Message:", placeholder="Your reply message...", max_chars=500)
                 else:
                     placeholder_text = "Greetings, fellow adventurer! Want to join my quest?"
-                message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
+                    message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
                 
                 # Send button
                 button_text = "↩️ Send Reply" if st.session_state.replying_to else "🦅 Send Message"
