@@ -4443,7 +4443,15 @@ if st.session_state.current_page == "Inbox":
             # Group messages by thread_id and show only the most recent message per thread
             threads = {}
             for message in messages:
-                thread_id = message.get('thread_id', message['id'])
+                # Use thread_id from message, or message ID if not set
+                thread_id = message.get('thread_id')
+                if not thread_id:
+                    thread_id = message['id']
+                    print(f"WARNING: Message {message['id']} has no thread_id, using message ID as fallback")
+                
+                # Debug: Show thread_id for each message
+                print(f"DEBUG: Message {message['id'][:8]}... has thread_id: {thread_id[:8] if thread_id else 'None'}...")
+                
                 if thread_id not in threads:
                     threads[thread_id] = []
                 threads[thread_id].append(message)
@@ -4455,6 +4463,7 @@ if st.session_state.current_page == "Inbox":
                 latest_message = thread_messages[0]
                 latest_message['thread_count'] = len(thread_messages)
                 thread_previews.append(latest_message)
+                print(f"DEBUG: Thread {thread_id[:8]}... has {len(thread_messages)} message(s)")
             
             # Sort thread previews by most recent activity
             thread_previews.sort(key=lambda x: x.get("created_at", x.get("timestamp", "")), reverse=True)

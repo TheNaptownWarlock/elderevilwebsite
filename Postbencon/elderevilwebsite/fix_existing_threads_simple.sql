@@ -4,7 +4,7 @@
 
 UPDATE private_messages pm1
 SET thread_id = (
-  SELECT MIN(pm2.id)
+  SELECT pm2.id
   FROM private_messages pm2
   WHERE (
     -- Messages where pm1 and pm2 involve the same two people
@@ -12,7 +12,6 @@ SET thread_id = (
     OR 
     (pm2.sender_email = pm1.recipient_email AND pm2.recipient_email = pm1.sender_email)
   )
-  AND pm2.created_at <= pm1.created_at
   ORDER BY pm2.created_at ASC
   LIMIT 1
 );
