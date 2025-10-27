@@ -332,14 +332,14 @@ def save_to_supabase(table, data):
         }
         
         if table == "users":
-            # Prepare user data for Supabase (only fields that exist in the schema)
-            # Fixed: Removed bio, password_hint, and email_verified fields
+            # Prepare user data for Supabase
             user_data = {
                 "email": data["email"],
                 "password_hash": data["password_hash"], 
                 "display_name": data["display_name"],
                 "avatar": data["avatar"],
-                "pronouns": data["pronouns"]
+                "pronouns": data["pronouns"],
+                "bio": data.get("bio", "")  # Include bio field
             }
             print(f"DEBUG: User data being sent: {user_data}")
             # Direct API call to Supabase
@@ -502,6 +502,45 @@ def save_to_sqlite(table, data):
         return True
     except Exception as e:
         st.error(f"Error saving to SQLite {table}: {e}")
+        return False
+
+def update_to_supabase(table, data, key_field="email"):
+    """Update existing record in Supabase using PATCH"""
+    try:
+        import requests
+        requests.packages.urllib3.disable_warnings()
+        
+        base_url = "https://uvsdbuonyfzajhtrgnxq.supabase.co"
+        api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
+        
+        headers = {
+            'apikey': api_key,
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+        }
+        
+        # Build URL with filter for the key field
+        key_value = data.get(key_field)
+        url = f"{base_url}/rest/v1/{table}?{key_field}=eq.{key_value}"
+        
+        print(f"DEBUG: Updating {table} where {key_field}={key_value}")
+        print(f"DEBUG: Update data: {data}")
+        
+        # Use PATCH for update
+        response = requests.patch(url, headers=headers, json=data, verify=False)
+        print(f"DEBUG: Response status: {response.status_code}")
+        print(f"DEBUG: Response text: {response.text}")
+        
+        if response.status_code in [200, 201, 204]:
+            print(f"✅ Updated {table} successfully!")
+            return True
+        else:
+            print(f"❌ Update failed: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error updating {table}: {e}")
         return False
 
 def load_from_database(table, conditions=None):
@@ -1460,6 +1499,18 @@ def update_user_profile(email, display_name, avatar, pronouns, bio=""):
             "pronouns": pronouns,
             "bio": bio
         })
+        
+        # Update in Supabase using PATCH
+        password_hash = st.session_state.users[email]["password"]
+        update_to_supabase("users", {
+            "email": email,
+            "password_hash": password_hash,
+            "display_name": display_name,
+            "avatar": avatar,
+            "pronouns": pronouns,
+            "bio": bio
+        }, key_field="email")
+        
         return True
     return False
 
@@ -4052,6 +4103,70 @@ else:
         logout_user()
         st.rerun()
 
+# Navigation section - show first when logged in
+if st.session_state.current_user:
+    st.sidebar.markdown("---")
+    
+    # Navigation header
+    st.sidebar.markdown("""
+    <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #D2691E 75%, #8B4513 100%);
+               border: 3px solid #654321; border-radius: 15px; padding: 10px; margin: 10px 0;
+               box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 8px rgba(0,0,0,0.3);">
+        <h4 style="color: #FFFACD; text-align: center; margin: 0 0 15px 0; 
+                 text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                 font-family: 'Uncial Antiqua', 'Cinzel', serif;">
+            🚀 Buzzy's Fast Travel Depot 🚀
+        </h4>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Navigation buttons as vertical list
+    if st.sidebar.button("🗓️ Quest Counter", use_container_width=True, key="nav_quest_counter",
+            type="primary" if st.session_state.current_page == "Quest Counter" else "secondary"):
+        if st.session_state.current_page != "Quest Counter":
+            st.session_state.current_page = "Quest Counter"
+            st.session_state.viewing_user_schedule = None
+            st.session_state.last_user_click = None
+            st.rerun()
+
+    if st.sidebar.button("⚔️ Create Quest", use_container_width=True, key="nav_create_quest",
+            type="primary" if st.session_state.current_page == "Create Quest" else "secondary"):
+        if st.session_state.current_page != "Create Quest":
+            st.session_state.current_page = "Create Quest"
+            st.session_state.viewing_user_schedule = None
+            st.session_state.editing_event = None
+            st.session_state.last_user_click = None
+            st.rerun()
+
+    # Inbox with unread count
+    unread_count = get_unread_count(st.session_state.current_user["email"])
+    inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
+    if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
+            type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
+        if st.session_state.current_page != "Inbox":
+            st.session_state.current_page = "Inbox"
+            st.session_state.viewing_user_schedule = None
+            st.session_state.editing_event = None
+            st.session_state.last_user_click = None
+            st.rerun()
+
+    user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
+    if st.sidebar.button(f"{user_avatar} Profile", use_container_width=True, key="nav_profile",
+            type="primary" if st.session_state.current_page == "Profile" else "secondary"):
+        st.session_state.current_page = "Profile"
+        st.session_state.viewing_user_schedule = None
+        st.session_state.editing_event = None
+        st.session_state.last_user_click = None
+        st.rerun()
+
+    # Print Schedule button
+    if st.sidebar.button("🖨️ Print Schedule", use_container_width=True, key="print_schedule_sidebar",
+                help="Open clean print view"):
+        print_html = generate_clean_print_html(st.session_state.current_user["email"])
+        st.components.v1.html(print_html, height=0, scrolling=False)
+    
+    st.sidebar.markdown("---")
+
 # Show registered users with avatars (clickable) - only when logged in
 if st.session_state.users and st.session_state.current_user:
     st.sidebar.write("**Registered Adventurers:**")
@@ -4079,68 +4194,6 @@ if st.session_state.users and st.session_state.current_user:
                 if 'last_user_click' in st.session_state:
                     del st.session_state.last_user_click
                 st.rerun()
-
-    # Tavern Chat (show on all pages when logged in)
-    if st.session_state.current_user:
-        st.sidebar.markdown("---")
-        
-        # Navigation header
-        st.sidebar.markdown("""
-        <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #D2691E 75%, #8B4513 100%);
-                   border: 3px solid #654321; border-radius: 15px; padding: 10px; margin: 10px 0;
-                   box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 8px rgba(0,0,0,0.3);">
-            <h4 style="color: #FFFACD; text-align: center; margin: 0 0 15px 0; 
-                     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-                     font-family: 'Uncial Antiqua', 'Cinzel', serif;">
-                🚀 Buzzy's Fast Travel Depot 🚀
-            </h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Navigation buttons as vertical list
-        if st.sidebar.button("🗓️ Quest Counter", use_container_width=True, key="nav_quest_counter",
-                type="primary" if st.session_state.current_page == "Quest Counter" else "secondary"):
-            if st.session_state.current_page != "Quest Counter":
-                st.session_state.current_page = "Quest Counter"
-                st.session_state.viewing_user_schedule = None
-                st.session_state.last_user_click = None
-                st.rerun()
-
-        if st.sidebar.button("⚔️ Create Quest", use_container_width=True, key="nav_create_quest",
-                type="primary" if st.session_state.current_page == "Create Quest" else "secondary"):
-            if st.session_state.current_page != "Create Quest":
-                st.session_state.current_page = "Create Quest"
-                st.session_state.viewing_user_schedule = None
-                st.session_state.editing_event = None
-                st.session_state.last_user_click = None
-                st.rerun()
-
-    # Inbox with unread count
-    unread_count = get_unread_count(st.session_state.current_user["email"])
-    inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
-    if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
-                type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
-        if st.session_state.current_page != "Inbox":
-            st.session_state.current_page = "Inbox"
-            st.session_state.viewing_user_schedule = None
-            st.session_state.editing_event = None
-            st.session_state.last_user_click = None
-            st.rerun()
-
-    user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
-    if st.sidebar.button(f"{user_avatar} Profile", use_container_width=True, key="nav_profile",
-                type="primary" if st.session_state.current_page == "Profile" else "secondary"):
-        st.session_state.current_page = "Profile"
-        st.session_state.viewing_user_schedule = None
-        st.session_state.editing_event = None
-        st.session_state.last_user_click = None
-        st.rerun()
-
-        # Print Schedule button
-        if st.sidebar.button("🖨️ Print Schedule", use_container_width=True, key="print_schedule_sidebar",
-                    help="Open clean print view"):
-            print_html = generate_clean_print_html(st.session_state.current_user["email"])
-            st.components.v1.html(print_html, height=0, scrolling=False)
 
 # Only show content if user is logged in
 if st.session_state.current_user is None:
