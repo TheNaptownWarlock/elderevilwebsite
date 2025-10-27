@@ -808,7 +808,7 @@ def handle_tavern_messages_change(payload):
         print(f"✅ Tavern message added from {user_email}")
 
 def setup_realtime_subscriptions():
-    """Set up all Realtime subscriptions with error handling"""
+    """Set up all Realtime subscriptions with error handling - using realtime channel API"""
     if 'realtime_client' not in st.session_state:
         st.session_state.realtime_client = init_realtime_client()
     
@@ -823,44 +823,64 @@ def setup_realtime_subscriptions():
     try:
         client = st.session_state.realtime_client
         
-        # Subscribe to users table
+        # Use the Realtime channel API for subscriptions
         try:
-            client.table('users').on('*', handle_users_change).subscribe()
-            print("✅ Subscribed to users table")
+            # Create a channel for database changes
+            channel = client.channel('db-changes')
+            
+            # Subscribe to users table changes
+            channel.on_postgres_changes(
+                event='*',
+                schema='public',
+                table='users',
+                callback=handle_users_change
+            )
+            
+            # Subscribe to events table changes
+            channel.on_postgres_changes(
+                event='*',
+                schema='public',
+                table='events',
+                callback=handle_events_change
+            )
+            
+            # Subscribe to rsvps table changes
+            channel.on_postgres_changes(
+                event='*',
+                schema='public',
+                table='rsvps',
+                callback=handle_rsvps_change
+            )
+            
+            # Subscribe to private_messages table changes
+            channel.on_postgres_changes(
+                event='*',
+                schema='public',
+                table='private_messages',
+                callback=handle_private_messages_change
+            )
+            
+            # Subscribe to tavern_messages table changes
+            channel.on_postgres_changes(
+                event='*',
+                schema='public',
+                table='tavern_messages',
+                callback=handle_tavern_messages_change
+            )
+            
+            # Subscribe to the channel
+            channel.subscribe()
+            
+            st.session_state.realtime_subscribed = True
+            st.session_state.realtime_channel = channel
+            print("✅ Realtime subscriptions setup complete!")
+            return True
+            
         except Exception as e:
-            print(f"⚠️ Failed to subscribe to users table: {e}")
-        
-        # Subscribe to events table
-        try:
-            client.table('events').on('*', handle_events_change).subscribe()
-            print("✅ Subscribed to events table")
-        except Exception as e:
-            print(f"⚠️ Failed to subscribe to events table: {e}")
-        
-        # Subscribe to rsvps table
-        try:
-            client.table('rsvps').on('*', handle_rsvps_change).subscribe()
-            print("✅ Subscribed to rsvps table")
-        except Exception as e:
-            print(f"⚠️ Failed to subscribe to rsvps table: {e}")
-        
-        # Subscribe to private_messages table
-        try:
-            client.table('private_messages').on('*', handle_private_messages_change).subscribe()
-            print("✅ Subscribed to private_messages table")
-        except Exception as e:
-            print(f"⚠️ Failed to subscribe to private_messages table: {e}")
-        
-        # Subscribe to tavern_messages table
-        try:
-            client.table('tavern_messages').on('*', handle_tavern_messages_change).subscribe()
-            print("✅ Subscribed to tavern_messages table")
-        except Exception as e:
-            print(f"⚠️ Failed to subscribe to tavern_messages table: {e}")
-        
-        st.session_state.realtime_subscribed = True
-        print("🎉 Realtime subscriptions setup complete!")
-        return True
+            print(f"⚠️ Failed to setup Realtime subscriptions: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
         
     except Exception as e:
         print(f"❌ Error setting up Realtime subscriptions: {e}")
@@ -869,13 +889,11 @@ def setup_realtime_subscriptions():
         return False
 
 # Initialize Realtime subscriptions on app start
-# TEMPORARILY DISABLED - causing recursion errors
-# try:
-#     setup_realtime_subscriptions()
-# except Exception as e:
-#     print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
-#     print("ℹ️ App will continue with polling fallback")
-print("ℹ️ Realtime subscriptions temporarily disabled - using polling mode")
+try:
+    setup_realtime_subscriptions()
+except Exception as e:
+    print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
+    print("ℹ️ App will continue with polling fallback")
 
 # ============================================================================
 
