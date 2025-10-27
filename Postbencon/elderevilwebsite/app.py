@@ -5265,8 +5265,14 @@ if st.session_state.current_page == "Create Quest":
     # Add CSS for silver form background on Create Quest page
     st.markdown("""
     <style>
-    /* Silver background for event form on Create Quest page */
-    .main .block-container .stForm {
+    /* Silver background for event form on Create Quest page - ultra specific */
+    div[data-testid="stForm"],
+    .main .block-container div[data-testid="stForm"],
+    section[data-testid="stForm"],
+    form[data-testid="stForm"],
+    .stForm,
+    .main .stForm,
+    div.stForm > div {
         background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 25%, #D3D3D3 50%, #E8E8E8 75%, #C0C0C0 100%) !important;
         border: 3px solid #A9A9A9 !important;
         border-radius: 15px !important;
@@ -5275,6 +5281,12 @@ if st.session_state.current_page == "Create Quest":
             0 4px 8px rgba(0,0,0,0.3),
             inset 0 1px 3px rgba(255,255,255,0.5),
             inset 0 -1px 3px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Make sure form container has opaque background */
+    .main .block-container .stForm > div,
+    .main .block-container form > div {
+        background-color: #D3D3D3 !important;
     }
     </style>
     """, unsafe_allow_html=True)
