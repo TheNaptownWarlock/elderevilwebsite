@@ -625,12 +625,20 @@ def init_realtime_client():
         api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
         
         # Create Supabase client with Realtime enabled
-        supabase_client = create_client(base_url, api_key)
+        # Use options to configure timeout and reconnection
+        from supabase import ClientOptions
+        options = ClientOptions(
+            auto_refresh_token=True,
+            persist_session=True
+        )
+        supabase_client = create_client(base_url, api_key, options=options)
         
         print("✅ Supabase Realtime client initialized!")
         return supabase_client
     except Exception as e:
         print(f"❌ Error initializing Realtime client: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 def handle_users_change(payload):
@@ -799,42 +807,72 @@ def handle_tavern_messages_change(payload):
         print(f"✅ Tavern message added from {user_email}")
 
 def setup_realtime_subscriptions():
-    """Set up all Realtime subscriptions"""
+    """Set up all Realtime subscriptions with error handling"""
     if 'realtime_client' not in st.session_state:
         st.session_state.realtime_client = init_realtime_client()
     
-    if st.session_state.realtime_client and 'realtime_subscribed' not in st.session_state:
+    if not st.session_state.realtime_client:
+        print("⚠️ Realtime client not available, skipping subscriptions")
+        return False
+    
+    if 'realtime_subscribed' in st.session_state and st.session_state.realtime_subscribed:
+        print("ℹ️ Realtime subscriptions already active")
+        return True
+    
+    try:
+        client = st.session_state.realtime_client
+        
+        # Subscribe to users table
         try:
-            client = st.session_state.realtime_client
-            
-            # Subscribe to users table
             client.table('users').on('*', handle_users_change).subscribe()
             print("✅ Subscribed to users table")
-            
-            # Subscribe to events table
+        except Exception as e:
+            print(f"⚠️ Failed to subscribe to users table: {e}")
+        
+        # Subscribe to events table
+        try:
             client.table('events').on('*', handle_events_change).subscribe()
             print("✅ Subscribed to events table")
-            
-            # Subscribe to rsvps table
+        except Exception as e:
+            print(f"⚠️ Failed to subscribe to events table: {e}")
+        
+        # Subscribe to rsvps table
+        try:
             client.table('rsvps').on('*', handle_rsvps_change).subscribe()
             print("✅ Subscribed to rsvps table")
-            
-            # Subscribe to private_messages table
+        except Exception as e:
+            print(f"⚠️ Failed to subscribe to rsvps table: {e}")
+        
+        # Subscribe to private_messages table
+        try:
             client.table('private_messages').on('*', handle_private_messages_change).subscribe()
             print("✅ Subscribed to private_messages table")
-            
-            # Subscribe to tavern_messages table
+        except Exception as e:
+            print(f"⚠️ Failed to subscribe to private_messages table: {e}")
+        
+        # Subscribe to tavern_messages table
+        try:
             client.table('tavern_messages').on('*', handle_tavern_messages_change).subscribe()
             print("✅ Subscribed to tavern_messages table")
-            
-            st.session_state.realtime_subscribed = True
-            print("🎉 All Realtime subscriptions active!")
-            
         except Exception as e:
-            print(f"❌ Error setting up Realtime subscriptions: {e}")
+            print(f"⚠️ Failed to subscribe to tavern_messages table: {e}")
+        
+        st.session_state.realtime_subscribed = True
+        print("🎉 Realtime subscriptions setup complete!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error setting up Realtime subscriptions: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 # Initialize Realtime subscriptions on app start
-setup_realtime_subscriptions()
+try:
+    setup_realtime_subscriptions()
+except Exception as e:
+    print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
+    print("ℹ️ App will continue with polling fallback")
 
 # ============================================================================
 
