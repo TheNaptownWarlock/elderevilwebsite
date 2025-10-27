@@ -4570,6 +4570,9 @@ if st.session_state.current_page == "Inbox":
                                        help="Reply to this message or view conversation thread", use_container_width=True):
                                 # Set the recipient for the reply and go to send message
                                 current_replying = st.session_state.get('replying_to')
+                                print(f"DEBUG: Setting reply state for message {message['id']}")
+                                print(f"DEBUG: Message thread_id from DB: {message.get('thread_id')}")
+                                print(f"DEBUG: Calculated thread_id: {thread_id}")
                                 new_replying = {
                                     'email': message['from_email'],
                                     'name': message['from_name'],
@@ -4761,9 +4764,12 @@ if st.session_state.current_page == "Inbox":
                         if st.session_state.replying_to:
                             # If replying, use the thread_id from the original message
                             thread_id = st.session_state.replying_to.get('thread_id', st.session_state.replying_to.get('id'))
+                            print(f"DEBUG: Replying to message. Thread ID: {thread_id}")
+                            print(f"DEBUG: Reply info: {st.session_state.replying_to}")
                         else:
                             # If new conversation, this message starts a new thread
                             thread_id = new_message_id
+                            print(f"DEBUG: New conversation. Thread ID: {thread_id}")
                         
                         message_data = {
                             "id": new_message_id,
