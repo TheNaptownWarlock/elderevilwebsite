@@ -5317,6 +5317,22 @@ if st.session_state.current_page == "Create Quest":
     .main .block-container form > div {
         background-color: #D3D3D3 !important;
     }
+    
+    /* Fix cutoff on number input fields (minimum/maximum seats) */
+    .main .block-container .stForm .stNumberInput input,
+    .main .block-container .stForm div[data-baseweb="input"] input[type="number"],
+    .stNumberInput input {
+        line-height: normal !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        height: auto !important;
+        min-height: 44px !important;
+    }
+    
+    .main .block-container .stForm .stNumberInput,
+    .main .block-container .stForm div[data-testid="stNumberInput"] {
+        overflow: visible !important;
+    }
     </style>
     """, unsafe_allow_html=True)
     
