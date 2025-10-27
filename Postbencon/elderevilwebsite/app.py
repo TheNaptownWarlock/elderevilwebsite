@@ -4548,10 +4548,10 @@ if st.session_state.current_page == "Inbox":
         st.divider()
         st.subheader("✉️ Send Message")
         
-        # Add CSS for silver form background on Send Message form
+        # Add CSS for white form background on Send Message form
         st.markdown("""
         <style>
-        /* Silver background for send message form on Inbox page - ultra specific */
+        /* White background for send message form on Inbox page - ultra specific */
         div[data-testid="stForm"],
         .main .block-container div[data-testid="stForm"],
         section[data-testid="stForm"],
@@ -4559,20 +4559,20 @@ if st.session_state.current_page == "Inbox":
         .stForm,
         .main .stForm,
         div.stForm > div {
-            background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 25%, #D3D3D3 50%, #E8E8E8 75%, #C0C0C0 100%) !important;
-            border: 3px solid #A9A9A9 !important;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 25%, #FFFFFF 50%, #F8F8F8 75%, #FFFFFF 100%) !important;
+            border: 3px solid #CCCCCC !important;
             border-radius: 15px !important;
             padding: 25px !important;
             box-shadow: 
                 0 4px 8px rgba(0,0,0,0.3),
-                inset 0 1px 3px rgba(255,255,255,0.5),
-                inset 0 -1px 3px rgba(0,0,0,0.2) !important;
+                inset 0 1px 3px rgba(255,255,255,0.8),
+                inset 0 -1px 3px rgba(0,0,0,0.1) !important;
         }
         
         /* Make sure form container has opaque background */
         .main .block-container .stForm > div,
         .main .block-container form > div {
-            background-color: #D3D3D3 !important;
+            background-color: #FFFFFF !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -5291,10 +5291,10 @@ if st.session_state.current_page == "Create Quest":
     if st.session_state.form_submitted:
         st.session_state.form_submitted = False
 
-    # Add CSS for silver form background on Create Quest page
+    # Add CSS for white form background on Create Quest page
     st.markdown("""
     <style>
-    /* Silver background for event form on Create Quest page - ultra specific */
+    /* White background for event form on Create Quest page - ultra specific */
     div[data-testid="stForm"],
     .main .block-container div[data-testid="stForm"],
     section[data-testid="stForm"],
@@ -5302,20 +5302,20 @@ if st.session_state.current_page == "Create Quest":
     .stForm,
     .main .stForm,
     div.stForm > div {
-        background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 25%, #D3D3D3 50%, #E8E8E8 75%, #C0C0C0 100%) !important;
-        border: 3px solid #A9A9A9 !important;
+        background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 25%, #FFFFFF 50%, #F8F8F8 75%, #FFFFFF 100%) !important;
+        border: 3px solid #CCCCCC !important;
         border-radius: 15px !important;
         padding: 25px !important;
         box-shadow: 
             0 4px 8px rgba(0,0,0,0.3),
-            inset 0 1px 3px rgba(255,255,255,0.5),
-            inset 0 -1px 3px rgba(0,0,0,0.2) !important;
+            inset 0 1px 3px rgba(255,255,255,0.8),
+            inset 0 -1px 3px rgba(0,0,0,0.1) !important;
     }
     
     /* Make sure form container has opaque background */
     .main .block-container .stForm > div,
     .main .block-container form > div {
-        background-color: #D3D3D3 !important;
+        background-color: #FFFFFF !important;
     }
     </style>
     """, unsafe_allow_html=True)
