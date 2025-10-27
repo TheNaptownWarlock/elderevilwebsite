@@ -4679,6 +4679,7 @@ if st.session_state.current_page == "Inbox":
                 other_person_name = other_person_info.get('display_name', other_person_email.split('@')[0])
                 other_person_avatar = other_person_info.get('avatar', '🧙‍♂️')
                 other_person_pronouns = other_person_info.get('pronouns', '')
+                other_person_class = AVATAR_OPTIONS.get(other_person_avatar, 'Adventurer')
                 
                 # Get subject from the first message in thread or reply info
                 thread_subject = reply_info.get('original_subject', 'Conversation')
@@ -4689,7 +4690,7 @@ if st.session_state.current_page == "Inbox":
                 <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
                            padding: 15px; margin-bottom: 15px;">
                     <div style="font-weight: bold; color: #7B2CBF; margin-bottom: 10px;">
-                        📜 {thread_subject} | {other_person_avatar} {other_person_name} ({other_person_pronouns})
+                        📜 {thread_subject} | {other_person_avatar} {other_person_name} ({other_person_pronouns}) - {other_person_class}
                     </div>
                 """, unsafe_allow_html=True)
                 
