@@ -4158,8 +4158,9 @@ if st.session_state.current_user:
     </div>
     """, unsafe_allow_html=True)
     
-    # Navigation buttons as vertical list
-    if st.sidebar.button("🗓️ Quest Counter", use_container_width=True, key="nav_quest_counter",
+    # Navigation buttons as vertical list with fire emoji for active page
+    quest_counter_label = "🗓️ Quest Counter 🔥" if st.session_state.current_page == "Quest Counter" else "🗓️ Quest Counter"
+    if st.sidebar.button(quest_counter_label, use_container_width=True, key="nav_quest_counter",
             type="primary" if st.session_state.current_page == "Quest Counter" else "secondary"):
         if st.session_state.current_page != "Quest Counter":
             st.session_state.current_page = "Quest Counter"
@@ -4167,7 +4168,8 @@ if st.session_state.current_user:
             st.session_state.last_user_click = None
             st.rerun()
 
-    if st.sidebar.button("⚔️ Create Quest", use_container_width=True, key="nav_create_quest",
+    create_quest_label = "⚔️ Create Quest 🔥" if st.session_state.current_page == "Create Quest" else "⚔️ Create Quest"
+    if st.sidebar.button(create_quest_label, use_container_width=True, key="nav_create_quest",
             type="primary" if st.session_state.current_page == "Create Quest" else "secondary"):
         if st.session_state.current_page != "Create Quest":
             st.session_state.current_page = "Create Quest"
@@ -4176,9 +4178,13 @@ if st.session_state.current_user:
             st.session_state.last_user_click = None
             st.rerun()
 
-    # Inbox with unread count
+    # Inbox with unread count and fire emoji if active
     unread_count = get_unread_count(st.session_state.current_user["email"])
-    inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
+    if st.session_state.current_page == "Inbox":
+        inbox_label = f"📨 Inbox ({unread_count}) 🔥" if unread_count > 0 else "📨 Inbox 🔥"
+    else:
+        inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
+    
     if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
             type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
         if st.session_state.current_page != "Inbox":
@@ -4189,7 +4195,8 @@ if st.session_state.current_user:
             st.rerun()
 
     user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
-    if st.sidebar.button(f"{user_avatar} Profile", use_container_width=True, key="nav_profile",
+    profile_label = f"{user_avatar} Profile 🔥" if st.session_state.current_page == "Profile" else f"{user_avatar} Profile"
+    if st.sidebar.button(profile_label, use_container_width=True, key="nav_profile",
             type="primary" if st.session_state.current_page == "Profile" else "secondary"):
         st.session_state.current_page = "Profile"
         st.session_state.viewing_user_schedule = None
