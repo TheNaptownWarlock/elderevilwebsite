@@ -437,6 +437,7 @@ def save_to_supabase(table, data):
                 "recipient_email": data["recipient_email"],
                 "subject": data["subject"],
                 "message": data["message"],
+                "thread_id": data.get("thread_id", data["id"]),  # Use message id as thread_id if not provided
                 "created_at": datetime.now().isoformat()
             }
             print(f"DEBUG: Private message data being sent: {pm_data}")
@@ -1722,6 +1723,34 @@ def get_user_messages(user_email):
     fallback_messages = st.session_state.messages.get(user_email, [])
     # print(f"Debug: Fallback returned {len(fallback_messages)} messages")
     return fallback_messages
+
+def get_thread_messages(thread_id, user_email):
+    """Get all messages in a thread from Supabase"""
+    try:
+        SUPABASE_URL, SUPABASE_KEY = get_supabase_credentials()
+        if SUPABASE_URL and SUPABASE_KEY:
+            response = requests.get(
+                f"{SUPABASE_URL}/rest/v1/private_messages",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json"
+                },
+                params={
+                    "thread_id": f"eq.{thread_id}",
+                    "select": "*",
+                    "order": "created_at.asc"  # Chronological order for thread view
+                }
+            )
+            
+            if response.status_code == 200:
+                messages = response.json()
+                # Only return messages where user is sender or recipient
+                return [msg for msg in messages if msg['sender_email'] == user_email or msg['recipient_email'] == user_email]
+    except Exception as e:
+        print(f"Error fetching thread messages: {e}")
+    
+    return []
 
 def mark_message_read(user_email, message_id):
     """Mark a message as read in Supabase"""
@@ -4504,8 +4533,18 @@ if st.session_state.current_page == "Inbox":
                         # Reply and Delete buttons for regular messages
                         col_reply, col_delete = st.columns([3, 1])
                         with col_reply:
-                            if st.button("↩️ Reply", key=f"reply_msg_{message['id']}", 
-                                       help="Reply to this message", use_container_width=True):
+                            # Check if there are multiple messages in the thread
+                            thread_id = message.get('thread_id', message['id'])
+                            thread_messages = get_thread_messages(thread_id, st.session_state.current_user["email"])
+                            
+                            # Show "View Thread" if there are multiple messages, otherwise "Reply"
+                            if len(thread_messages) > 1:
+                                button_label = f"💬 View Thread ({len(thread_messages)})"
+                            else:
+                                button_label = "↩️ Reply"
+                            
+                            if st.button(button_label, key=f"reply_msg_{message['id']}", 
+                                       help="Reply to this message or view conversation thread", use_container_width=True):
                                 # Set the recipient for the reply and go to send message
                                 current_replying = st.session_state.get('replying_to')
                                 new_replying = {
@@ -4513,7 +4552,11 @@ if st.session_state.current_page == "Inbox":
                                     'name': message['from_name'],
                                     'avatar': message['from_avatar'],
                                     'original_message': message['message'],
-                                    'original_subject': message.get('subject', '')
+                                    'original_subject': message.get('subject', ''),
+                                    'thread_id': thread_id,  # Pass thread_id for threading
+                                    'id': message['id'],  # Pass message id as fallback
+                                    'show_thread': len(thread_messages) > 1,  # Flag to show full thread
+                                    'thread_messages': thread_messages  # Pass all thread messages
                                 }
                                 
                                 # Only update and rerun if state actually changes
@@ -4580,17 +4623,48 @@ if st.session_state.current_page == "Inbox":
         # Show reply context if replying
         if st.session_state.replying_to:
             reply_info = st.session_state.replying_to
-            st.markdown(f"""
-            <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
-                       padding: 10px; margin-bottom: 15px;">
-                <div style="font-weight: bold; color: #7B2CBF;">
-                    ↩️ Replying to: {reply_info['name']}
+            
+            # Show full thread if available
+            if reply_info.get('show_thread') and reply_info.get('thread_messages'):
+                st.markdown("""
+                <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
+                           padding: 15px; margin-bottom: 15px;">
+                    <div style="font-weight: bold; color: #7B2CBF; margin-bottom: 10px;">
+                        💬 Conversation Thread
+                    </div>
+                """, unsafe_allow_html=True)
+                
+                # Display all messages in the thread
+                for thread_msg in reply_info['thread_messages']:
+                    is_sent_by_user = thread_msg['sender_email'] == st.session_state.current_user["email"]
+                    msg_style = "background: #D4EDDA; border-left: 4px solid #28A745;" if is_sent_by_user else "background: #F8F9FA; border-left: 4px solid #6C757D;"
+                    sender_label = "You" if is_sent_by_user else thread_msg.get('sender_email', 'Unknown').split('@')[0]
+                    
+                    st.markdown(f"""
+                    <div style="{msg_style} padding: 10px; margin-bottom: 8px; border-radius: 5px;">
+                        <div style="font-weight: bold; font-size: 12px; color: #555;">
+                            {sender_label} • {thread_msg.get('created_at', '')[:16]}
+                        </div>
+                        <div style="font-size: 14px; color: #333; margin-top: 5px;">
+                            {thread_msg['message']}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                # Show simple reply context for single message
+                st.markdown(f"""
+                <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
+                           padding: 10px; margin-bottom: 15px;">
+                    <div style="font-weight: bold; color: #7B2CBF;">
+                        ↩️ Replying to: {reply_info['name']}
+                    </div>
+                    <div style="font-size: 12px; color: #666; font-style: italic; margin-top: 5px;">
+                        "{reply_info['original_message'][:100]}{'...' if len(reply_info['original_message']) > 100 else ''}"
+                    </div>
                 </div>
-                <div style="font-size: 12px; color: #666; font-style: italic; margin-top: 5px;">
-                    "{reply_info['original_message'][:100]}{'...' if len(reply_info['original_message']) > 100 else ''}"
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
             
             if st.button("❌ Cancel Reply"):
                 if st.session_state.get('replying_to') is not None:
@@ -4640,18 +4714,29 @@ if st.session_state.current_page == "Inbox":
                     if not message_text.strip():
                         st.error("Please enter a message!")
                     else:
-                        reply_to_id = None  # We'll handle this differently for now
+                        # Generate new message ID
+                        new_message_id = str(uuid.uuid4())
+                        
+                        # Determine thread_id
+                        if st.session_state.replying_to:
+                            # If replying, use the thread_id from the original message
+                            thread_id = st.session_state.replying_to.get('thread_id', st.session_state.replying_to.get('id'))
+                        else:
+                            # If new conversation, this message starts a new thread
+                            thread_id = new_message_id
                         
                         message_data = {
-                            "id": str(uuid.uuid4()),
+                            "id": new_message_id,
                             "sender_email": st.session_state.current_user["email"],
                             "recipient_email": selected_recipient,
                             "subject": f"Re: {st.session_state.replying_to.get('original_subject', 'Message')}" if st.session_state.replying_to else "",
-                            "message": message_text.strip()
+                            "message": message_text.strip(),
+                            "thread_id": thread_id
                         }
                         
                         # Save to database
                         print(f"🔍 DEBUG: About to call save_to_database for private_messages")
+                        print(f"🔍 DEBUG: Thread ID: {thread_id}, Is Reply: {bool(st.session_state.replying_to)}")
                         result = save_to_database("private_messages", message_data)
                         
                         if result:
