@@ -4191,6 +4191,33 @@ if st.session_state.current_user:
     </div>
     """, unsafe_allow_html=True)
     
+    # CSS for gold navigation buttons (active page)
+    st.sidebar.markdown("""
+    <style>
+    /* Style primary buttons in sidebar (active navigation) with gold color */
+    div[data-testid="stSidebar"] button[kind="primary"] {
+        background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #DAA520 100%) !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        border: 2px solid #B8860B !important;
+        box-shadow: 0 4px 8px rgba(218, 165, 32, 0.4) !important;
+    }
+    
+    div[data-testid="stSidebar"] button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #FDB931 0%, #FFD700 50%, #FDB931 100%) !important;
+        box-shadow: 0 6px 12px rgba(218, 165, 32, 0.6) !important;
+        transform: translateY(-1px);
+    }
+    
+    /* Keep secondary buttons with brown color */
+    div[data-testid="stSidebar"] button[kind="secondary"] {
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%) !important;
+        color: #FFFACD !important;
+        border: 2px solid #654321 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Navigation buttons as vertical list with fire emoji for active page
     quest_counter_label = "🗓️ Quest Counter 🔥" if st.session_state.current_page == "Quest Counter" else "🗓️ Quest Counter"
     if st.sidebar.button(quest_counter_label, use_container_width=True, key="nav_quest_counter",
@@ -4690,7 +4717,7 @@ if st.session_state.current_page == "Inbox":
                 <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
                            padding: 15px; margin-bottom: 15px;">
                     <div style="font-weight: bold; color: #7B2CBF; margin-bottom: 10px;">
-                        📜 {thread_subject} | {other_person_avatar} {other_person_name} ({other_person_pronouns}) - {other_person_class}
+                        📜 {thread_subject} | {other_person_avatar} {other_person_name} ({other_person_pronouns}) - "<i>{other_person_class}</i>"
                     </div>
                 """, unsafe_allow_html=True)
                 
