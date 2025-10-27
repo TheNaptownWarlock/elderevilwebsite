@@ -4440,12 +4440,30 @@ if st.session_state.current_page == "Inbox":
         if not messages:
             st.info("Your inbox is empty. No messages from fellow adventurers yet!")
         else:
-            st.write(f"You have {len(messages)} message(s)")
-            
-            # Sort messages by timestamp (newest first)
-            messages.sort(key=lambda x: x["timestamp"], reverse=True)
-            
+            # Group messages by thread_id and show only the most recent message per thread
+            threads = {}
             for message in messages:
+                thread_id = message.get('thread_id', message['id'])
+                if thread_id not in threads:
+                    threads[thread_id] = []
+                threads[thread_id].append(message)
+            
+            # Sort each thread by timestamp and get the latest message
+            thread_previews = []
+            for thread_id, thread_messages in threads.items():
+                thread_messages.sort(key=lambda x: x.get("created_at", x.get("timestamp", "")), reverse=True)
+                latest_message = thread_messages[0]
+                latest_message['thread_count'] = len(thread_messages)
+                thread_previews.append(latest_message)
+            
+            # Sort thread previews by most recent activity
+            thread_previews.sort(key=lambda x: x.get("created_at", x.get("timestamp", "")), reverse=True)
+            
+            total_threads = len(thread_previews)
+            total_messages = len(messages)
+            st.write(f"You have {total_threads} conversation{'s' if total_threads != 1 else ''} ({total_messages} total message{'s' if total_messages != 1 else ''})")
+            
+            for message in thread_previews:
                 # Mark as read when viewing
                 if not message.get("read", False):
                     mark_message_read(st.session_state.current_user["email"], message["id"])
@@ -4454,13 +4472,18 @@ if st.session_state.current_page == "Inbox":
                 read_style = "opacity: 0.7;" if message.get("read", False) else ""
                 
                 with st.container():
+                    # Show thread count badge if multiple messages
+                    thread_badge = ""
+                    if message.get('thread_count', 1) > 1:
+                        thread_badge = f"<span style='background: #7B2CBF; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;'>💬 {message['thread_count']} messages</span>"
+                    
                     st.markdown(f"""
                     <div style="border: 2px solid #7B2CBF; border-radius: 10px; padding: 15px; 
                                margin: 10px 0; background: linear-gradient(135deg, #F8F4FF 0%, #EDE4FF 100%); 
                                {read_style}">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <div style="font-weight: bold; color: #7B2CBF;">
-                                {message.get('from_avatar', '🧙‍♂️')} From: {message.get('from_name', 'Unknown')}
+                                {message.get('from_avatar', '🧙‍♂️')} From: {message.get('from_name', 'Unknown')} {thread_badge}
                             </div>
                             <div style="font-size: 12px; color: #666;">
                                 {message['timestamp']}
@@ -4682,10 +4705,27 @@ if st.session_state.current_page == "Inbox":
             else:
                 # Recipient selection
                 if st.session_state.replying_to:
-                    recipient_email = st.session_state.replying_to['email']
+                    reply_info = st.session_state.replying_to
+                    # For threaded conversations, determine the other person in the thread
+                    # Look at the thread messages to find who we're talking to
+                    if reply_info.get('thread_messages'):
+                        # Find the other person in the thread (not current user)
+                        other_emails = set()
+                        for msg in reply_info['thread_messages']:
+                            if msg['sender_email'] != st.session_state.current_user["email"]:
+                                other_emails.add(msg['sender_email'])
+                            if msg['recipient_email'] != st.session_state.current_user["email"]:
+                                other_emails.add(msg['recipient_email'])
+                        # Use the most recent other person as recipient
+                        recipient_email = list(other_emails)[0] if other_emails else st.session_state.replying_to['email']
+                    else:
+                        recipient_email = st.session_state.replying_to['email']
+                    
                     recipient_options = [recipient_email]
                     selected_recipient = recipient_email
-                    st.write(f"**Replying to:** {st.session_state.replying_to['avatar']} {st.session_state.replying_to['name']}")
+                    recipient_name = other_users.get(recipient_email, {}).get('display_name', recipient_email.split('@')[0])
+                    recipient_avatar = other_users.get(recipient_email, {}).get('avatar', '🧙‍♂️')
+                    st.write(f"**Replying to:** {recipient_avatar} {recipient_name}")
                 else:
                     # Recipient selection
                     recipient_options = list(other_users.keys())

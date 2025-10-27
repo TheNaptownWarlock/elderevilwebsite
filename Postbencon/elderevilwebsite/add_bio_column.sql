@@ -7,3 +7,5 @@ UPDATE users
 SET bio = ''
 WHERE bio IS NULL;
 
+
+
