@@ -4772,11 +4772,6 @@ if st.session_state.current_page == "Inbox":
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-            
-            if st.button("❌ Cancel Reply"):
-                if st.session_state.get('replying_to') is not None:
-                    st.session_state.replying_to = None
-                    # Don't call st.rerun() - let the form clear naturally
         
         # Send message form
         with st.form("send_message_form", clear_on_submit=True):
@@ -4839,9 +4834,21 @@ if st.session_state.current_page == "Inbox":
                     placeholder_text = "Greetings, fellow adventurer! Want to join my quest?"
                     message_text = st.text_area("Message:", placeholder=placeholder_text, max_chars=500)
                 
-                # Send button
-                button_text = "↩️ Send Reply" if st.session_state.replying_to else "🦅 Send Message"
-                send_button = st.form_submit_button(button_text, type="primary")
+                # Send button (with Cancel button to the right when replying)
+                if st.session_state.replying_to:
+                    col_send, col_cancel = st.columns([3, 1])
+                    with col_send:
+                        send_button = st.form_submit_button("↩️ Send Reply", type="primary", use_container_width=True)
+                    with col_cancel:
+                        cancel_button = st.form_submit_button("❌ Cancel", use_container_width=True)
+                else:
+                    send_button = st.form_submit_button("🦅 Send Message", type="primary", use_container_width=True)
+                    cancel_button = False
+                
+                # Handle cancel button click
+                if cancel_button and not send_button:
+                    st.session_state.replying_to = None
+                    st.rerun()
                 
                 if send_button:
                     if not message_text.strip():
