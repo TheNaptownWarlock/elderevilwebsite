@@ -4499,13 +4499,16 @@ if st.session_state.current_page == "Inbox":
                     <div style="border: 2px solid #7B2CBF; border-radius: 10px; padding: 15px; 
                                margin: 10px 0; background: linear-gradient(135deg, #F8F4FF 0%, #EDE4FF 100%); 
                                {read_style}">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                             <div style="font-weight: bold; color: #7B2CBF;">
                                 {message.get('from_avatar', '🧙‍♂️')} From: {message.get('from_name', 'Unknown')} {thread_badge}
                             </div>
                             <div style="font-size: 12px; color: #666;">
                                 {message['timestamp']}
                             </div>
+                        </div>
+                        <div style="font-size: 13px; color: #555; font-style: italic; margin-bottom: 10px;">
+                            📜 {message.get('subject', 'No subject')}
                         </div>
                         <div style="color: #333; margin-bottom: 10px;">
                             {message['message']}
@@ -4670,11 +4673,23 @@ if st.session_state.current_page == "Inbox":
             
             # Show full thread if available
             if reply_info.get('show_thread') and reply_info.get('thread_messages'):
-                st.markdown("""
+                # Get the other person in the thread
+                other_person_email = reply_info.get('email')
+                other_person_info = st.session_state.users.get(other_person_email, {})
+                other_person_name = other_person_info.get('display_name', other_person_email.split('@')[0])
+                other_person_avatar = other_person_info.get('avatar', '🧙‍♂️')
+                other_person_pronouns = other_person_info.get('pronouns', '')
+                
+                # Get subject from the first message in thread or reply info
+                thread_subject = reply_info.get('original_subject', 'Conversation')
+                if thread_subject.startswith('Re: '):
+                    thread_subject = thread_subject[4:]  # Remove "Re: " prefix
+                
+                st.markdown(f"""
                 <div style="background: #E8F4FD; border: 2px solid #7B2CBF; border-radius: 8px; 
                            padding: 15px; margin-bottom: 15px;">
                     <div style="font-weight: bold; color: #7B2CBF; margin-bottom: 10px;">
-                        💬 Conversation Thread
+                        📜 {thread_subject} | {other_person_avatar} {other_person_name} ({other_person_pronouns})
                     </div>
                 """, unsafe_allow_html=True)
                 
@@ -4756,6 +4771,15 @@ if st.session_state.current_page == "Inbox":
                         format_func=lambda x: f"{other_users[x]['avatar']} {other_users[x]['display_name']} ({x})"
                     )
                 
+                # Subject field
+                if st.session_state.replying_to:
+                    # Use existing subject with "Re:" prefix
+                    subject_value = f"Re: {st.session_state.replying_to.get('original_subject', 'Message')}"
+                    subject_text = st.text_input("Subject:", value=subject_value, max_chars=100, disabled=True)
+                else:
+                    # New message - user enters subject
+                    subject_text = st.text_input("Subject:", placeholder="e.g., Quest invitation, Trade offer, Alliance proposal", max_chars=100)
+                
                 # Message content
                 if st.session_state.replying_to:
                     # Show original message at the top when replying
@@ -4774,6 +4798,8 @@ if st.session_state.current_page == "Inbox":
                 if send_button:
                     if not message_text.strip():
                         st.error("Please enter a message!")
+                    elif not st.session_state.replying_to and not subject_text.strip():
+                        st.error("Please enter a subject!")
                     else:
                         # Generate new message ID
                         new_message_id = str(uuid.uuid4())
@@ -4793,7 +4819,7 @@ if st.session_state.current_page == "Inbox":
                             "id": new_message_id,
                             "sender_email": st.session_state.current_user["email"],
                             "recipient_email": selected_recipient,
-                            "subject": f"Re: {st.session_state.replying_to.get('original_subject', 'Message')}" if st.session_state.replying_to else "",
+                            "subject": subject_text.strip(),
                             "message": message_text.strip(),
                             "thread_id": thread_id
                         }
