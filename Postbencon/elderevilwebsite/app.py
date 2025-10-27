@@ -4183,8 +4183,8 @@ else:
         try:
             import base64
             import os
-            # Use relative path from the app directory
-            audio_file_path = os.path.join(os.path.dirname(__file__), "..", "'Yeah!' but it's Medieval - USHER  Medieval Bardcore Version.mp3")
+            # Audio file is in the same directory as app.py
+            audio_file_path = os.path.join(os.path.dirname(__file__), "'Yeah!' but it's Medieval - USHER  Medieval Bardcore Version.mp3")
             
             with open(audio_file_path, "rb") as audio_file:
                 audio_bytes = audio_file.read()
