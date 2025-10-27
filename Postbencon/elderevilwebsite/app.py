@@ -4203,6 +4203,49 @@ if st.session_state.current_user:
         print_html = generate_clean_print_html(st.session_state.current_user["email"])
         st.components.v1.html(print_html, height=0, scrolling=False)
     
+    # Add gold glow effect for active navigation buttons
+    st.sidebar.markdown("""
+    <style>
+    /* Gold glow for active navigation buttons (primary type) */
+    section[data-testid="stSidebar"] button[kind="primary"] {
+        box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.8),
+            0 0 40px rgba(255, 215, 0, 0.6),
+            0 0 60px rgba(255, 215, 0, 0.4),
+            inset 0 0 20px rgba(255, 215, 0, 0.3) !important;
+        border: 2px solid #FFD700 !important;
+        animation: goldPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes goldPulse {
+        0%, 100% {
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.8),
+                0 0 40px rgba(255, 215, 0, 0.6),
+                0 0 60px rgba(255, 215, 0, 0.4),
+                inset 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        50% {
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 1),
+                0 0 50px rgba(255, 215, 0, 0.8),
+                0 0 70px rgba(255, 215, 0, 0.6),
+                inset 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+    }
+    
+    /* Enhance the gold glow on hover */
+    section[data-testid="stSidebar"] button[kind="primary"]:hover {
+        box-shadow: 
+            0 0 25px rgba(255, 215, 0, 1),
+            0 0 45px rgba(255, 215, 0, 0.8),
+            0 0 65px rgba(255, 215, 0, 0.6),
+            inset 0 0 25px rgba(255, 215, 0, 0.4) !important;
+        transform: scale(1.02) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.sidebar.markdown("---")
 
 # Show registered users with avatars (clickable) - only when logged in
