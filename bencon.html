@@ -96,10 +96,11 @@
     <!-- Streamlit App Iframe -->
     <iframe 
         id="bencon-frame"
-        src="https://bencon-2026.streamlit.app/" 
+        src="https://bencon-2026.streamlit.app/?embed=true" 
         title="Bencon 2026 - Fantasy Convention Calendar"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
+        allowfullscreen
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads">
     </iframe>
     
     <script>
