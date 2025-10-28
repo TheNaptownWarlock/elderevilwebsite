@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=https://bencon-2026.streamlit.app/">
     <title>Bencon 2026 - Elder Evil</title>
     <style>
         * {
@@ -87,45 +88,21 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Loading Screen / Redirect Message -->
     <div id="loading">
-        <div class="loading-text">🏰 Loading Bencon 2026... 🏰</div>
+        <div class="loading-text">🏰 Redirecting to Bencon 2026... 🏰</div>
         <div class="spinner"></div>
+        <p style="margin-top: 30px; color: #FFD700; font-size: 1.2em;">
+            If you are not redirected automatically, 
+            <a href="https://bencon-2026.streamlit.app/" style="color: #FFD700; text-decoration: underline; font-weight: bold;">click here</a>
+        </p>
     </div>
     
-    <!-- Streamlit App Iframe -->
-    <iframe 
-        id="bencon-frame"
-        src="https://bencon-2026.streamlit.app/?embed=true" 
-        title="Bencon 2026 - Fantasy Convention Calendar"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads">
-    </iframe>
-    
     <script>
-        // Hide loading screen when iframe loads
-        const iframe = document.getElementById('bencon-frame');
-        const loading = document.getElementById('loading');
-        
-        iframe.addEventListener('load', function() {
-            setTimeout(function() {
-                loading.classList.add('hidden');
-            }, 500);
-        });
-        
-        // Fallback: Hide loading screen after 5 seconds even if load event doesn't fire
+        // Redirect to Streamlit app after a brief moment
         setTimeout(function() {
-            loading.classList.add('hidden');
-        }, 5000);
-        
-        // Handle iframe communication (optional)
-        window.addEventListener('message', function(event) {
-            // You can add custom message handling here if needed
-            if (event.origin === 'https://bencon-2026.streamlit.app') {
-                console.log('Message from Bencon app:', event.data);
-            }
-        });
+            window.location.href = 'https://bencon-2026.streamlit.app/';
+        }, 1500);
     </script>
 </body>
 </html>
