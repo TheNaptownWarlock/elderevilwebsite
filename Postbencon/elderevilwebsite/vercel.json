@@ -6,7 +6,11 @@
   "rewrites": [
     {
       "source": "/Bencon",
-      "destination": "/fantasy-calendar.html"
+      "destination": "/bencon-embed.html"
+    },
+    {
+      "source": "/bencon",
+      "destination": "/bencon-embed.html"
     }
   ]
 } 
