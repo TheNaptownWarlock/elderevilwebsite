@@ -3,14 +3,6 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "rewrites": [
-    {
-      "source": "/Bencon",
-      "destination": "/bencon-embed.html"
-    },
-    {
-      "source": "/bencon",
-      "destination": "/bencon-embed.html"
-    }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 } 

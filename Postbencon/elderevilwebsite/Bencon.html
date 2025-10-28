@@ -3,47 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bencon - The Naptown Warlock</title>
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Bencon 2026 - Elder Evil</title>
     <style>
-        .streamlit-container {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Full-screen iframe */
+        #bencon-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
             width: 100%;
             height: 100vh;
             border: none;
-            background: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            z-index: 999999;
+        }
+        
+        /* Loading screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2d1810 50%, #1a0f0a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000000;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-text {
+            color: #FFD700;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            margin-bottom: 20px;
+            font-family: 'Cinzel', 'Georgia', serif;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #FFD700;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            .loading-text {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="glow-effect">
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html#projects">Projects</a></li>
-                    <li><a href="index.html#blog">Blog</a></li>
-                    <li><a href="index.html#about">About</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                    <li><a href="fantasy-calendar.html">Bencon</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <!-- Embedded Streamlit App with ALL your original features -->
-        <iframe 
-            id="benconFrame"
-            src="https://bencon-2026.streamlit.app/" 
-            class="streamlit-container"
-            frameborder="0"
-            allow="clipboard-write"
-            style="width: 100%; height: 100vh; border: none;"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
-        </iframe>
-        
-        <!-- Streamlit Cloud URL is hardcoded for deployed version -->
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loading-text">🏰 Loading Bencon 2026... 🏰</div>
+        <div class="spinner"></div>
     </div>
+    
+    <!-- Streamlit App Iframe -->
+    <iframe 
+        id="bencon-frame"
+        src="https://bencon-2026.streamlit.app/" 
+        title="Bencon 2026 - Fantasy Convention Calendar"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    
+    <script>
+        // Hide loading screen when iframe loads
+        const iframe = document.getElementById('bencon-frame');
+        const loading = document.getElementById('loading');
+        
+        iframe.addEventListener('load', function() {
+            setTimeout(function() {
+                loading.classList.add('hidden');
+            }, 500);
+        });
+        
+        // Fallback: Hide loading screen after 5 seconds even if load event doesn't fire
+        setTimeout(function() {
+            loading.classList.add('hidden');
+        }, 5000);
+        
+        // Handle iframe communication (optional)
+        window.addEventListener('message', function(event) {
+            // You can add custom message handling here if needed
+            if (event.origin === 'https://bencon-2026.streamlit.app') {
+                console.log('Message from Bencon app:', event.data);
+            }
+        });
+    </script>
 </body>
 </html>
+
