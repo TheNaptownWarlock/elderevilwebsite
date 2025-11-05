@@ -3016,6 +3016,41 @@ div[data-testid="stRadio"] * {
     opacity: 1 !important;
 }
 
+/* Style horizontal radio buttons like a single dropdown selector */
+div[data-testid="stRadio"][role="radiogroup"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+}
+
+/* Style individual radio button labels like dropdown options */
+div[data-testid="stRadio"] label {
+    background-color: transparent !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+    margin: 0 !important;
+    border: 1px solid #8B4513 !important;
+}
+
+/* Hover effect for radio options */
+div[data-testid="stRadio"] label:hover {
+    background-color: #DEB887 !important;
+}
+
+/* Selected radio option styling */
+div[data-testid="stRadio"] input[type="radio"]:checked + div {
+    background-color: #8B4513 !important;
+    color: #FFFACD !important;
+}
+
 /* Dropdown styling - make them white background */
 .main .block-container .stForm .stSelectbox > div > div > div,
 div[data-testid="stSelectbox"] > div > div > div {
@@ -6042,7 +6077,10 @@ if st.session_state.current_page == "Create Quest":
             day = st.selectbox("Select Day", DAYS, format_func=lambda x: x[1])
             start_time = st.selectbox("Start Time", TIME_SLOTS)
             end_time = st.selectbox("End Time", TIME_SLOTS, index=min(len(TIME_SLOTS)-1, 2))
-            tag = st.selectbox("Event Tag", list(TAGS.keys()))
+            
+            # Simple single-column dropdown using radio buttons in horizontal layout
+            tag = st.radio("Event Tag", list(TAGS.keys()), horizontal=True, index=0)
+            
             game_system = st.text_input("Game System:", placeholder="e.g., D&D 5e, Pathfinder, etc.")
             
             # Participation option - changed to dropdown for better styling
