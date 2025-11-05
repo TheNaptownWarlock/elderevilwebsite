@@ -3018,8 +3018,22 @@ div[data-testid="stRadio"] * {
 
 
 
-/* Unified selectbox styling - single field appearance */
+/* Selectbox container - keep labels outside the styled field */
 div[data-testid="stSelectbox"] {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Keep selectbox labels separate and styled normally */
+div[data-testid="stSelectbox"] label {
+    background: transparent !important;
+    border: none !important;
+    margin-bottom: 8px !important;
+}
+
+/* Apply unified styling only to the dropdown field container */
+div[data-testid="stSelectbox"] > div:last-child,
+div[data-testid="stSelectbox"] > div:last-child > div {
     background-color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
@@ -3027,10 +3041,9 @@ div[data-testid="stSelectbox"] {
     min-height: 48px !important;
 }
 
-/* Ensure all nested containers inherit the unified styling */
-div[data-testid="stSelectbox"] > div,
-div[data-testid="stSelectbox"] > div > div,
-div[data-testid="stSelectbox"] > div > div > div {
+/* Ensure nested containers within the field inherit styling */
+div[data-testid="stSelectbox"] > div:last-child > div > div,
+div[data-testid="stSelectbox"] > div:last-child > div > div > div {
     background: inherit !important;
     border: none !important;
     box-shadow: none !important;
@@ -3217,24 +3230,40 @@ function forceMedievalStyling() {
              input.style.setProperty('max-width', '280px', 'important');
          });
         
-        // Unified selectbox styling - single field appearance
+        // Selectbox styling - keep labels separate from field
         const selectboxContainers = parentDocument.querySelectorAll('div[data-testid="stSelectbox"]');
         selectboxContainers.forEach(container => {
-            // Style the main container as a unified field
-            container.style.setProperty('background-color', '#FFFACD', 'important');
-            container.style.setProperty('border', '2px solid #654321', 'important');
-            container.style.setProperty('border-radius', '8px', 'important');
-            container.style.setProperty('padding', '4px', 'important');
-            container.style.setProperty('min-height', '48px', 'important');
+            // Keep main container transparent 
+            container.style.setProperty('background', 'transparent', 'important');
+            container.style.setProperty('border', 'none', 'important');
             
-            // Make all nested divs inherit the unified styling seamlessly
-            const nestedDivs = container.querySelectorAll('div');
-            nestedDivs.forEach(div => {
-                div.style.setProperty('background', 'inherit', 'important');
-                div.style.setProperty('border', 'none', 'important');
-                div.style.setProperty('box-shadow', 'none', 'important');
-                div.style.setProperty('border-radius', 'inherit', 'important');
+            // Keep labels separate and normally styled
+            const labels = container.querySelectorAll('label');
+            labels.forEach(label => {
+                label.style.setProperty('background', 'transparent', 'important');
+                label.style.setProperty('border', 'none', 'important');
+                label.style.setProperty('margin-bottom', '8px', 'important');
             });
+            
+            // Find and style only the dropdown field container (usually the last div)
+            const childDivs = container.querySelectorAll(':scope > div');
+            if (childDivs.length > 0) {
+                const fieldContainer = childDivs[childDivs.length - 1]; // Last div is usually the field
+                fieldContainer.style.setProperty('background-color', '#FFFACD', 'important');
+                fieldContainer.style.setProperty('border', '2px solid #654321', 'important');
+                fieldContainer.style.setProperty('border-radius', '8px', 'important');
+                fieldContainer.style.setProperty('padding', '4px', 'important');
+                fieldContainer.style.setProperty('min-height', '48px', 'important');
+                
+                // Make nested divs within the field inherit the styling
+                const nestedDivs = fieldContainer.querySelectorAll('div');
+                nestedDivs.forEach(div => {
+                    div.style.setProperty('background', 'inherit', 'important');
+                    div.style.setProperty('border', 'none', 'important');
+                    div.style.setProperty('box-shadow', 'none', 'important');
+                    div.style.setProperty('border-radius', 'inherit', 'important');
+                });
+            }
             
             // Style input/select elements transparently within the unified field
             const inputElements = container.querySelectorAll('input, select');
