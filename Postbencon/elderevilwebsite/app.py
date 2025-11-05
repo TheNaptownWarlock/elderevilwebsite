@@ -4806,21 +4806,19 @@ if st.session_state.current_user:
     quest_counter_label = "🗓️ Quest Counter 🔥" if st.session_state.current_page == "Quest Counter" else "🗓️ Quest Counter"
     if st.sidebar.button(quest_counter_label, use_container_width=True, key="nav_quest_counter",
             type="primary" if st.session_state.current_page == "Quest Counter" else "secondary"):
-        if st.session_state.current_page != "Quest Counter":
-            st.session_state.current_page = "Quest Counter"
-            st.session_state.viewing_user_schedule = None
-            st.session_state.last_user_click = None
-            st.rerun()
+        st.session_state.current_page = "Quest Counter"
+        st.session_state.viewing_user_schedule = None
+        st.session_state.last_user_click = None
+        st.rerun()
 
     create_quest_label = "⚔️ Create Quest 🔥" if st.session_state.current_page == "Create Quest" else "⚔️ Create Quest"
     if st.sidebar.button(create_quest_label, use_container_width=True, key="nav_create_quest",
             type="primary" if st.session_state.current_page == "Create Quest" else "secondary"):
-        if st.session_state.current_page != "Create Quest":
-            st.session_state.current_page = "Create Quest"
-            st.session_state.viewing_user_schedule = None
-            st.session_state.editing_event = None
-            st.session_state.last_user_click = None
-            st.rerun()
+        st.session_state.current_page = "Create Quest"
+        st.session_state.viewing_user_schedule = None
+        st.session_state.editing_event = None
+        st.session_state.last_user_click = None
+        st.rerun()
 
     # Inbox with unread count and fire emoji if active
     unread_count = get_unread_count(st.session_state.current_user["email"])
@@ -4831,12 +4829,11 @@ if st.session_state.current_user:
     
     if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
             type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
-        if st.session_state.current_page != "Inbox":
-            st.session_state.current_page = "Inbox"
-            st.session_state.viewing_user_schedule = None
-            st.session_state.editing_event = None
-            st.session_state.last_user_click = None
-            st.rerun()
+        st.session_state.current_page = "Inbox"
+        st.session_state.viewing_user_schedule = None
+        st.session_state.editing_event = None
+        st.session_state.last_user_click = None
+        st.rerun()
 
     user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
     profile_label = f"{user_avatar} Profile 🔥" if st.session_state.current_page == "Profile" else f"{user_avatar} Profile"
