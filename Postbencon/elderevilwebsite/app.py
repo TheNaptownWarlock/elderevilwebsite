@@ -61,10 +61,11 @@ def check_recursion_pattern(func_name):
     
     current_time = time.time()
     recent_calls = [call for call in _function_call_times[func_name] 
-                   if current_time - call['time'] < 5.0]  # Last 5 seconds
+                   if current_time - call['time'] < 2.0]  # Last 2 seconds (more strict)
     
-    if len(recent_calls) > _max_recursion_depth:
-        print(f"🚨 RECURSION ALERT: Function '{func_name}' called {len(recent_calls)} times in 5 seconds!")
+    # More aggressive blocking - block after just 3 calls in 2 seconds
+    if len(recent_calls) > 3:
+        print(f"🚨 RECURSION ALERT: Function '{func_name}' called {len(recent_calls)} times in 2 seconds!")
         print("Recent call stack depths:", [call['stack_depth'] for call in recent_calls])
         print("Recent callers:", [call['caller'] for call in recent_calls])
         _recursion_detected = True
@@ -168,40 +169,67 @@ def emergency_recursion_check():
     """Emergency check for runaway recursion"""
     current_stack_size = len(inspect.stack())
     
-    if current_stack_size > 50:
-        print("🆘 EMERGENCY: Stack depth > 50! Possible runaway recursion!")
+    # More aggressive emergency check - trigger at 30 instead of 50
+    if current_stack_size > 30:
+        print("🆘 EMERGENCY: Stack depth > 30! Possible runaway recursion!")
         print("Emergency stack trace:")
         trace = get_detailed_stack_trace()
         for i, frame in enumerate(trace[:15]):
             print(f"  {i+1}. {frame['function']} ({frame['filename']}:{frame['lineno']})")
         
-        # Force exit if too deep
-        if current_stack_size > 100:
-            print("🚨 CRITICAL: Stack depth > 100! Force stopping execution!")
-            sys.exit(1)
+        # Force exit if too deep - at 50 instead of 100
+        if current_stack_size > 50:
+            print("🚨 CRITICAL: Stack depth > 50! Force stopping execution!")
+            print("🛑 TERMINATING PROCESS TO PREVENT STACK OVERFLOW")
+            import os
+            os._exit(1)  # Hard exit, no cleanup
     
     return current_stack_size
+
+# Global flag to prevent multiple initialization
+_monitoring_initialized = False
+_original_rerun = None
 
 # Monitor Streamlit specific functions that might cause recursion
 def monitor_streamlit_calls():
     """Monitor calls to Streamlit functions that might cause recursion"""
-    original_rerun = st.rerun
-    original_experimental_rerun = getattr(st, 'experimental_rerun', None)
+    global _monitoring_initialized, _original_rerun
+    
+    # Prevent multiple initialization that causes infinite recursion
+    if _monitoring_initialized:
+        print("⚠️ Monitoring already initialized, skipping...")
+        return
+    
+    # Store the REAL original rerun function before any modification
+    _original_rerun = st.rerun
     
     def safe_rerun(*args, **kwargs):
+        # Immediate emergency check first
+        current_stack = len(inspect.stack())
+        if current_stack > 25:  # Even more aggressive than emergency check
+            print(f"🚫 HARD BLOCK: Preventing st.rerun() at stack depth {current_stack}")
+            return None
+        
         log_function_call('st.rerun')
         stack_depth = emergency_recursion_check()
         
         if check_recursion_pattern('st.rerun'):
             print("🛑 BLOCKING RECURSIVE st.rerun() CALL!")
-            return
+            return None
         
         print(f"📡 st.rerun() called from stack depth {stack_depth}")
-        return original_rerun(*args, **kwargs)
+        # Use the stored original function, not the current st.rerun
+        if _original_rerun:
+            return _original_rerun(*args, **kwargs)
+        else:
+            print("⚠️ No original rerun function available!")
+            return None
     
     # Replace st.rerun with our monitored version
     st.rerun = safe_rerun
+    _monitoring_initialized = True
     
+    original_experimental_rerun = getattr(st, 'experimental_rerun', None)
     if original_experimental_rerun:
         def safe_experimental_rerun(*args, **kwargs):
             log_function_call('st.experimental_rerun')
