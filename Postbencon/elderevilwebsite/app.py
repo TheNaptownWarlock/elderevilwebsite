@@ -2895,7 +2895,7 @@ div[data-testid="stNumberInput"] input {
     padding: 8px 12px !important;
     box-sizing: border-box !important;
     margin: 0 auto !important;
-    text-align: center !important;
+    text-align: left !important;
 }
 
 /* Position password input container with flex layout for external button */
