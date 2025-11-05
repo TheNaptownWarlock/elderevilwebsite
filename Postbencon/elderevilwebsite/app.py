@@ -3018,8 +3018,8 @@ div[data-testid="stRadio"] * {
 
 
 
-/* Unified selectbox styling - single section appearance */
-div[data-testid="stSelectbox"] > div {
+/* Unified selectbox styling - target the input container only */
+div[data-testid="stSelectbox"] > div > div {
     background-color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
@@ -3029,8 +3029,13 @@ div[data-testid="stSelectbox"] > div {
     min-height: 48px !important;
 }
 
+/* Keep the main container clean (no background on labels) */
+div[data-testid="stSelectbox"] > div {
+    background: transparent !important;
+    border: none !important;
+}
+
 /* Remove inner section borders for seamless look */
-div[data-testid="stSelectbox"] > div > div,
 div[data-testid="stSelectbox"] > div > div > div {
     border: none !important;
     background: transparent !important;
@@ -3044,7 +3049,6 @@ div[data-testid="stSelectbox"] div {
     color: #8B4513 !important;
     font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
-    background: transparent !important;
 }
 `;
 
@@ -3218,20 +3222,27 @@ function forceMedievalStyling() {
         // Force dropdown styling - unified single section appearance
         const selectboxContainers = parentDocument.querySelectorAll('div[data-testid="stSelectbox"]');
         selectboxContainers.forEach(container => {
-            // Style the main container as a single unified box
+            // Keep the main container (with label) clean
             const mainDiv = container.querySelector('div');
             if (mainDiv) {
-                mainDiv.style.setProperty('background-color', '#FFFACD', 'important');
-                mainDiv.style.setProperty('border', '2px solid #654321', 'important');
-                mainDiv.style.setProperty('border-radius', '8px', 'important');
-                mainDiv.style.setProperty('padding', '8px', 'important');
-                mainDiv.style.setProperty('display', 'flex', 'important');
-                mainDiv.style.setProperty('align-items', 'center', 'important');
-                mainDiv.style.setProperty('min-height', '48px', 'important');
+                mainDiv.style.setProperty('background', 'transparent', 'important');
+                mainDiv.style.setProperty('border', 'none', 'important');
             }
             
-            // Remove borders from inner divs to create seamless appearance
-            const innerDivs = container.querySelectorAll('div > div, div > div > div');
+            // Style the input container (second level div) as unified box
+            const inputContainer = container.querySelector('div > div');
+            if (inputContainer) {
+                inputContainer.style.setProperty('background-color', '#FFFACD', 'important');
+                inputContainer.style.setProperty('border', '2px solid #654321', 'important');
+                inputContainer.style.setProperty('border-radius', '8px', 'important');
+                inputContainer.style.setProperty('padding', '8px', 'important');
+                inputContainer.style.setProperty('display', 'flex', 'important');
+                inputContainer.style.setProperty('align-items', 'center', 'important');
+                inputContainer.style.setProperty('min-height', '48px', 'important');
+            }
+            
+            // Remove borders from deeper inner divs to create seamless appearance
+            const innerDivs = container.querySelectorAll('div > div > div');
             innerDivs.forEach(div => {
                 div.style.setProperty('border', 'none', 'important');
                 div.style.setProperty('background', 'transparent', 'important');
@@ -3239,13 +3250,11 @@ function forceMedievalStyling() {
             });
             
             // Style the actual dropdown elements
-            const dropdownElements = container.querySelectorAll('div > div > div, input, select');
+            const dropdownElements = container.querySelectorAll('input, select, div > div > div');
             dropdownElements.forEach(element => {
                 element.style.setProperty('color', '#8B4513', 'important');
                 element.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
                 element.style.setProperty('font-weight', 'bold', 'important');
-                element.style.setProperty('background', 'transparent', 'important');
-                element.style.setProperty('border', 'none', 'important');
             });
         });
         
