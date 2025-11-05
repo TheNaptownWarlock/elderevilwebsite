@@ -3090,8 +3090,8 @@ div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div > div {
 }
 
 /* Make dice roller text visible and centered */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) input,
 div[data-testid="stSelectbox"]:has([id*="dice_type"]) select,
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) input,
 div[data-testid="stSelectbox"]:has([id*="dice_type"]) div,
 div[data-testid="stSelectbox"]:has([id*="dice_type"]) span {
     color: #8B4513 !important;
@@ -3355,7 +3355,7 @@ function forceMedievalStyling() {
                 });
                 
                 // Make all text elements visible with strong styling
-                const textElements = container.querySelectorAll('input, select, div, span');
+                const textElements = container.querySelectorAll('select, input, div, span');
                 textElements.forEach(element => {
                     element.style.setProperty('color', '#8B4513', 'important');
                     element.style.setProperty('background', 'transparent', 'important');
