@@ -1130,11 +1130,13 @@ def setup_realtime_subscriptions():
         return False
 
 # Initialize Realtime subscriptions on app start
-try:
-    setup_realtime_subscriptions()
-except Exception as e:
-    print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
-    print("ℹ️ App will continue with polling fallback")
+# DISABLED: Realtime is only available in async client, not sync client
+# try:
+#     setup_realtime_subscriptions()
+# except Exception as e:
+#     print(f"⚠️ Realtime subscriptions failed to initialize: {e}")
+#     print("ℹ️ App will continue with polling fallback")
+print("ℹ️ Realtime subscriptions disabled - using sync client with polling fallback")
 
 # ============================================================================
 
@@ -3539,15 +3541,19 @@ section[data-testid="stSidebar"] {
 </style>
 """)
 
-# Add collapse button under the banner using Streamlit button
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    if st.button("☰ Toggle Navigation", key="sidebar_toggle", use_container_width=True):
-        # Toggle sidebar state
-        if 'sidebar_collapsed' not in st.session_state:
-            st.session_state.sidebar_collapsed = False
-        st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
-        st.rerun()
+# Add collapse button under the banner using Streamlit button - TEMPORARILY DISABLED
+# col1, col2, col3 = st.columns([1, 1, 1])
+# with col2:
+#     if st.button("☰ Toggle Navigation", key="sidebar_toggle", use_container_width=True):
+#         # Toggle sidebar state
+#         if 'sidebar_collapsed' not in st.session_state:
+#             st.session_state.sidebar_collapsed = False
+#         st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
+#         st.rerun()
+
+# Initialize sidebar state without button
+if 'sidebar_collapsed' not in st.session_state:
+    st.session_state.sidebar_collapsed = False
 
 # Add CSS to hide the built-in Streamlit collapse button
 st.markdown("""
