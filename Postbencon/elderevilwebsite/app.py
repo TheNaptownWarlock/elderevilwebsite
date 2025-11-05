@@ -4806,60 +4806,6 @@ if st.session_state.current_user:
     
     st.sidebar.markdown("---")
 
-# Dice Roller Section
-if st.session_state.current_user:
-    st.sidebar.markdown("""
-    <div style="background: linear-gradient(135deg, #4A1A4A 0%, #8B008B 50%, #4A1A4A 100%);
-               border: 3px solid #6B1F6B; border-radius: 15px; padding: 15px; margin: 10px 0;
-               box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.3);">
-        <h4 style="color: #E6E6FA; text-align: center; margin: 0 0 10px 0; 
-                 text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-                 font-family: 'Uncial Antiqua', 'Cinzel', serif;">
-            🎲 Dice Roller 🎲
-        </h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Dice type selector
-    dice_types = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"]
-    selected_dice = st.sidebar.selectbox("Select Dice:", dice_types, index=5, key="dice_type")
-    
-    # Number of dice
-    num_dice = st.sidebar.number_input("Number of Dice:", min_value=1, max_value=10, value=1, key="num_dice")
-    
-    # Modifier
-    modifier = st.sidebar.number_input("Modifier:", min_value=-20, max_value=20, value=0, key="dice_modifier")
-    
-    # Roll button
-    if st.sidebar.button("🎲 Roll!", use_container_width=True, type="primary"):
-        import random
-        dice_value = int(selected_dice[1:])  # Remove 'd' prefix
-        rolls = [random.randint(1, dice_value) for _ in range(num_dice)]
-        total = sum(rolls) + modifier
-        
-        # Display result
-        rolls_str = " + ".join(map(str, rolls))
-        modifier_str = f" {'+' if modifier >= 0 else ''}{modifier}" if modifier != 0 else ""
-        
-        st.sidebar.markdown(f"""
-        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                   border: 2px solid #DAA520; border-radius: 10px; padding: 10px;
-                   text-align: center; margin: 10px 0;
-                   box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            <div style="font-size: 14px; color: #000; font-weight: bold;">
-                {num_dice}{selected_dice}{modifier_str}
-            </div>
-            <div style="font-size: 12px; color: #333; margin: 5px 0;">
-                [{rolls_str}]{modifier_str}
-            </div>
-            <div style="font-size: 24px; color: #8B0000; font-weight: bold; margin-top: 5px;">
-                Total: {total}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.sidebar.markdown("---")
-
 # Show registered users with avatars (clickable) - only when logged in
 if st.session_state.users and st.session_state.current_user:
     st.sidebar.write("**Registered Adventurers:**")
