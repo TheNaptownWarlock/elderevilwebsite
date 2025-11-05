@@ -3061,6 +3061,16 @@ div[data-testid="stSelectbox"] select {
     padding: 8px !important;
     width: 100% !important;
 }
+
+/* Dice roller selectbox specific alignment - center the text */
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) input,
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) select,
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div > div {
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
 `;
 
 // Add the style to the parent document head
@@ -3276,6 +3286,18 @@ function forceMedievalStyling() {
                 element.style.setProperty('padding', '8px', 'important');
                 element.style.setProperty('width', '100%', 'important');
             });
+            
+            // Special alignment for dice roller selectbox
+            const diceElements = container.querySelectorAll('[id*="dice_type"]');
+            if (diceElements.length > 0) {
+                const allDiceElements = container.querySelectorAll('input, select, div');
+                allDiceElements.forEach(element => {
+                    element.style.setProperty('text-align', 'center', 'important');
+                    element.style.setProperty('display', 'flex', 'important');
+                    element.style.setProperty('align-items', 'center', 'important');
+                    element.style.setProperty('justify-content', 'center', 'important');
+                });
+            }
         });
         
     } catch (error) {
