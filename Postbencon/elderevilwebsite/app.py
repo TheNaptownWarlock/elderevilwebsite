@@ -3018,33 +3018,35 @@ div[data-testid="stRadio"] * {
 
 
 
-/* Direct selectbox styling - no containers, just the elements */
+/* Unified selectbox styling - single field appearance */
 div[data-testid="stSelectbox"] {
-    background: transparent !important;
-    border: none !important;
-}
-
-/* Remove all container backgrounds and borders */
-div[data-testid="stSelectbox"] > div,
-div[data-testid="stSelectbox"] > div > div,
-div[data-testid="stSelectbox"] > div > div > div {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Apply yellow styling directly to selectbox elements */
-div[data-testid="stSelectbox"] input,
-div[data-testid="stSelectbox"] select,
-div[data-testid="stSelectbox"] > div > div > div {
     background-color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
+    padding: 4px !important;
+    min-height: 48px !important;
+}
+
+/* Ensure all nested containers inherit the unified styling */
+div[data-testid="stSelectbox"] > div,
+div[data-testid="stSelectbox"] > div > div,
+div[data-testid="stSelectbox"] > div > div > div {
+    background: inherit !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: inherit !important;
+}
+
+/* Style the actual input/select elements seamlessly */
+div[data-testid="stSelectbox"] input,
+div[data-testid="stSelectbox"] select {
+    background: transparent !important;
+    border: none !important;
     color: #8B4513 !important;
     font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
     padding: 8px !important;
-    min-height: 48px !important;
+    width: 100% !important;
 }
 `;
 
@@ -3215,28 +3217,35 @@ function forceMedievalStyling() {
              input.style.setProperty('max-width', '280px', 'important');
          });
         
-        // Style selectbox elements directly - no containers
+        // Unified selectbox styling - single field appearance
         const selectboxContainers = parentDocument.querySelectorAll('div[data-testid="stSelectbox"]');
         selectboxContainers.forEach(container => {
-            // Remove all container backgrounds
-            const allDivs = container.querySelectorAll('div');
-            allDivs.forEach(div => {
-                div.style.setProperty('background', 'transparent', 'important');
+            // Style the main container as a unified field
+            container.style.setProperty('background-color', '#FFFACD', 'important');
+            container.style.setProperty('border', '2px solid #654321', 'important');
+            container.style.setProperty('border-radius', '8px', 'important');
+            container.style.setProperty('padding', '4px', 'important');
+            container.style.setProperty('min-height', '48px', 'important');
+            
+            // Make all nested divs inherit the unified styling seamlessly
+            const nestedDivs = container.querySelectorAll('div');
+            nestedDivs.forEach(div => {
+                div.style.setProperty('background', 'inherit', 'important');
                 div.style.setProperty('border', 'none', 'important');
                 div.style.setProperty('box-shadow', 'none', 'important');
+                div.style.setProperty('border-radius', 'inherit', 'important');
             });
             
-            // Style the actual selectbox elements directly
-            const selectElements = container.querySelectorAll('input, select, div > div > div');
-            selectElements.forEach(element => {
-                element.style.setProperty('background-color', '#FFFACD', 'important');
-                element.style.setProperty('border', '2px solid #654321', 'important');
-                element.style.setProperty('border-radius', '8px', 'important');
+            // Style input/select elements transparently within the unified field
+            const inputElements = container.querySelectorAll('input, select');
+            inputElements.forEach(element => {
+                element.style.setProperty('background', 'transparent', 'important');
+                element.style.setProperty('border', 'none', 'important');
                 element.style.setProperty('color', '#8B4513', 'important');
                 element.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
                 element.style.setProperty('font-weight', 'bold', 'important');
                 element.style.setProperty('padding', '8px', 'important');
-                element.style.setProperty('min-height', '48px', 'important');
+                element.style.setProperty('width', '100%', 'important');
             });
         });
         
