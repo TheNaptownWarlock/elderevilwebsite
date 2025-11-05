@@ -4760,14 +4760,45 @@ if st.session_state.current_user:
     
     # Show current page indicator (after navigation buttons are processed)
     if st.session_state.current_page:
+        # Define color schemes for each page
+        page_colors = {
+            "Quest Counter": {
+                "bg_gradient": "linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #1E3A8A 100%)",
+                "border": "#1D4ED8",
+                "text": "#DBEAFE"
+            },
+            "Create Quest": {
+                "bg_gradient": "linear-gradient(135deg, #7C2D12 0%, #DC2626 50%, #7C2D12 100%)",
+                "border": "#B91C1C", 
+                "text": "#FEE2E2"
+            },
+            "Inbox": {
+                "bg_gradient": "linear-gradient(135deg, #6B21A8 0%, #A855F7 50%, #6B21A8 100%)",
+                "border": "#9333EA",
+                "text": "#F3E8FF"
+            },
+            "Profile": {
+                "bg_gradient": "linear-gradient(135deg, #B45309 0%, #F59E0B 50%, #B45309 100%)",
+                "border": "#D97706",
+                "text": "#FEF3C7"
+            }
+        }
+        
+        # Get colors for current page, default to green if page not found
+        colors = page_colors.get(st.session_state.current_page, {
+            "bg_gradient": "linear-gradient(135deg, #2C5F2D 0%, #4F8A10 50%, #2C5F2D 100%)",
+            "border": "#228B22",
+            "text": "#90EE90"
+        })
+        
         st.sidebar.markdown(f"""
-        <div style="background: linear-gradient(135deg, #2C5F2D 0%, #4F8A10 50%, #2C5F2D 100%);
-                   border: 2px solid #228B22; border-radius: 10px; padding: 8px; margin: 5px 0;
+        <div style="background: {colors['bg_gradient']};
+                   border: 2px solid {colors['border']}; border-radius: 10px; padding: 8px; margin: 5px 0;
                    box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);">
-            <p style="color: #90EE90; text-align: center; margin: 0; 
+            <p style="color: {colors['text']}; text-align: center; margin: 0; 
                      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
                      font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px;">
-                🎯 Pulled In To: {st.session_state.current_page}
+                🚂 Pulled In To: {st.session_state.current_page}
             </p>
         </div>
         """, unsafe_allow_html=True)
