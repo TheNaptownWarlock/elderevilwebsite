@@ -3018,15 +3018,33 @@ div[data-testid="stRadio"] * {
 
 
 
-/* Dropdown styling - make them white background */
-.main .block-container .stForm .stSelectbox > div > div > div,
-div[data-testid="stSelectbox"] > div > div > div {
+/* Unified selectbox styling - single section appearance */
+div[data-testid="stSelectbox"] > div {
     background-color: #FFFACD !important;
     border: 2px solid #654321 !important;
     border-radius: 8px !important;
+    padding: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 48px !important;
+}
+
+/* Remove inner section borders for seamless look */
+div[data-testid="stSelectbox"] > div > div,
+div[data-testid="stSelectbox"] > div > div > div {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Style selectbox text and elements */
+div[data-testid="stSelectbox"] input,
+div[data-testid="stSelectbox"] select,
+div[data-testid="stSelectbox"] div {
     color: #8B4513 !important;
     font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
+    background: transparent !important;
 }
 `;
 
@@ -3197,15 +3215,38 @@ function forceMedievalStyling() {
              input.style.setProperty('max-width', '280px', 'important');
          });
         
-        // Force dropdown styling
-        const dropdowns = parentDocument.querySelectorAll('div[data-testid="stSelectbox"] > div > div > div');
-        dropdowns.forEach(dropdown => {
-            dropdown.style.setProperty('background-color', '#FFFACD', 'important');
-            dropdown.style.setProperty('border', '2px solid #654321', 'important');
-            dropdown.style.setProperty('border-radius', '8px', 'important');
-            dropdown.style.setProperty('color', '#8B4513', 'important');
-            dropdown.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
-            dropdown.style.setProperty('font-weight', 'bold', 'important');
+        // Force dropdown styling - unified single section appearance
+        const selectboxContainers = parentDocument.querySelectorAll('div[data-testid="stSelectbox"]');
+        selectboxContainers.forEach(container => {
+            // Style the main container as a single unified box
+            const mainDiv = container.querySelector('div');
+            if (mainDiv) {
+                mainDiv.style.setProperty('background-color', '#FFFACD', 'important');
+                mainDiv.style.setProperty('border', '2px solid #654321', 'important');
+                mainDiv.style.setProperty('border-radius', '8px', 'important');
+                mainDiv.style.setProperty('padding', '8px', 'important');
+                mainDiv.style.setProperty('display', 'flex', 'important');
+                mainDiv.style.setProperty('align-items', 'center', 'important');
+                mainDiv.style.setProperty('min-height', '48px', 'important');
+            }
+            
+            // Remove borders from inner divs to create seamless appearance
+            const innerDivs = container.querySelectorAll('div > div, div > div > div');
+            innerDivs.forEach(div => {
+                div.style.setProperty('border', 'none', 'important');
+                div.style.setProperty('background', 'transparent', 'important');
+                div.style.setProperty('box-shadow', 'none', 'important');
+            });
+            
+            // Style the actual dropdown elements
+            const dropdownElements = container.querySelectorAll('div > div > div, input, select');
+            dropdownElements.forEach(element => {
+                element.style.setProperty('color', '#8B4513', 'important');
+                element.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+                element.style.setProperty('font-weight', 'bold', 'important');
+                element.style.setProperty('background', 'transparent', 'important');
+                element.style.setProperty('border', 'none', 'important');
+            });
         });
         
     } catch (error) {
