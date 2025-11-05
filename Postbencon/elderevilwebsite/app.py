@@ -4685,20 +4685,6 @@ if st.session_state.current_user:
     </div>
     """, unsafe_allow_html=True)
     
-    # Show current page indicator
-    if st.session_state.current_page:
-        st.sidebar.markdown(f"""
-        <div style="background: linear-gradient(135deg, #2C5F2D 0%, #4F8A10 50%, #2C5F2D 100%);
-                   border: 2px solid #228B22; border-radius: 10px; padding: 8px; margin: 5px 0;
-                   box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);">
-            <p style="color: #90EE90; text-align: center; margin: 0; 
-                     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-                     font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px;">
-                🎯 Pulled In To: {st.session_state.current_page}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
     # CSS for gold navigation buttons (active page)
     st.sidebar.markdown("""
     <style>
@@ -4771,6 +4757,20 @@ if st.session_state.current_user:
                 help="Open clean print view"):
         print_html = generate_clean_print_html(st.session_state.current_user["email"])
         st.components.v1.html(print_html, height=0, scrolling=False)
+    
+    # Show current page indicator (after navigation buttons are processed)
+    if st.session_state.current_page:
+        st.sidebar.markdown(f"""
+        <div style="background: linear-gradient(135deg, #2C5F2D 0%, #4F8A10 50%, #2C5F2D 100%);
+                   border: 2px solid #228B22; border-radius: 10px; padding: 8px; margin: 5px 0;
+                   box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);">
+            <p style="color: #90EE90; text-align: center; margin: 0; 
+                     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+                     font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px;">
+                🎯 Pulled In To: {st.session_state.current_page}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     
     st.sidebar.markdown("---")
 
