@@ -4803,18 +4803,36 @@ if st.session_state.current_user:
     """, unsafe_allow_html=True)
     
     # Navigation buttons as vertical list with fire emoji for active page
-    quest_counter_label = "🗓️ Quest Counter 🔥" if st.session_state.current_page == "Quest Counter" else "🗓️ Quest Counter"
-    if st.sidebar.button(quest_counter_label, use_container_width=True, key="nav_quest_counter",
-            type="primary" if st.session_state.current_page == "Quest Counter" else "secondary"):
+    # Initialize navigation state tracking
+    if "nav_just_clicked" not in st.session_state:
+        st.session_state.nav_just_clicked = None
+    
+    # Quest Counter button
+    quest_counter_is_active = st.session_state.current_page == "Quest Counter" or st.session_state.nav_just_clicked == "Quest Counter"
+    quest_counter_clicked = st.sidebar.button(
+        "🗓️ Quest Counter 🔥" if quest_counter_is_active else "🗓️ Quest Counter", 
+        use_container_width=True, 
+        key="nav_quest_counter",
+        type="primary" if quest_counter_is_active else "secondary"
+    )
+    if quest_counter_clicked:
         st.session_state.current_page = "Quest Counter"
+        st.session_state.nav_just_clicked = "Quest Counter"
         st.session_state.viewing_user_schedule = None
         st.session_state.last_user_click = None
         st.rerun()
 
-    create_quest_label = "⚔️ Create Quest 🔥" if st.session_state.current_page == "Create Quest" else "⚔️ Create Quest"
-    if st.sidebar.button(create_quest_label, use_container_width=True, key="nav_create_quest",
-            type="primary" if st.session_state.current_page == "Create Quest" else "secondary"):
+    # Create Quest button  
+    create_quest_is_active = st.session_state.current_page == "Create Quest" or st.session_state.nav_just_clicked == "Create Quest"
+    create_quest_clicked = st.sidebar.button(
+        "⚔️ Create Quest 🔥" if create_quest_is_active else "⚔️ Create Quest", 
+        use_container_width=True, 
+        key="nav_create_quest",
+        type="primary" if create_quest_is_active else "secondary"
+    )
+    if create_quest_clicked:
         st.session_state.current_page = "Create Quest"
+        st.session_state.nav_just_clicked = "Create Quest"
         st.session_state.viewing_user_schedule = None
         st.session_state.editing_event = None
         st.session_state.last_user_click = None
@@ -4822,28 +4840,48 @@ if st.session_state.current_user:
 
     # Inbox with unread count and fire emoji if active
     unread_count = get_unread_count(st.session_state.current_user["email"])
-    if st.session_state.current_page == "Inbox":
+    inbox_is_active = st.session_state.current_page == "Inbox" or st.session_state.nav_just_clicked == "Inbox"
+    if inbox_is_active:
         inbox_label = f"📨 Inbox ({unread_count}) 🔥" if unread_count > 0 else "📨 Inbox 🔥"
     else:
         inbox_label = f"📨 Inbox ({unread_count})" if unread_count > 0 else "📨 Inbox"
     
-    if st.sidebar.button(inbox_label, use_container_width=True, key="nav_inbox",
-            type="primary" if st.session_state.current_page == "Inbox" else "secondary"):
+    inbox_clicked = st.sidebar.button(
+        inbox_label, 
+        use_container_width=True, 
+        key="nav_inbox",
+        type="primary" if inbox_is_active else "secondary"
+    )
+    if inbox_clicked:
         st.session_state.current_page = "Inbox"
+        st.session_state.nav_just_clicked = "Inbox"
         st.session_state.viewing_user_schedule = None
         st.session_state.editing_event = None
         st.session_state.last_user_click = None
         st.rerun()
 
+    # Profile button
     user_avatar = st.session_state.current_user.get('avatar', '🧙‍♂️')
-    profile_label = f"{user_avatar} Profile 🔥" if st.session_state.current_page == "Profile" else f"{user_avatar} Profile"
-    if st.sidebar.button(profile_label, use_container_width=True, key="nav_profile",
-            type="primary" if st.session_state.current_page == "Profile" else "secondary"):
+    profile_is_active = st.session_state.current_page == "Profile" or st.session_state.nav_just_clicked == "Profile"
+    profile_clicked = st.sidebar.button(
+        f"{user_avatar} Profile 🔥" if profile_is_active else f"{user_avatar} Profile", 
+        use_container_width=True, 
+        key="nav_profile",
+        type="primary" if profile_is_active else "secondary"
+    )
+    if profile_clicked:
         st.session_state.current_page = "Profile"
+        st.session_state.nav_just_clicked = "Profile"
         st.session_state.viewing_user_schedule = None
         st.session_state.editing_event = None
         st.session_state.last_user_click = None
         st.rerun()
+    
+    # Clear the just-clicked state after buttons are rendered (on next run)
+    if st.session_state.nav_just_clicked is not None:
+        # Only clear if we're actually on the page now (prevents clearing too early)
+        if st.session_state.current_page == st.session_state.nav_just_clicked:
+            st.session_state.nav_just_clicked = None
 
     # Print Schedule button
     if st.sidebar.button("🖨️ Print Schedule", use_container_width=True, key="print_schedule_sidebar",
