@@ -3062,14 +3062,46 @@ div[data-testid="stSelectbox"] select {
     width: 100% !important;
 }
 
-/* Dice roller selectbox specific alignment - center the text */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) input,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) select,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div > div {
+/* Dice roller selectbox - unified field with centered text display */
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) {
+    background-color: #FFFACD !important;
+    border: 2px solid #654321 !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+    min-height: 48px !important;
     text-align: center !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+}
+
+/* Hide all nested containers in dice roller selectbox */
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div,
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div,
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+/* Hide input field and show only selected value for dice roller */
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) input {
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+
+/* Style the display text for dice roller */
+div[data-testid="stSelectbox"]:has([id*="dice_type"]) div[data-baseweb="select"] {
+    color: #8B4513 !important;
+    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: none !important;
 }
 `;
 
@@ -3287,15 +3319,48 @@ function forceMedievalStyling() {
                 element.style.setProperty('width', '100%', 'important');
             });
             
-            // Special alignment for dice roller selectbox
+            // Special styling for dice roller selectbox - unified field
             const diceElements = container.querySelectorAll('[id*="dice_type"]');
             if (diceElements.length > 0) {
-                const allDiceElements = container.querySelectorAll('input, select, div');
-                allDiceElements.forEach(element => {
+                // Style the main container as unified field
+                container.style.setProperty('background-color', '#FFFACD', 'important');
+                container.style.setProperty('border', '2px solid #654321', 'important');
+                container.style.setProperty('border-radius', '8px', 'important');
+                container.style.setProperty('padding', '8px', 'important');
+                container.style.setProperty('min-height', '48px', 'important');
+                container.style.setProperty('text-align', 'center', 'important');
+                container.style.setProperty('display', 'flex', 'important');
+                container.style.setProperty('align-items', 'center', 'important');
+                container.style.setProperty('justify-content', 'center', 'important');
+                
+                // Hide all nested containers
+                const allDivs = container.querySelectorAll('div');
+                allDivs.forEach(div => {
+                    div.style.setProperty('background', 'transparent', 'important');
+                    div.style.setProperty('border', 'none', 'important');
+                    div.style.setProperty('box-shadow', 'none', 'important');
+                    div.style.setProperty('width', '100%', 'important');
+                    div.style.setProperty('text-align', 'center', 'important');
+                });
+                
+                // Hide input field for dice roller
+                const inputs = container.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.style.setProperty('opacity', '0', 'important');
+                    input.style.setProperty('position', 'absolute', 'important');
+                    input.style.setProperty('pointer-events', 'none', 'important');
+                });
+                
+                // Style display text
+                const selectElements = container.querySelectorAll('[data-baseweb="select"]');
+                selectElements.forEach(element => {
+                    element.style.setProperty('color', '#8B4513', 'important');
+                    element.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
+                    element.style.setProperty('font-weight', 'bold', 'important');
+                    element.style.setProperty('font-size', '18px', 'important');
                     element.style.setProperty('text-align', 'center', 'important');
-                    element.style.setProperty('display', 'flex', 'important');
-                    element.style.setProperty('align-items', 'center', 'important');
-                    element.style.setProperty('justify-content', 'center', 'important');
+                    element.style.setProperty('background', 'transparent', 'important');
+                    element.style.setProperty('border', 'none', 'important');
                 });
             }
         });
