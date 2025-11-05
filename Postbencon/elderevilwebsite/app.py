@@ -3064,55 +3064,7 @@ div[data-testid="stSelectbox"] select {
     width: 100% !important;
 }
 
-/* Dice roller selectbox - unified field with visible text */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) {
-    background-color: #FFFACD !important;
-    border: 2px solid #654321 !important;
-    border-radius: 8px !important;
-    padding: 8px !important;
-    min-height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
-}
 
-/* Style nested containers for dice roller - make them visible */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) > div > div > div {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-
-/* Make dice roller text visible and centered */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) select,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) input,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) div,
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) span {
-    color: #8B4513 !important;
-    background: transparent !important;
-    border: none !important;
-    font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
-    font-weight: bold !important;
-    font-size: 20px !important;
-    text-align: center !important;
-    width: 100% !important;
-    position: relative !important;
-    z-index: 10 !important;
-}
-
-/* Ensure dice roller dropdown arrow is visible */
-div[data-testid="stSelectbox"]:has([id*="dice_type"]) svg {
-    color: #8B4513 !important;
-    opacity: 1 !important;
-}
 `;
 
 // Add the style to the parent document head
@@ -3329,55 +3281,7 @@ function forceMedievalStyling() {
                 element.style.setProperty('width', '100%', 'important');
             });
             
-            // Special styling for dice roller selectbox - unified field with visible text
-            const diceElements = container.querySelectorAll('[id*="dice_type"]');
-            if (diceElements.length > 0) {
-                // Style the main container as unified field
-                container.style.setProperty('background-color', '#FFFACD', 'important');
-                container.style.setProperty('border', '2px solid #654321', 'important');
-                container.style.setProperty('border-radius', '8px', 'important');
-                container.style.setProperty('padding', '8px', 'important');
-                container.style.setProperty('min-height', '48px', 'important');
-                container.style.setProperty('display', 'flex', 'important');
-                container.style.setProperty('align-items', 'center', 'important');
-                container.style.setProperty('justify-content', 'center', 'important');
-                container.style.setProperty('position', 'relative', 'important');
-                
-                // Style all nested divs to be visible and centered
-                const allDivs = container.querySelectorAll('div');
-                allDivs.forEach(div => {
-                    div.style.setProperty('background', 'transparent', 'important');
-                    div.style.setProperty('border', 'none', 'important');
-                    div.style.setProperty('box-shadow', 'none', 'important');
-                    div.style.setProperty('width', '100%', 'important');
-                    div.style.setProperty('display', 'flex', 'important');
-                    div.style.setProperty('align-items', 'center', 'important');
-                    div.style.setProperty('justify-content', 'center', 'important');
-                    div.style.setProperty('text-align', 'center', 'important');
-                });
-                
-                // Make all text elements visible with strong styling
-                const textElements = container.querySelectorAll('select, input, div, span');
-                textElements.forEach(element => {
-                    element.style.setProperty('color', '#8B4513', 'important');
-                    element.style.setProperty('background', 'transparent', 'important');
-                    element.style.setProperty('border', 'none', 'important');
-                    element.style.setProperty('font-family', "'Uncial Antiqua', 'Cinzel', serif", 'important');
-                    element.style.setProperty('font-weight', 'bold', 'important');
-                    element.style.setProperty('font-size', '20px', 'important');
-                    element.style.setProperty('text-align', 'center', 'important');
-                    element.style.setProperty('width', '100%', 'important');
-                    element.style.setProperty('position', 'relative', 'important');
-                    element.style.setProperty('z-index', '10', 'important');
-                });
-                
-                // Make dropdown arrow visible
-                const svgs = container.querySelectorAll('svg');
-                svgs.forEach(svg => {
-                    svg.style.setProperty('color', '#8B4513', 'important');
-                    svg.style.setProperty('opacity', '1', 'important');
-                });
-            }
+
         });
         
     } catch (error) {
@@ -4853,60 +4757,6 @@ if st.session_state.current_user:
                 help="Open clean print view"):
         print_html = generate_clean_print_html(st.session_state.current_user["email"])
         st.components.v1.html(print_html, height=0, scrolling=False)
-    
-    st.sidebar.markdown("---")
-
-# Dice Roller Section
-if st.session_state.current_user:
-    st.sidebar.markdown("""
-    <div style="background: linear-gradient(135deg, #2C1810 0%, #3D2415 50%, #2C1810 100%);
-               border: 3px solid #8B4513; border-radius: 15px; padding: 15px; margin: 10px 0;
-               box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.3);">
-        <h4 style="color: #FFD700; text-align: center; margin: 0 0 10px 0; 
-                 text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-                 font-family: 'Uncial Antiqua', 'Cinzel', serif;">
-            🎲 Dice Roller 🎲
-        </h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Dice type selector
-    dice_types = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"]
-    selected_dice = st.sidebar.selectbox("Select Dice:", dice_types, index=5, key="dice_type")
-    
-    # Number of dice
-    num_dice = st.sidebar.number_input("Number of Dice:", min_value=1, max_value=10, value=1, key="num_dice")
-    
-    # Modifier
-    modifier = st.sidebar.number_input("Modifier:", min_value=-20, max_value=20, value=0, key="dice_modifier")
-    
-    # Roll button
-    if st.sidebar.button("🎲 Roll!", use_container_width=True, type="primary"):
-        import random
-        dice_value = int(selected_dice[1:])  # Remove 'd' prefix
-        rolls = [random.randint(1, dice_value) for _ in range(num_dice)]
-        total = sum(rolls) + modifier
-        
-        # Display result
-        rolls_str = " + ".join(map(str, rolls))
-        modifier_str = f" {'+' if modifier >= 0 else ''}{modifier}" if modifier != 0 else ""
-        
-        st.sidebar.markdown(f"""
-        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                   border: 2px solid #DAA520; border-radius: 10px; padding: 10px;
-                   text-align: center; margin: 10px 0;
-                   box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            <div style="font-size: 14px; color: #000; font-weight: bold;">
-                {num_dice}{selected_dice}{modifier_str}
-            </div>
-            <div style="font-size: 12px; color: #333; margin: 5px 0;">
-                [{rolls_str}]{modifier_str}
-            </div>
-            <div style="font-size: 24px; color: #8B0000; font-weight: bold; margin-top: 5px;">
-                Total: {total}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
     
     st.sidebar.markdown("---")
 
