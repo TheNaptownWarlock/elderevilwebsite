@@ -2853,6 +2853,22 @@ div[data-testid="stRadio"] label span {
     text-shadow: 1px 1px 2px rgba(255,255,255,0.5) !important;
 }
 
+/* Force form input containers to center content */
+.main .block-container .stForm .stTextInput > div,
+.main .block-container .stForm .stSelectbox > div,
+.main .block-container .stForm .stNumberInput > div,
+.main .block-container .stForm .stTextArea > div,
+div[data-testid="stTextInput"] > div,
+div[data-testid="stSelectbox"] > div,
+div[data-testid="stNumberInput"] > div,
+div[data-testid="stTextArea"] > div {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 /* Force form inputs */
 input,
 textarea,
@@ -2871,6 +2887,15 @@ div[data-testid="stNumberInput"] input {
     color: #8B4513 !important;
     font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 250px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 8px 12px !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    text-align: center !important;
 }
 
 /* Force dropdown containers */
