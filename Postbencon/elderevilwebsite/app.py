@@ -6,6 +6,219 @@ import json
 import hashlib
 import html
 import os
+import inspect
+import sys
+import threading
+from collections import defaultdict
+import traceback
+import time
+
+# ============================================================================
+# RECURSION DETECTION & STACK INSPECTION SYSTEM
+# ============================================================================
+
+# Global variables for recursion detection
+_call_stack_tracker = defaultdict(int)
+_stack_traces = {}
+_recursion_detected = False
+_max_recursion_depth = 5
+_function_call_times = defaultdict(list)
+_last_stack_check = time.time()
+
+def log_function_call(func_name, depth=None, caller_info=None):
+    """Log function calls with stack information"""
+    current_time = time.time()
+    
+    # Get current stack frame
+    frame = inspect.currentframe()
+    try:
+        # Get caller frame
+        caller_frame = frame.f_back
+        if caller_frame:
+            filename = caller_frame.f_code.co_filename
+            lineno = caller_frame.f_lineno
+            caller_info = f"{filename}:{lineno}"
+        
+        # Record function call
+        _function_call_times[func_name].append({
+            'time': current_time,
+            'caller': caller_info,
+            'stack_depth': len(inspect.stack())
+        })
+        
+        # Keep only last 100 calls per function
+        if len(_function_call_times[func_name]) > 100:
+            _function_call_times[func_name] = _function_call_times[func_name][-100:]
+            
+        print(f"RECURSION_DEBUG: Function '{func_name}' called from {caller_info} (stack depth: {len(inspect.stack())})")
+        
+    finally:
+        del frame
+
+def check_recursion_pattern(func_name):
+    """Check if a function is being called in a recursive pattern"""
+    global _recursion_detected
+    
+    current_time = time.time()
+    recent_calls = [call for call in _function_call_times[func_name] 
+                   if current_time - call['time'] < 5.0]  # Last 5 seconds
+    
+    if len(recent_calls) > _max_recursion_depth:
+        print(f"🚨 RECURSION ALERT: Function '{func_name}' called {len(recent_calls)} times in 5 seconds!")
+        print("Recent call stack depths:", [call['stack_depth'] for call in recent_calls])
+        print("Recent callers:", [call['caller'] for call in recent_calls])
+        _recursion_detected = True
+        return True
+    
+    return False
+
+def get_detailed_stack_trace():
+    """Get a detailed stack trace with function names and line numbers"""
+    stack = inspect.stack()
+    trace = []
+    
+    for frame_info in stack[1:]:  # Skip current function
+        trace.append({
+            'function': frame_info.function,
+            'filename': frame_info.filename.split('\\')[-1],  # Just filename, not full path
+            'lineno': frame_info.lineno,
+            'code': frame_info.code_context[0].strip() if frame_info.code_context else 'N/A'
+        })
+    
+    return trace
+
+def print_stack_summary():
+    """Print a summary of current stack and recursion status"""
+    global _last_stack_check
+    
+    current_time = time.time()
+    if current_time - _last_stack_check < 2.0:  # Don't spam logs
+        return
+    
+    _last_stack_check = current_time
+    
+    print("\n" + "="*80)
+    print("📊 STACK INSPECTION SUMMARY")
+    print("="*80)
+    
+    # Show most frequently called functions
+    frequent_functions = sorted(_function_call_times.items(), 
+                              key=lambda x: len(x[1]), reverse=True)[:10]
+    
+    print("🔥 Most Called Functions (last 5 minutes):")
+    for func_name, calls in frequent_functions:
+        recent_calls = [c for c in calls if current_time - c['time'] < 300]  # 5 minutes
+        if recent_calls:
+            print(f"  - {func_name}: {len(recent_calls)} calls")
+            if len(recent_calls) > 20:
+                print(f"    ⚠️  HIGH FREQUENCY - Potential recursion!")
+    
+    # Show current stack depth
+    current_stack = inspect.stack()
+    print(f"\n📏 Current Stack Depth: {len(current_stack)}")
+    
+    if len(current_stack) > 30:
+        print("⚠️  DEEP STACK WARNING - Possible recursion!")
+        
+    # Show top 5 stack frames
+    print("\n📍 Current Stack (top 5 frames):")
+    for i, frame in enumerate(current_stack[1:6]):
+        print(f"  {i+1}. {frame.function} ({frame.filename.split('/')[-1]}:{frame.lineno})")
+    
+    print("="*80)
+
+def recursion_guard(func_name):
+    """Decorator to guard against recursion"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            global _recursion_detected
+            
+            # Log the function call
+            log_function_call(func_name)
+            
+            # Check for recursion pattern
+            if check_recursion_pattern(func_name):
+                print(f"🛑 RECURSION BLOCKED: Preventing recursive call to {func_name}")
+                print("Current stack trace:")
+                trace = get_detailed_stack_trace()
+                for i, frame in enumerate(trace[:10]):  # Show top 10 frames
+                    print(f"  {i+1}. {frame['function']} ({frame['filename']}:{frame['lineno']})")
+                    print(f"     Code: {frame['code']}")
+                return None
+            
+            # Increment call counter
+            _call_stack_tracker[func_name] += 1
+            
+            try:
+                # Call the original function
+                return func(*args, **kwargs)
+            finally:
+                # Decrement call counter
+                _call_stack_tracker[func_name] -= 1
+                
+                # Print periodic summary
+                if func_name in ['sync_session_with_db', 'load_events_from_db', 'load_users_from_db']:
+                    print_stack_summary()
+        
+        return wrapper
+    return decorator
+
+# Emergency recursion detection
+def emergency_recursion_check():
+    """Emergency check for runaway recursion"""
+    current_stack_size = len(inspect.stack())
+    
+    if current_stack_size > 50:
+        print("🆘 EMERGENCY: Stack depth > 50! Possible runaway recursion!")
+        print("Emergency stack trace:")
+        trace = get_detailed_stack_trace()
+        for i, frame in enumerate(trace[:15]):
+            print(f"  {i+1}. {frame['function']} ({frame['filename']}:{frame['lineno']})")
+        
+        # Force exit if too deep
+        if current_stack_size > 100:
+            print("🚨 CRITICAL: Stack depth > 100! Force stopping execution!")
+            sys.exit(1)
+    
+    return current_stack_size
+
+# Monitor Streamlit specific functions that might cause recursion
+def monitor_streamlit_calls():
+    """Monitor calls to Streamlit functions that might cause recursion"""
+    original_rerun = st.rerun
+    original_experimental_rerun = getattr(st, 'experimental_rerun', None)
+    
+    def safe_rerun(*args, **kwargs):
+        log_function_call('st.rerun')
+        stack_depth = emergency_recursion_check()
+        
+        if check_recursion_pattern('st.rerun'):
+            print("🛑 BLOCKING RECURSIVE st.rerun() CALL!")
+            return
+        
+        print(f"📡 st.rerun() called from stack depth {stack_depth}")
+        return original_rerun(*args, **kwargs)
+    
+    # Replace st.rerun with our monitored version
+    st.rerun = safe_rerun
+    
+    if original_experimental_rerun:
+        def safe_experimental_rerun(*args, **kwargs):
+            log_function_call('st.experimental_rerun')
+            if check_recursion_pattern('st.experimental_rerun'):
+                print("🛑 BLOCKING RECURSIVE st.experimental_rerun() CALL!")
+                return
+            return original_experimental_rerun(*args, **kwargs)
+        
+        st.experimental_rerun = safe_experimental_rerun
+
+# Initialize monitoring
+monitor_streamlit_calls()
+
+print("🔍 RECURSION DETECTION SYSTEM INITIALIZED")
+print("📊 Monitoring function calls for recursive patterns...")
+print("⚠️  Will block functions called more than 5 times in 5 seconds")
+print("="*80)
 
 # Configure Streamlit for subdirectory deployment
 st.set_page_config(
@@ -1014,14 +1227,18 @@ CANCEL_MESSAGES = [
 ]
 
 # Functions to sync session state with database
+@recursion_guard('load_users_from_db')
 def load_users_from_db():
     """Load users from database into session state"""
     
     try:
+        emergency_recursion_check()
+        
         users = {}
-        print(f"🔍 DEBUG: Loading users from database...")
+        print(f"� load_users_from_db: Starting to load users from database...")
         db_users = load_from_database("users")
-        print(f"🔍 DEBUG: Raw users data from DB: {db_users}")
+        print(f"� load_users_from_db: Raw users data from DB: {len(db_users) if db_users else 0} records")
+        
         for user_data in db_users:
             # Supabase returns dictionaries, not tuples
             if isinstance(user_data, dict):
@@ -1043,10 +1260,11 @@ def load_users_from_db():
                     "pronouns": pronouns,
                     "bio": bio or ""
                 }
-        print(f"🔍 DEBUG: Processed users: {list(users.keys())}")
+        print(f"� load_users_from_db: Processed users: {list(users.keys())}")
         return users
     except Exception as e:
-        print(f"Error loading users: {e}")
+        print(f"❌ load_users_from_db: Error loading users: {e}")
+        traceback.print_exc()
         return {}
 
 def get_events_from_supabase():
@@ -1168,12 +1386,18 @@ def get_events_from_supabase():
     except Exception as e:
         print(f"Error fetching events from Supabase: {e}")
         return []
+@recursion_guard('load_events_from_db')
 def load_events_from_db():
     """Load events from database into session state"""
     
     try:
+        emergency_recursion_check()
+        
+        print("📅 load_events_from_db: Starting to load events from database...")
         events = []
         db_events = load_from_database("events")
+        print(f"📅 load_events_from_db: Retrieved {len(db_events) if db_events else 0} events from database")
+        
         for event_data in db_events:
             if isinstance(event_data, dict):
                 # Supabase returns dictionaries
@@ -1230,9 +1454,12 @@ def load_events_from_db():
                 "max_attendees": max_attendees,
                 "rsvps": []     # Initialize empty rsvps list
             })
+        
+        print(f"📅 load_events_from_db: Successfully processed {len(events)} events")
         return events
     except Exception as e:
-        print(f"Error loading events: {e}")
+        print(f"❌ load_events_from_db: Error loading events: {e}")
+        traceback.print_exc()
         return []
 
 def load_rsvps_from_db():
@@ -1337,14 +1564,22 @@ def refresh_event_rsvps(event_id):
         st.error(f"Error refreshing RSVPs for event {event_id}: {e}")
         return []
 
+@recursion_guard('sync_session_with_db')
 def sync_session_with_db():
     """Sync session state with database on app start"""
     
     try:
+        # Emergency recursion check
+        emergency_recursion_check()
+        
+        print("🔄 sync_session_with_db: Starting database sync...")
+        
         # Load data from database
         db_users = load_users_from_db()
         db_events = load_events_from_db()
         db_rsvps = load_rsvps_from_db()
+        
+        print(f"🔄 sync_session_with_db: Loaded {len(db_users)} users, {len(db_events)} events")
         
         # Attach RSVPs to events
         for event in db_events:
@@ -1360,6 +1595,7 @@ def sync_session_with_db():
         
         # If database is empty, create test users
         if not db_users:
+            print("🔄 sync_session_with_db: Creating test users...")
             test_users = {
                 "Test": {
                     "password": hashlib.md5("Test".encode()).hexdigest(),
@@ -1385,25 +1621,39 @@ def sync_session_with_db():
                     "avatar": user_data["avatar"],
                     "pronouns": user_data["pronouns"]
                 })
+            print("🔄 sync_session_with_db: Test users created")
             return test_users, []
         
+        print("🔄 sync_session_with_db: Database sync completed successfully")
         return db_users, db_events
         
     except Exception as e:
-        print(f"Error syncing with database: {e}")
+        print(f"❌ sync_session_with_db: Error syncing with database: {e}")
+        traceback.print_exc()
         # Initialize with empty data if sync fails
         st.session_state.users = {}
         st.session_state.events = []
         return {}, []
 
+@recursion_guard('refresh_data')
 def refresh_data():
     """Refresh data from database only when needed"""
+    print("🔄 refresh_data: Refreshing data from database...")
+    emergency_recursion_check()
     st.session_state.users, st.session_state.events = sync_session_with_db()
 
 # Initialize session state with database persistence
+print("🏁 INITIALIZING SESSION STATE...")
+emergency_recursion_check()
+
 if "events" not in st.session_state:
+    print("🏁 Events not in session state, loading from database...")
     st.session_state.users, st.session_state.events = sync_session_with_db()
+else:
+    print(f"🏁 Session state already has {len(st.session_state.events)} events")
+
 if "data_loaded" not in st.session_state:
+    print("🏁 Setting data_loaded flag...")
     st.session_state.data_loaded = True
 
 if "current_user" not in st.session_state:
@@ -1467,15 +1717,21 @@ def verify_reset_code(email, input_code):
     return False
 
 # User management functions
+@recursion_guard('register_user')
 def register_user(email, password, display_name, avatar, pronouns, bio=""):
+    print(f"👤 register_user: Registering new user {email} with display name {display_name}")
+    emergency_recursion_check()
+    
     if email.strip() and password.strip() and display_name.strip() and avatar and pronouns:
         # Check if email already exists
         if email in st.session_state.users:
+            print(f"👤 register_user: Email {email} already exists")
             return False, "Email already exists!"
         
         # Check if display name (username) already exists
         for existing_email, user_data in st.session_state.users.items():
             if user_data["display_name"].lower() == display_name.strip().lower():
+                print(f"👤 register_user: Display name {display_name} already taken")
                 return False, f"Username '{display_name.strip()}' is already taken! Please choose a different name."
         
         # Generate password hint from email (simple goblin logic)
@@ -1495,10 +1751,12 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
             "email_verified": True  # Skip verification for goblin simplicity
         }
         
+        print(f"👤 register_user: Added user to session state")
+        
         # Save to database
         print("=" * 80)
-        print(f"🔍 DEBUG: About to call save_to_database for users (registration)")
-        print(f"🔍 DEBUG: Email: {email}, Display Name: {display_name.strip()}")
+        print(f"� register_user: About to call save_to_database for users (registration)")
+        print(f"� register_user: Email: {email}, Display Name: {display_name.strip()}")
         print("=" * 80)
         result = save_to_database("users", {
             "email": email,
@@ -1512,7 +1770,7 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
         })
         
         print("=" * 80)
-        print(f"🔍 DEBUG: save_to_database returned: {result}")
+        print(f"� register_user: save_to_database returned: {result}")
         print("=" * 80)
         
         # Auto-login after registration
@@ -1523,8 +1781,10 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
             "pronouns": pronouns,
             "bio": bio
         }
+        print(f"👤 register_user: User logged in successfully")
         return True, f"Welcome to the party, {display_name}! 🎉"
         
+    print(f"👤 register_user: Registration failed - missing required fields")
     return False, "All fields are required!"
 
 def login_user(email, password):
@@ -2091,7 +2351,11 @@ def toggle_beer_for_message(message_id, user_email):
 
 
 
+@recursion_guard('rsvp_to_event')
 def rsvp_to_event(event_id, user_info):
+    print(f"⚔️ rsvp_to_event: User {user_info['email']} joining event {event_id}")
+    emergency_recursion_check()
+    
     for event in st.session_state.events:
         if event["id"] == event_id:
             if "rsvps" not in event:
@@ -2104,6 +2368,7 @@ def rsvp_to_event(event_id, user_info):
             }
             if not any(rsvp["email"] == user_info["email"] for rsvp in event["rsvps"]):
                 event["rsvps"].append(user_rsvp)
+                print(f"⚔️ rsvp_to_event: Added RSVP to session state")
                 # Save RSVP to database
                 save_to_database("rsvps", {
                     "id": str(uuid.uuid4()),
@@ -2111,8 +2376,10 @@ def rsvp_to_event(event_id, user_info):
                     "user_email": user_info["email"],
                     "status": "yes"
                 })
+                print(f"⚔️ rsvp_to_event: RSVP saved to database")
                 # Refresh RSVPs from database to ensure consistency
                 refresh_event_rsvps(event_id)
+                print(f"⚔️ rsvp_to_event: RSVPs refreshed")
             break
 
 def cancel_rsvp(event_id, user_email):
@@ -3996,9 +4263,16 @@ document.addEventListener('DOMContentLoaded', function() {
 # Add Toggle Navigation button at the top of sidebar
 if st.sidebar.button("☰ Toggle Navigation", key="sidebar_toggle_top", use_container_width=True):
     # Toggle sidebar state
+    print("☰ Sidebar toggle button clicked")
+    emergency_recursion_check()
+    
     if 'sidebar_collapsed' not in st.session_state:
         st.session_state.sidebar_collapsed = False
+    
+    old_state = st.session_state.sidebar_collapsed
     st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
+    print(f"☰ Sidebar state changed from {old_state} to {st.session_state.sidebar_collapsed}")
+    
     st.rerun()
 
 st.sidebar.header("🎭 Knave Check")
@@ -6112,3 +6386,84 @@ if st.session_state.current_page == "Quest Counter":
     
     # Tavern chat at bottom of Quest Counter page
     render_tavern_chat_at_bottom()
+
+# ============================================================================
+# RECURSION DEBUGGING DISPLAY - ALWAYS SHOW AT END
+# ============================================================================
+
+# Show recursion debugging info at the bottom of every page
+if st.session_state.get('current_user'):
+    st.markdown("---")
+    
+    with st.expander("🔍 Recursion Debug Info (Click to expand)", expanded=False):
+        st.markdown("### 📊 Function Call Statistics")
+        
+        # Show most called functions
+        current_time = time.time()
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Most Called Functions (last 5 minutes):**")
+            frequent_functions = sorted(_function_call_times.items(), 
+                                      key=lambda x: len([c for c in x[1] if current_time - c['time'] < 300]), 
+                                      reverse=True)[:10]
+            
+            for func_name, calls in frequent_functions:
+                recent_calls = [c for c in calls if current_time - c['time'] < 300]
+                if recent_calls:
+                    color = "🔴" if len(recent_calls) > 20 else "🟡" if len(recent_calls) > 10 else "🟢"
+                    st.write(f"{color} `{func_name}`: {len(recent_calls)} calls")
+        
+        with col2:
+            st.markdown("**Current Status:**")
+            stack_depth = len(inspect.stack())
+            
+            if stack_depth > 30:
+                st.error(f"⚠️ Deep stack detected: {stack_depth} frames")
+            elif stack_depth > 20:
+                st.warning(f"🟡 Moderate stack depth: {stack_depth} frames")
+            else:
+                st.success(f"✅ Normal stack depth: {stack_depth} frames")
+            
+            if _recursion_detected:
+                st.error("🚨 Recursion detected and blocked!")
+            else:
+                st.success("✅ No recursion detected")
+        
+        # Show current call stack
+        st.markdown("**Current Call Stack (top 10 frames):**")
+        current_stack = inspect.stack()
+        
+        stack_data = []
+        for i, frame in enumerate(current_stack[1:11]):  # Skip this function
+            stack_data.append({
+                'Level': i+1,
+                'Function': frame.function,
+                'File': frame.filename.split('/')[-1].split('\\')[-1],
+                'Line': frame.lineno
+            })
+        
+        if stack_data:
+            st.dataframe(stack_data, use_container_width=True)
+        
+        # Show session state info
+        st.markdown("**Session State Debug:**")
+        session_info = {
+            'Current User': st.session_state.get('current_user', {}).get('email', 'None'),
+            'Current Page': st.session_state.get('current_page', 'None'),
+            'Editing Event': st.session_state.get('editing_event', 'None'),
+            'Viewing User Schedule': st.session_state.get('viewing_user_schedule', 'None'),
+            'Show Profile': st.session_state.get('show_profile', False),
+            'Events Count': len(st.session_state.get('events', [])),
+            'Users Count': len(st.session_state.get('users', {})),
+        }
+        
+        for key, value in session_info.items():
+            st.write(f"- **{key}:** `{value}`")
+
+print("🏁 APP EXECUTION COMPLETED")
+print("📊 Final execution statistics:")
+print(f"   - Total unique functions called: {len(_function_call_times)}")
+print(f"   - Recursion detected: {_recursion_detected}")
+print(f"   - Final stack depth: {len(inspect.stack())}")
+print("="*80)
