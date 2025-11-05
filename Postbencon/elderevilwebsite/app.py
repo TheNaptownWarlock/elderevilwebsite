@@ -2887,8 +2887,8 @@ div[data-testid="stNumberInput"] input {
     color: #8B4513 !important;
     font-family: 'Uncial Antiqua', 'Cinzel', serif !important;
     font-weight: bold !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 98% !important;
+    max-width: 98% !important;
     min-width: 250px !important;
     height: 48px !important;
     min-height: 48px !important;
@@ -2896,6 +2896,30 @@ div[data-testid="stNumberInput"] input {
     box-sizing: border-box !important;
     margin: 0 auto !important;
     text-align: center !important;
+}
+
+/* Password visibility toggle button styling */
+.main .block-container .stForm .stTextInput button,
+div[data-testid="stTextInput"] button,
+button[kind="icon"] {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    border: none !important;
+    color: #8B4513 !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    padding: 4px !important;
+    margin: 0 !important;
+}
+
+/* Position password input container for button placement */
+.main .block-container .stForm .stTextInput > div > div,
+div[data-testid="stTextInput"] > div > div {
+    position: relative !important;
 }
 
 /* Force dropdown containers */
