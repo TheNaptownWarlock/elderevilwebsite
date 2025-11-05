@@ -3445,17 +3445,17 @@ section[data-testid="stSidebar"] {
 </style>
 """)
 
-# Add collapse button under the banner using Streamlit button - TEMPORARILY DISABLED
-# col1, col2, col3 = st.columns([1, 1, 1])
-# with col2:
-#     if st.button("☰ Toggle Navigation", key="sidebar_toggle", use_container_width=True):
-#         # Toggle sidebar state
-#         if 'sidebar_collapsed' not in st.session_state:
-#             st.session_state.sidebar_collapsed = False
-#         st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
-#         st.rerun()
+# Add collapse button under the banner using Streamlit button
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    if st.button("☰ Toggle Navigation", key="sidebar_toggle", use_container_width=True):
+        # Toggle sidebar state
+        if 'sidebar_collapsed' not in st.session_state:
+            st.session_state.sidebar_collapsed = False
+        st.session_state.sidebar_collapsed = not st.session_state.sidebar_collapsed
+        st.rerun()
 
-# Initialize sidebar state without button
+# Initialize sidebar state
 if 'sidebar_collapsed' not in st.session_state:
     st.session_state.sidebar_collapsed = False
 
