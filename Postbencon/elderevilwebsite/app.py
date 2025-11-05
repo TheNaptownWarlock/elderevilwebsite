@@ -2898,28 +2898,49 @@ div[data-testid="stNumberInput"] input {
     text-align: center !important;
 }
 
-/* Password visibility toggle button styling */
+/* Position password input container with flex layout for external button */
+.main .block-container .stForm .stTextInput > div,
+div[data-testid="stTextInput"] > div {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+}
+
+/* Password input field - adjust width to make room for external button */
+.main .block-container .stForm .stTextInput input[type="password"],
+div[data-testid="stTextInput"] input[type="password"] {
+    width: calc(98% - 40px) !important;
+    max-width: calc(98% - 40px) !important;
+}
+
+/* Password visibility toggle button styling - positioned outside container */
 .main .block-container .stForm .stTextInput button,
 div[data-testid="stTextInput"] button,
 button[kind="icon"] {
-    position: absolute !important;
-    right: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    background: transparent !important;
-    border: none !important;
-    color: #8B4513 !important;
-    font-size: 18px !important;
+    position: relative !important;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%) !important;
+    border: 2px solid #654321 !important;
+    border-radius: 6px !important;
+    color: #FFFACD !important;
+    font-size: 16px !important;
     cursor: pointer !important;
-    z-index: 10 !important;
-    padding: 4px !important;
+    padding: 8px 12px !important;
     margin: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    box-shadow: 
+        inset 0 1px 3px rgba(255,255,255,0.2),
+        0 2px 4px rgba(0,0,0,0.3) !important;
 }
 
-/* Position password input container for button placement */
-.main .block-container .stForm .stTextInput > div > div,
-div[data-testid="stTextInput"] > div > div {
-    position: relative !important;
+.main .block-container .stForm .stTextInput button:hover,
+div[data-testid="stTextInput"] button:hover,
+button[kind="icon"]:hover {
+    background: linear-gradient(135deg, #A0522D 0%, #CD853F 50%, #DEB887 100%) !important;
+    transform: translateY(-1px) !important;
 }
 
 /* Force dropdown containers */
