@@ -5606,11 +5606,9 @@ if st.session_state.current_page == "Profile":
     </div>
     """, unsafe_allow_html=True)
     
-    # Edit Profile button - centered
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("✏️ Edit Profile", key="profile_edit_btn", help="Edit your adventurer profile"):
-            st.session_state.show_profile_edit = not st.session_state.get('show_profile_edit', False)
+    # Edit Profile button - left aligned
+    if st.button("✏️ Edit Profile", key="profile_edit_btn", help="Edit your adventurer profile"):
+        st.session_state.show_profile_edit = not st.session_state.get('show_profile_edit', False)
     
     # Show profile editor if requested
     if st.session_state.get('show_profile_edit', False):
@@ -5662,11 +5660,11 @@ if st.session_state.current_page == "Profile":
                                  height=100,
                                  key="edit_bio_input")
             
-            # Buttons side by side
-            col1, col2, col3 = st.columns([2, 1, 1])
+            # Buttons centered horizontally
+            col1, col2, col3, col4, col5 = st.columns([2, 1, 0.5, 1, 2])
             with col2:
                 save_btn = st.form_submit_button("💾 Save Changes", use_container_width=True)
-            with col3:
+            with col4:
                 cancel_btn = st.form_submit_button("❌ Cancel", use_container_width=True)
             
             if save_btn:
