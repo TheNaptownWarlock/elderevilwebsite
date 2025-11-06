@@ -209,39 +209,26 @@ def init_supabase():
         except Exception as debug_e:
             st.warning(f"Could not list secret keys: {debug_e}")
         
-        # Try multiple ways to get the credentials
-        supabase_url = ""
-        supabase_key = ""
+        # Use hardcoded credentials directly to avoid empty string issues
+        supabase_url = "https://uvsdbuonyfzajhtrgnxq.supabase.co"
+        supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
         
-        # Method 1: Direct access
+        # Try to get from secrets first, but fall back to hardcoded if needed
         try:
             raw_url = st.secrets["SUPABASE_URL"]
             raw_key = st.secrets["SUPABASE_KEY"]
             
-            st.info(f"Raw URL from secrets: '{raw_url}' (type: {type(raw_url)}, len: {len(str(raw_url))})")
-            st.info(f"Raw Key from secrets: '{str(raw_key)[:20]}...' (type: {type(raw_key)}, len: {len(str(raw_key))})")
-            
-            supabase_url = str(raw_url)
-            supabase_key = str(raw_key)
-            st.info("✅ Method 1: Direct access worked")
+            if raw_url and raw_key and str(raw_url).strip() and str(raw_key).strip():
+                supabase_url = str(raw_url).strip()
+                supabase_key = str(raw_key).strip()
+                st.info("✅ Using credentials from secrets")
+            else:
+                st.info("✅ Secrets empty, using hardcoded credentials")
         except Exception as e1:
-            st.warning(f"Method 1 failed: {e1}")
+            st.info(f"✅ Secrets not available ({e1}), using hardcoded credentials")
         
-        # Clean and validate credentials
-        supabase_url = str(supabase_url).strip().strip('"').strip("'")
-        supabase_key = str(supabase_key).strip().strip('"').strip("'")
-        
-        # Debug output after cleaning
-        st.info(f"After cleaning - URL: '{supabase_url[:50]}...'" if supabase_url else "After cleaning - URL: Empty")
-        st.info(f"After cleaning - Key: '{supabase_key[:20]}...'" if supabase_key else "After cleaning - Key: Empty")
-        
-        # If still empty, use the hardcoded values you provided
-        if not supabase_url or not supabase_key or len(supabase_url) == 0 or len(supabase_key) == 0:
-            st.warning("⚠️ Secrets are empty, using provided credentials...")
-            supabase_url = "https://uvsdbuonyfzajhtrgnxq.supabase.co"
-            supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
-            st.info(f"✅ Using hardcoded URL: {supabase_url}")
-            st.info(f"✅ Using hardcoded Key: {supabase_key[:20]}...")
+        st.info(f"Final URL: {supabase_url}")
+        st.info(f"Final Key: {supabase_key[:20]}...")
         
         if not supabase_url or not supabase_key:
             st.error("❌ Supabase credentials are empty")
