@@ -4533,56 +4533,16 @@ else:
     user = st.session_state.current_user
     
     
-    # Profile button with avatar
+    # Profile display with avatar (view-only)
     profile_col1, profile_col2 = st.sidebar.columns([1, 3])
     with profile_col1:
-        if st.sidebar.button(f"{user['avatar']}", help=f"Click to edit profile - Current: {AVATAR_OPTIONS[user['avatar']]}"):
-            st.session_state.show_profile = not st.session_state.show_profile
-    with profile_col2:
-        # Use HTML for avatar with tooltip
+        # Display avatar with tooltip (non-interactive)
         avatar_html = f"""
-        <span title="{AVATAR_OPTIONS[user['avatar']]}">{user['avatar']}</span>
+        <span title="{AVATAR_OPTIONS[user['avatar']]}" style="font-size: 1.2em;">{user['avatar']}</span>
         """
-        st.sidebar.markdown(f"**{user['display_name']}** | _{user['pronouns']}_ | {avatar_html}", unsafe_allow_html=True)
-    
-    # Show profile editor if requested
-    if st.session_state.show_profile:
-        st.sidebar.subheader("✏️ Edit Profile")
-        with st.sidebar.form("profile_form"):
-            new_name = st.text_input("Adventurer Name:", value=user['display_name'])
-            
-            # Avatar selection with better formatting for profile edit
-            st.write("**Avatar:**")
-            new_avatar = st.selectbox("Choose avatar:", 
-                                    options=list(AVATAR_OPTIONS.keys()),
-                                    index=list(AVATAR_OPTIONS.keys()).index(user['avatar']),
-                                    format_func=lambda x: f"{x} {AVATAR_OPTIONS[x]}",
-                                    label_visibility="collapsed")
-            
-            new_pronouns = st.selectbox("Pronouns:", 
-                                      options=PRONOUN_OPTIONS,
-                                      index=PRONOUN_OPTIONS.index(user['pronouns']))
-            
-            new_bio = st.text_area("Bio (optional):", 
-                                 value=user.get('bio', ''),
-                                 placeholder="Tell us about yourself...",
-                                 height=100)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                save_btn = st.form_submit_button("Save")
-            with col2:
-                cancel_btn = st.form_submit_button("Cancel")
-            
-            if save_btn:
-                update_user_profile(user['email'], new_name, new_avatar, new_pronouns, new_bio)
-                st.sidebar.success("Profile updated!")
-                st.session_state.show_profile = False
-                st.rerun()
-            
-            if cancel_btn:
-                st.session_state.show_profile = False
-                st.rerun()
+        st.sidebar.markdown(avatar_html, unsafe_allow_html=True)
+    with profile_col2:
+        st.sidebar.markdown(f"**{user['display_name']}**  \n_{user['pronouns']}_", unsafe_allow_html=True)
     
     if st.sidebar.button("Logout"):
         logout_user()
@@ -5653,6 +5613,50 @@ if st.session_state.current_page == "Profile":
         </h1>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Edit Profile button
+    if st.button("✏️ Edit Profile", key="profile_edit_btn", help="Edit your adventurer profile"):
+        st.session_state.show_profile_edit = not st.session_state.get('show_profile_edit', False)
+    
+    # Show profile editor if requested
+    if st.session_state.get('show_profile_edit', False):
+        with st.form("profile_edit_form"):
+            st.subheader("✏️ Edit Your Adventurer Profile")
+            
+            new_name = st.text_input("Adventurer Name:", value=user['display_name'])
+            
+            # Avatar selection with better formatting for profile edit
+            st.write("**Avatar:**")
+            new_avatar = st.selectbox("Choose avatar:", 
+                                    options=list(AVATAR_OPTIONS.keys()),
+                                    index=list(AVATAR_OPTIONS.keys()).index(user['avatar']),
+                                    format_func=lambda x: f"{x} {AVATAR_OPTIONS[x]}",
+                                    label_visibility="collapsed")
+            
+            new_pronouns = st.selectbox("Pronouns:", 
+                                      options=PRONOUN_OPTIONS,
+                                      index=PRONOUN_OPTIONS.index(user['pronouns']))
+            
+            new_bio = st.text_area("Bio (optional):", 
+                                 value=user.get('bio', ''),
+                                 placeholder="Tell us about yourself...",
+                                 height=100)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                save_btn = st.form_submit_button("💾 Save Changes")
+            with col2:
+                cancel_btn = st.form_submit_button("❌ Cancel")
+            
+            if save_btn:
+                update_user_profile(user['email'], new_name, new_avatar, new_pronouns, new_bio)
+                st.success("Profile updated!")
+                st.session_state.show_profile_edit = False
+                st.rerun()
+            
+            if cancel_btn:
+                st.session_state.show_profile_edit = False
+                st.rerun()
     
     # Bio section
     if user.get('bio', '').strip():
