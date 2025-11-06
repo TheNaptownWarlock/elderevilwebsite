@@ -1457,33 +1457,102 @@ def refresh_event_rsvps(event_id):
 
 @recursion_guard('sync_session_with_db')
 def sync_session_with_db():
-    """EMERGENCY BYPASS: Return empty data without database calls"""
-    print("🔄 sync_session_with_db: Using emergency bypass mode")
-    return {}, []
+    """Sync session state with database - RESTORED FOR TESTING"""
+    try:
+        print("🔄 sync_session_with_db: Loading users from database...")
+        db_users = load_users_from_db()
+        
+        print("🔄 sync_session_with_db: Loading events from database...")
+        db_events = load_events_from_db()
+        
+        print("🔄 sync_session_with_db: Loading RSVPs from database...")
+        db_rsvps = {}
+        for event in db_events:
+            event_id = event["id"] 
+            rsvps = refresh_event_rsvps(event_id)
+            db_rsvps[event_id] = rsvps
+        
+        # Attach RSVPs to events
+        for event in db_events:
+            event_id = event["id"]
+            if event_id in db_rsvps:
+                event["rsvps"] = db_rsvps[event_id]
+            else:
+                event["rsvps"] = []
+        
+        # Update session state
+        st.session_state.users = db_users
+        st.session_state.events = db_events
+        
+        # If database is empty, create test users
+        if not db_users:
+            print("🔄 sync_session_with_db: Creating test users...")
+            test_users = {
+                "Test": {
+                    "password": hashlib.md5("Test".encode()).hexdigest(),
+                    "display_name": "Test",
+                    "avatar": "🧙‍♂️",
+                    "pronouns": "they/them",
+                    "bio": ""
+                },
+                "Test2": {
+                    "password": hashlib.md5("Test2".encode()).hexdigest(),
+                    "display_name": "Test2", 
+                    "avatar": "⚔️",
+                    "pronouns": "she/her",
+                    "bio": ""
+                }
+            }
+            # Save test users to database
+            for email, user_data in test_users.items():
+                save_to_database("users", {
+                    "email": email,
+                    "password_hash": user_data["password"],
+                    "display_name": user_data["display_name"],
+                    "avatar": user_data["avatar"],
+                    "pronouns": user_data["pronouns"]
+                })
+            print("🔄 sync_session_with_db: Test users created")
+            return test_users, []
+        
+        print("🔄 sync_session_with_db: Database sync completed successfully")
+        return db_users, db_events
+        
+    except Exception as e:
+        print(f"❌ sync_session_with_db: Error syncing with database: {e}")
+        traceback.print_exc()
+        # Initialize with empty data if sync fails
+        st.session_state.users = {}
+        st.session_state.events = []
+        return {}, []
 
 @recursion_guard('refresh_data')
 def refresh_data():
-    """EMERGENCY BYPASS: Skip database refresh"""
-    print("🔄 refresh_data: Using emergency bypass - no database calls")
-    pass
+    """Refresh data from database - RESTORED FOR TESTING"""
+    print("🔄 refresh_data: Syncing with database...")
+    try:
+        users, events = sync_session_with_db()
+        print(f"🔄 refresh_data: Loaded {len(users)} users and {len(events)} events")
+        return True
+    except Exception as e:
+        print(f"❌ refresh_data: Error refreshing data: {e}")
+        return False
 
-# EMERGENCY BYPASS: Initialize with local data only (NO DATABASE CALLS)
-print("🏁 INITIALIZING SESSION STATE...")
+# RESTORED DATABASE INITIALIZATION - TESTING RECURSION BEHAVIOR
+print("🏁 INITIALIZING SESSION STATE WITH DATABASE...")
 
-if "events" not in st.session_state:
-    print("🏁 Using emergency local data initialization...")
-    st.session_state.events = []
-    # Create hardcoded test users to bypass database
-    st.session_state.users = {
-        "test@example.com": {
-            "email": "test@example.com",
-            "password_hash": "0cbc6611f5540bd0809a388dc95a615b",
-            "display_name": "Test User",
-            "avatar": "🧙‍♂️",
-            "pronouns": "they/them",
-            "bio": "Test user for emergency mode"
-        }
-    }
+# Initialize session state with database data
+if "events" not in st.session_state or "users" not in st.session_state:
+    print("🏁 Loading initial data from database...")
+    try:
+        users, events = sync_session_with_db()
+        print(f"🏁 Initial load: {len(users)} users and {len(events)} events")
+    except Exception as e:
+        print(f"❌ Initial database load failed: {e}")
+        traceback.print_exc()
+        # Fallback to empty state
+        st.session_state.events = []
+        st.session_state.users = {}
 else:
     print(f"🏁 Session state already has {len(st.session_state.events)} events")
 
