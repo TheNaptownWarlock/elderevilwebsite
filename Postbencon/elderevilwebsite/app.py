@@ -2965,6 +2965,25 @@ div[data-testid="stSelectbox"] select {
     width: 100% !important;
 }
 
+/* Style dropdown menu options - align left and ensure visibility */
+div[data-baseweb="select"] ul,
+div[data-baseweb="select"] li,
+[data-baseweb="select"] [role="option"],
+.stSelectbox [role="listbox"],
+.stSelectbox [role="option"] {
+    text-align: left !important;
+    padding-left: 12px !important;
+    background: #FFFACD !important;
+    color: #8B4513 !important;
+    font-family: 'Cinzel', serif !important;
+}
+
+/* Ensure dropdown container is left-aligned */
+div[data-testid="stSelectbox"] [role="listbox"] {
+    text-align: left !important;
+    left: 0 !important;
+}
+
 
 `;
 
@@ -3217,7 +3236,7 @@ try {
 st.components.v1.html("""
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=MedievalSharp&display=swap" rel="stylesheet">
 <div style="
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FFDF00 50%, #FFA500 75%, #FFD700 100%);
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #654321 50%, #A0522D 75%, #8B4513 100%);
     background-size: 400% 400%;
     animation: gradientShift 4s ease infinite;
     border: 4px solid #8B4513;
@@ -4589,18 +4608,18 @@ if st.session_state.current_user:
     # CSS for gold navigation buttons (active page)
     st.sidebar.markdown("""
     <style>
-    /* Style primary buttons in sidebar (active navigation) with gold color */
+    /* Style primary buttons in sidebar (active navigation) with brown color */
     div[data-testid="stSidebar"] button[kind="primary"] {
-        background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #DAA520 100%) !important;
-        color: #000000 !important;
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #654321 100%) !important;
+        color: #F4E4BC !important;
         font-weight: bold !important;
-        border: 2px solid #B8860B !important;
-        box-shadow: 0 4px 8px rgba(218, 165, 32, 0.4) !important;
+        border: 2px solid #654321 !important;
+        box-shadow: 0 4px 8px rgba(139, 69, 19, 0.4) !important;
     }
     
     div[data-testid="stSidebar"] button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #FDB931 0%, #FFD700 50%, #FDB931 100%) !important;
-        box-shadow: 0 6px 12px rgba(218, 165, 32, 0.6) !important;
+        background: linear-gradient(135deg, #A0522D 0%, #8B4513 50%, #A0522D 100%) !important;
+        box-shadow: 0 6px 12px rgba(139, 69, 19, 0.6) !important;
         transform: translateY(-1px);
     }
     
