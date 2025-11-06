@@ -21,6 +21,8 @@ import time
 _function_call_times = {}
 _recursion_detected = False
 _call_stack_tracker = {}
+_monitoring_initialized = False
+_original_rerun = None
 
 def log_function_call(func_name, depth=None, caller_info=None):
     """Disabled logging to prevent recursion"""
@@ -102,53 +104,8 @@ _original_rerun = None
 
 # Monitor Streamlit specific functions that might cause recursion
 def monitor_streamlit_calls():
-    """Monitor calls to Streamlit functions that might cause recursion"""
-    global _monitoring_initialized, _original_rerun
-    
-    # Prevent multiple initialization that causes infinite recursion
-    if _monitoring_initialized:
-        print("⚠️ Monitoring already initialized, skipping...")
-        return
-    
-    # Store the REAL original rerun function before any modification
-    _original_rerun = st.rerun
-    
-    def safe_rerun(*args, **kwargs):
-        # Immediate emergency check first
-        current_stack = len(inspect.stack())
-        if current_stack > 25:  # Even more aggressive than emergency check
-            print(f"🚫 HARD BLOCK: Preventing st.rerun() at stack depth {current_stack}")
-            return None
-        
-        log_function_call('st.rerun')
-        stack_depth = emergency_recursion_check()
-        
-        if check_recursion_pattern('st.rerun'):
-            print("🛑 BLOCKING RECURSIVE st.rerun() CALL!")
-            return None
-        
-        print(f"📡 st.rerun() called from stack depth {stack_depth}")
-        # Use the stored original function, not the current st.rerun
-        if _original_rerun:
-            return _original_rerun(*args, **kwargs)
-        else:
-            print("⚠️ No original rerun function available!")
-            return None
-    
-    # Replace st.rerun with our monitored version
-    st.rerun = safe_rerun
-    _monitoring_initialized = True
-    
-    original_experimental_rerun = getattr(st, 'experimental_rerun', None)
-    if original_experimental_rerun:
-        def safe_experimental_rerun(*args, **kwargs):
-            log_function_call('st.experimental_rerun')
-            if check_recursion_pattern('st.experimental_rerun'):
-                print("🛑 BLOCKING RECURSIVE st.experimental_rerun() CALL!")
-                return
-            return original_experimental_rerun(*args, **kwargs)
-        
-        st.experimental_rerun = safe_experimental_rerun
+    """Completely disabled to prevent recursion"""
+    pass
 
 # Monitoring system disabled to prevent recursion loops
 
