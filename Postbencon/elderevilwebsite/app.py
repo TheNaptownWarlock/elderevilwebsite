@@ -1525,6 +1525,42 @@ def refresh_data():
         print(f"❌ refresh_data: Error refreshing data: {e}")
         return False
 
+def load_tavern_messages_from_db():
+    """Load tavern messages from database with updated class names"""
+    try:
+        # Load messages from database
+        db_messages = load_from_database("tavern_messages")
+        messages = []
+        
+        for msg_data in db_messages:
+            if isinstance(msg_data, dict):
+                user_email = msg_data.get("user_email")
+                user_info = st.session_state.users.get(user_email, {})
+                
+                # Update class name from current AVATAR_OPTIONS
+                user_avatar = user_info.get('avatar', '🧙‍♂️')
+                updated_class = AVATAR_OPTIONS.get(user_avatar, 'Trash Wizard')
+                
+                message = {
+                    "id": msg_data.get("id"),
+                    "user_email": user_email,
+                    "user_name": user_info.get("display_name", "Unknown Adventurer"),
+                    "user_avatar": user_avatar,
+                    "user_class": updated_class,  # Use current class name
+                    "message": msg_data.get("message"),
+                    "timestamp": msg_data.get("created_at", datetime.now().isoformat()),
+                    "beer_count": msg_data.get("beer_count", 0),
+                    "beer_users": msg_data.get("beer_users", [])
+                }
+                messages.append(message)
+        
+        # Sort by timestamp
+        messages.sort(key=lambda x: x.get("timestamp", ""))
+        return messages
+    except Exception as e:
+        print(f"Error loading tavern messages: {e}")
+        return []
+
 # RESTORED DATABASE INITIALIZATION - TESTING RECURSION BEHAVIOR
 print("🏁 INITIALIZING SESSION STATE WITH DATABASE...")
 
@@ -1558,7 +1594,9 @@ if "message_sent_confirmation" not in st.session_state:
 if "replying_to" not in st.session_state:
     st.session_state.replying_to = None
 if "tavern_messages" not in st.session_state:
-    st.session_state.tavern_messages = []
+    print("🍺 Initializing tavern messages from database...")
+    st.session_state.tavern_messages = load_tavern_messages_from_db()
+    print(f"🍺 Initialized with {len(st.session_state.tavern_messages)} tavern messages")
 if "tavern_form_counter" not in st.session_state:
     st.session_state.tavern_form_counter = 0
 if "sent_messages" not in st.session_state:
@@ -2201,9 +2239,11 @@ def send_tavern_message(user_email, message):
     return message_data["id"]
 
 def get_tavern_messages():
-    """Get all tavern messages"""
+    """Get all tavern messages - load from DB if not in session state"""
     if "tavern_messages" not in st.session_state:
-        st.session_state.tavern_messages = []
+        print("🍺 Loading tavern messages from database...")
+        st.session_state.tavern_messages = load_tavern_messages_from_db()
+        print(f"🍺 Loaded {len(st.session_state.tavern_messages)} tavern messages")
     
     return st.session_state.tavern_messages
 
