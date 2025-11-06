@@ -4533,16 +4533,8 @@ else:
     user = st.session_state.current_user
     
     
-    # Profile display with avatar (view-only)
-    profile_col1, profile_col2 = st.sidebar.columns([1, 3])
-    with profile_col1:
-        # Display avatar with tooltip (non-interactive)
-        avatar_html = f"""
-        <span title="{AVATAR_OPTIONS[user['avatar']]}" style="font-size: 1.2em;">{user['avatar']}</span>
-        """
-        st.sidebar.markdown(avatar_html, unsafe_allow_html=True)
-    with profile_col2:
-        st.sidebar.markdown(f"**{user['display_name']}**  \n_{user['pronouns']}_", unsafe_allow_html=True)
+    # Profile display with avatar (view-only) - single line
+    st.sidebar.markdown(f"{user['avatar']} **{user['display_name']}** | _{user['pronouns']}_", unsafe_allow_html=True)
     
     if st.sidebar.button("Logout"):
         logout_user()
@@ -5614,19 +5606,42 @@ if st.session_state.current_page == "Profile":
     </div>
     """, unsafe_allow_html=True)
     
-    # Edit Profile button
-    if st.button("✏️ Edit Profile", key="profile_edit_btn", help="Edit your adventurer profile"):
-        st.session_state.show_profile_edit = not st.session_state.get('show_profile_edit', False)
+    # Edit Profile button - centered
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("✏️ Edit Profile", key="profile_edit_btn", help="Edit your adventurer profile"):
+            st.session_state.show_profile_edit = not st.session_state.get('show_profile_edit', False)
     
     # Show profile editor if requested
     if st.session_state.get('show_profile_edit', False):
+        # Silver container for the edit form
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 25%, #F5F5F5 50%, #E5E5E5 75%, #C0C0C0 100%);
+                    border: 3px solid #A0A0A0;
+                    border-radius: 15px;
+                    padding: 30px;
+                    margin: 20px 0;
+                    box-shadow: 
+                        0 4px 8px rgba(0,0,0,0.3),
+                        inset 0 1px 3px rgba(255,255,255,0.5),
+                        inset 0 -1px 3px rgba(0,0,0,0.2);">
+        """, unsafe_allow_html=True)
+        
         with st.form("profile_edit_form"):
-            st.subheader("✏️ Edit Your Adventurer Profile")
+            st.markdown("<h3 style='color: #4A4A4A; text-align: center; font-family: \"Uncial Antiqua\", \"Cinzel\", serif;'>✏️ Edit Your Adventurer Profile</h3>", unsafe_allow_html=True)
             
-            new_name = st.text_input("Adventurer Name:", value=user['display_name'])
+            # Full width adventurer name
+            new_name = st.text_input("Adventurer Name:", value=user['display_name'], key="edit_name_input")
+            st.markdown("""
+            <style>
+            div[data-testid="stTextInput"] input[aria-label="Adventurer Name:"] {
+                width: 100% !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
             
-            # Avatar selection with better formatting for profile edit
-            st.write("**Avatar:**")
+            # Avatar selection with consistent label styling
+            st.markdown("<label style='font-weight: 600; color: rgb(49, 51, 63);'>Avatar:</label>", unsafe_allow_html=True)
             new_avatar = st.selectbox("Choose avatar:", 
                                     options=list(AVATAR_OPTIONS.keys()),
                                     index=list(AVATAR_OPTIONS.keys()).index(user['avatar']),
@@ -5637,10 +5652,24 @@ if st.session_state.current_page == "Profile":
                                       options=PRONOUN_OPTIONS,
                                       index=PRONOUN_OPTIONS.index(user['pronouns']))
             
+            # Full width bio text area
             new_bio = st.text_area("Bio (optional):", 
                                  value=user.get('bio', ''),
                                  placeholder="Tell us about yourself...",
-                                 height=100)
+                                 height=100,
+                                 key="edit_bio_input")
+            
+            # Custom CSS for full width inputs
+            st.markdown("""
+            <style>
+            div[data-testid="stTextInput"] > div > div > input {
+                width: 100% !important;
+            }
+            div[data-testid="stTextArea"] > div > div > textarea {
+                width: 100% !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
             
             col1, col2 = st.columns(2)
             with col1:
@@ -5657,6 +5686,9 @@ if st.session_state.current_page == "Profile":
             if cancel_btn:
                 st.session_state.show_profile_edit = False
                 st.rerun()
+        
+        # Close the silver container
+        st.markdown("</div>", unsafe_allow_html=True)
     
     # Bio section
     if user.get('bio', '').strip():
