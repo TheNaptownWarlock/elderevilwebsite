@@ -14,63 +14,20 @@ import traceback
 import time
 
 # ============================================================================
-# RECURSION DETECTION & STACK INSPECTION SYSTEM
+# SIMPLIFIED RECURSION SYSTEM (DISABLED TO PREVENT LOOPS)
 # ============================================================================
 
-# Global variables for recursion detection
-_call_stack_tracker = defaultdict(int)
-_stack_traces = {}
+# Dummy variables to prevent errors
+_function_call_times = {}
 _recursion_detected = False
-_max_recursion_depth = 5
-_function_call_times = defaultdict(list)
-_last_stack_check = time.time()
+_call_stack_tracker = {}
 
 def log_function_call(func_name, depth=None, caller_info=None):
-    """Log function calls with stack information"""
-    current_time = time.time()
-    
-    # Get current stack frame
-    frame = inspect.currentframe()
-    try:
-        # Get caller frame
-        caller_frame = frame.f_back
-        if caller_frame:
-            filename = caller_frame.f_code.co_filename
-            lineno = caller_frame.f_lineno
-            caller_info = f"{filename}:{lineno}"
-        
-        # Record function call
-        _function_call_times[func_name].append({
-            'time': current_time,
-            'caller': caller_info,
-            'stack_depth': len(inspect.stack())
-        })
-        
-        # Keep only last 100 calls per function
-        if len(_function_call_times[func_name]) > 100:
-            _function_call_times[func_name] = _function_call_times[func_name][-100:]
-            
-        print(f"RECURSION_DEBUG: Function '{func_name}' called from {caller_info} (stack depth: {len(inspect.stack())})")
-        
-    finally:
-        del frame
+    """Disabled logging to prevent recursion"""
+    pass
 
 def check_recursion_pattern(func_name):
-    """Check if a function is being called in a recursive pattern"""
-    global _recursion_detected
-    
-    current_time = time.time()
-    recent_calls = [call for call in _function_call_times[func_name] 
-                   if current_time - call['time'] < 2.0]  # Last 2 seconds (more strict)
-    
-    # More aggressive blocking - block after just 3 calls in 2 seconds
-    if len(recent_calls) > 3:
-        print(f"🚨 RECURSION ALERT: Function '{func_name}' called {len(recent_calls)} times in 2 seconds!")
-        print("Recent call stack depths:", [call['stack_depth'] for call in recent_calls])
-        print("Recent callers:", [call['caller'] for call in recent_calls])
-        _recursion_detected = True
-        return True
-    
+    """Disabled recursion checking"""
     return False
 
 def get_detailed_stack_trace():
@@ -129,62 +86,15 @@ def print_stack_summary():
     print("="*80)
 
 def recursion_guard(func_name):
-    """Decorator to guard against recursion"""
+    """Simplified decorator - no recursion monitoring"""
     def decorator(func):
-        def wrapper(*args, **kwargs):
-            global _recursion_detected
-            
-            # Log the function call
-            log_function_call(func_name)
-            
-            # Check for recursion pattern
-            if check_recursion_pattern(func_name):
-                print(f"🛑 RECURSION BLOCKED: Preventing recursive call to {func_name}")
-                print("Current stack trace:")
-                trace = get_detailed_stack_trace()
-                for i, frame in enumerate(trace[:10]):  # Show top 10 frames
-                    print(f"  {i+1}. {frame['function']} ({frame['filename']}:{frame['lineno']})")
-                    print(f"     Code: {frame['code']}")
-                return None
-            
-            # Increment call counter
-            _call_stack_tracker[func_name] += 1
-            
-            try:
-                # Call the original function
-                return func(*args, **kwargs)
-            finally:
-                # Decrement call counter
-                _call_stack_tracker[func_name] -= 1
-                
-                # Print periodic summary
-                if func_name in ['sync_session_with_db', 'load_events_from_db', 'load_users_from_db']:
-                    print_stack_summary()
-        
-        return wrapper
+        return func  # Just return the original function unchanged
     return decorator
 
 # Emergency recursion detection
 def emergency_recursion_check():
-    """Emergency check for runaway recursion"""
-    current_stack_size = len(inspect.stack())
-    
-    # More aggressive emergency check - trigger at 30 instead of 50
-    if current_stack_size > 30:
-        print("🆘 EMERGENCY: Stack depth > 30! Possible runaway recursion!")
-        print("Emergency stack trace:")
-        trace = get_detailed_stack_trace()
-        for i, frame in enumerate(trace[:15]):
-            print(f"  {i+1}. {frame['function']} ({frame['filename']}:{frame['lineno']})")
-        
-        # Force exit if too deep - at 50 instead of 100
-        if current_stack_size > 50:
-            print("🚨 CRITICAL: Stack depth > 50! Force stopping execution!")
-            print("🛑 TERMINATING PROCESS TO PREVENT STACK OVERFLOW")
-            import os
-            os._exit(1)  # Hard exit, no cleanup
-    
-    return current_stack_size
+    """Disabled emergency check"""
+    return 0
 
 # Global flag to prevent multiple initialization
 _monitoring_initialized = False
@@ -240,13 +150,7 @@ def monitor_streamlit_calls():
         
         st.experimental_rerun = safe_experimental_rerun
 
-# Initialize monitoring
-monitor_streamlit_calls()
-
-print("🔍 RECURSION DETECTION SYSTEM INITIALIZED")
-print("📊 Monitoring function calls for recursive patterns...")
-print("⚠️  Will block functions called more than 5 times in 5 seconds")
-print("="*80)
+# Monitoring system disabled to prevent recursion loops
 
 # Configure Streamlit for subdirectory deployment
 st.set_page_config(
