@@ -5614,31 +5614,34 @@ if st.session_state.current_page == "Profile":
     
     # Show profile editor if requested
     if st.session_state.get('show_profile_edit', False):
-        # Silver container for the edit form
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 25%, #F5F5F5 50%, #E5E5E5 75%, #C0C0C0 100%);
-                    border: 3px solid #A0A0A0;
-                    border-radius: 15px;
-                    padding: 30px;
-                    margin: 20px 0;
-                    box-shadow: 
-                        0 4px 8px rgba(0,0,0,0.3),
-                        inset 0 1px 3px rgba(255,255,255,0.5),
-                        inset 0 -1px 3px rgba(0,0,0,0.2);">
-        """, unsafe_allow_html=True)
-        
         with st.form("profile_edit_form"):
-            st.markdown("<h3 style='color: #4A4A4A; text-align: center; font-family: \"Uncial Antiqua\", \"Cinzel\", serif;'>✏️ Edit Your Adventurer Profile</h3>", unsafe_allow_html=True)
-            
-            # Full width adventurer name
-            new_name = st.text_input("Adventurer Name:", value=user['display_name'], key="edit_name_input")
+            # Silver container styling for the form
             st.markdown("""
             <style>
-            div[data-testid="stTextInput"] input[aria-label="Adventurer Name:"] {
+            div[data-testid="stForm"] {
+                background: linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 25%, #F5F5F5 50%, #E5E5E5 75%, #C0C0C0 100%) !important;
+                border: 3px solid #A0A0A0 !important;
+                border-radius: 15px !important;
+                padding: 30px !important;
+                margin: 20px 0 !important;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.5),
+                    inset 0 -1px 3px rgba(0,0,0,0.2) !important;
+            }
+            div[data-testid="stTextInput"] > div > div > input {
+                width: 100% !important;
+            }
+            div[data-testid="stTextArea"] > div > div > textarea {
                 width: 100% !important;
             }
             </style>
             """, unsafe_allow_html=True)
+            
+            st.markdown("<h3 style='color: #4A4A4A; text-align: center; font-family: \"Uncial Antiqua\", \"Cinzel\", serif;'>✏️ Edit Your Adventurer Profile</h3>", unsafe_allow_html=True)
+            
+            # Full width adventurer name
+            new_name = st.text_input("Adventurer Name:", value=user['display_name'], key="edit_name_input")
             
             # Avatar selection with consistent label styling
             st.markdown("<label style='font-weight: 600; color: rgb(49, 51, 63);'>Avatar:</label>", unsafe_allow_html=True)
@@ -5659,23 +5662,12 @@ if st.session_state.current_page == "Profile":
                                  height=100,
                                  key="edit_bio_input")
             
-            # Custom CSS for full width inputs
-            st.markdown("""
-            <style>
-            div[data-testid="stTextInput"] > div > div > input {
-                width: 100% !important;
-            }
-            div[data-testid="stTextArea"] > div > div > textarea {
-                width: 100% !important;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                save_btn = st.form_submit_button("💾 Save Changes")
+            # Buttons side by side
+            col1, col2, col3 = st.columns([2, 1, 1])
             with col2:
-                cancel_btn = st.form_submit_button("❌ Cancel")
+                save_btn = st.form_submit_button("💾 Save Changes", use_container_width=True)
+            with col3:
+                cancel_btn = st.form_submit_button("❌ Cancel", use_container_width=True)
             
             if save_btn:
                 update_user_profile(user['email'], new_name, new_avatar, new_pronouns, new_bio)
@@ -5686,9 +5678,6 @@ if st.session_state.current_page == "Profile":
             if cancel_btn:
                 st.session_state.show_profile_edit = False
                 st.rerun()
-        
-        # Close the silver container
-        st.markdown("</div>", unsafe_allow_html=True)
     
     # Bio section
     if user.get('bio', '').strip():
