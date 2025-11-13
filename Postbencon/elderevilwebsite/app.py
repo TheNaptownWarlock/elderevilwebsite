@@ -142,46 +142,11 @@ def get_supabase_credentials():
     except:
         return "", ""
 
-# Comprehensive requests SSL bypass
+# Simple SSL bypass - avoid recursion issues
 try:
     import requests
     requests.packages.urllib3.disable_warnings()
-    
-    # Monkey patch requests to disable SSL verification globally
-    original_request = requests.Session.request
-    def patched_request(self, method, url, **kwargs):
-        kwargs['verify'] = False
-        kwargs.pop('cert', None)  # Remove cert verification
-        return original_request(self, method, url, **kwargs)
-    requests.Session.request = patched_request
-    
-    # Also patch the get, post, put, delete methods
-    original_get = requests.get
-    original_post = requests.post
-    original_put = requests.put
-    original_delete = requests.delete
-    
-    def patched_get(url, **kwargs):
-        kwargs['verify'] = False
-        return original_get(url, **kwargs)
-    
-    def patched_post(url, **kwargs):
-        kwargs['verify'] = False
-        return original_post(url, **kwargs)
-        
-    def patched_put(url, **kwargs):
-        kwargs['verify'] = False
-        return original_put(url, **kwargs)
-        
-    def patched_delete(url, **kwargs):
-        kwargs['verify'] = False
-        return original_delete(url, **kwargs)
-    
-    requests.get = patched_get
-    requests.post = patched_post  
-    requests.put = patched_put
-    requests.delete = patched_delete
-    
+    print("✅ SSL warnings disabled - no monkey patching to avoid recursion")
 except ImportError:
     pass
 
@@ -497,11 +462,12 @@ def save_to_supabase(table, data):
                 return False
         
         elif table == "tavern_messages":
-            # Prepare tavern message for Supabase
+            # Prepare tavern message for Supabase - include display_name
             message_data = {
                 "id": data["id"],
                 "user_email": data["user_email"],
-                "message": data["message"]
+                "message": data["message"],
+                "display_name": data.get("display_name")  # Include display_name in new messages
             }
             print(f"DEBUG: Tavern message data being sent: {message_data}")
             # Direct API call to Supabase
@@ -887,6 +853,7 @@ def handle_tavern_messages_change(payload):
         message = {
             "id": new_record.get('id'),
             "user_email": user_email,
+            "user_name": new_record.get('display_name', 'Unknown Adventurer'),  # Use display_name from database
             "message": new_record.get('message'),
             "timestamp": new_record.get('created_at'),
             "user_avatar": user_info.get('avatar', '🧙‍♂️'),
@@ -1054,9 +1021,7 @@ AVATAR_OPTIONS = {
     "⚡": "Sparky Lad",
     "🌊": "Catch-a-ride",
     "🌪️": "Disaster Gay",
-    "🍄": "Shroom Enjoyer",
-    "🌿": "Illya's Fated Foe",
-    "💀": "Rag N' Bones"
+    "🍄": "Shroom Enjoyer"
 }
 
 # Pronoun options
@@ -1526,27 +1491,42 @@ def refresh_data():
         return False
 
 def load_tavern_messages_from_db():
-    """Load tavern messages from database with updated class names"""
+    """Load tavern messages from database using display_name column directly"""
     try:
         # Load messages from database
         db_messages = load_from_database("tavern_messages")
         messages = []
         
+        # Load users for avatar/class lookup only (display_name now comes from tavern_messages table)
+        db_users = load_from_database("users")
+        users_dict = {}
+        for user_data in db_users:
+            if isinstance(user_data, dict):
+                email = user_data.get("email")
+                users_dict[email] = {
+                    "avatar": user_data.get("avatar", "🧙‍♂️"),
+                    "pronouns": user_data.get("pronouns"),
+                    "bio": user_data.get("bio", "")
+                }
+        
         for msg_data in db_messages:
             if isinstance(msg_data, dict):
                 user_email = msg_data.get("user_email")
-                user_info = st.session_state.users.get(user_email, {})
                 
-                # Update class name from current AVATAR_OPTIONS
+                # Get display name directly from tavern_messages table
+                display_name = msg_data.get("display_name")
+                
+                # Get user avatar info for class lookup
+                user_info = users_dict.get(user_email, {})
                 user_avatar = user_info.get('avatar', '🧙‍♂️')
-                updated_class = AVATAR_OPTIONS.get(user_avatar, 'Trash Wizard')
+                updated_class = AVATAR_OPTIONS.get(user_avatar, 'Adventurer')
                 
                 message = {
                     "id": msg_data.get("id"),
                     "user_email": user_email,
-                    "user_name": user_info.get("display_name", "Unknown Adventurer"),
+                    "user_name": display_name or "Unknown Adventurer",  # Use display_name from tavern_messages
                     "user_avatar": user_avatar,
-                    "user_class": updated_class,  # Use current class name
+                    "user_class": updated_class,  # Use current class name from AVATAR_OPTIONS
                     "message": msg_data.get("message"),
                     "timestamp": msg_data.get("created_at", datetime.now().isoformat()),
                     "beer_count": msg_data.get("beer_count", 0),
@@ -2202,14 +2182,26 @@ def send_tavern_message(user_email, message):
     if "tavern_messages" not in st.session_state:
         st.session_state.tavern_messages = []
     
-    user_info = st.session_state.users.get(user_email, {})
-    user_avatar = user_info.get("avatar", "🧙‍♂️")
+    # Get user info - prioritize current user data over cached users dict
+    user_display_name = "Unknown Adventurer"
+    user_avatar = "🧙‍♂️"
+    
+    # If this is the current user, use their session data directly
+    if st.session_state.current_user and st.session_state.current_user.get("email") == user_email:
+        user_display_name = st.session_state.current_user.get("display_name", "Unknown Adventurer")
+        user_avatar = st.session_state.current_user.get("avatar", "🧙‍♂️")
+    else:
+        # Otherwise look it up in users dict
+        user_info = st.session_state.users.get(user_email, {})
+        user_display_name = user_info.get("display_name", "Unknown Adventurer")
+        user_avatar = user_info.get("avatar", "🧙‍♂️")
+    
     user_class = AVATAR_OPTIONS.get(user_avatar, "Adventurer")
     
     message_data = {
         "id": str(uuid.uuid4()),
         "user_email": user_email,
-        "user_name": user_info.get("display_name", "Unknown Adventurer"),
+        "user_name": user_display_name,
         "user_avatar": user_avatar,
         "user_class": user_class,
         "message": message,
@@ -2231,6 +2223,7 @@ def send_tavern_message(user_email, message):
             "id": message_data["id"],
             "user_email": message_data["user_email"],
             "message": message_data["message"]
+            # display_name will be auto-populated by database trigger
         })
     except Exception as e:
         # Don't break the app if persistence fails — keep in session_state

@@ -27,11 +27,23 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
             user_avatar = '🧙‍♂️'
             user_class = 'Adventurer'
 
-    SUPABASE_URL = st.secrets.get("SUPABASE_URL")
-    SUPABASE_ANON_KEY = st.secrets.get("SUPABASE_KEY")
-
+    # Use hardcoded credentials with secrets fallback (same as app.py)
+    SUPABASE_URL = "https://uvsdbuonyfzajhtrgnxq.supabase.co"
+    SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c2RidW9ueWZ6YWpodHJnbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjUxNjgsImV4cCI6MjA3NjY0MTE2OH0.tq_dQfCIl68bSt2BUPP0lWW2DjjwPpxcKV6LIt2LRFg"
+    
+    # Try to get from secrets first, but fall back to hardcoded if needed
+    try:
+        secrets_url = st.secrets.get("SUPABASE_URL")
+        secrets_key = st.secrets.get("SUPABASE_KEY")
+        
+        if secrets_url and secrets_key and str(secrets_url).strip() and str(secrets_key).strip():
+            SUPABASE_URL = str(secrets_url).strip()
+            SUPABASE_ANON_KEY = str(secrets_key).strip()
+    except Exception:
+        pass  # Use hardcoded values
+    
     if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-        st.warning("Supabase credentials not configured. Please update secrets.toml")
+        st.warning("Supabase credentials not configured")
         return
 
     # Safe-escape values
@@ -283,9 +295,7 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
             "⚡": "Sparky Lad",
             "🌊": "Catch-a-ride",
             "🌪️": "Disaster Gay",
-            "🍄": "Shroom Enjoyer",
-            "🌿": "Illya's Fated Foe",
-            "💀": "Rag N' Bones"
+            "🍄": "Shroom Enjoyer"
           }};
 
           let supabase = null;
@@ -306,7 +316,17 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
             messageDiv.className = 'message';
             
             const isOwnMessage = message.user_email === USER_EMAIL;
-            const displayName = isOwnMessage ? USER_DISPLAY_NAME : (message.user_email ? message.user_email.split('@')[0] : 'Anonymous');
+            // Use display name from message data if available, otherwise fall back to email parsing
+            let displayName = 'Anonymous';
+            if (isOwnMessage) {{
+              displayName = USER_DISPLAY_NAME;
+            }} else if (message.display_name) {{
+              displayName = message.display_name;
+            }} else if (message.user_name) {{
+              displayName = message.user_name;
+            }} else if (message.user_email) {{
+              displayName = message.user_email.split('@')[0];
+            }}
             
             // Get user class from message data or fallback to avatar mapping
             let userClass = message.user_class || 'Adventurer';
@@ -316,10 +336,18 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
             }}
             
             // Set avatar as background with 50% transparency
-            messageDiv.style.backgroundImage = `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='65' font-size='50' text-anchor='middle' x='50' opacity='0.5'>${{userAvatar}}</text></svg>")`;
-            messageDiv.style.backgroundRepeat = 'no-repeat';
-            messageDiv.style.backgroundPosition = 'center center';
-            messageDiv.style.backgroundSize = '70px 70px';
+            try {{
+              const svgData = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='65' font-size='50' text-anchor='middle' x='50' opacity='0.5'>${{userAvatar}}</text></svg>`;
+              const encodedSvg = encodeURIComponent(svgData);
+              messageDiv.style.backgroundImage = `url("data:image/svg+xml,${{encodedSvg}}")`;
+              messageDiv.style.backgroundRepeat = 'no-repeat';
+              messageDiv.style.backgroundPosition = 'center center';
+              messageDiv.style.backgroundSize = '70px 70px';
+            }} catch (emojiError) {{
+              console.warn('Error setting avatar background:', emojiError);
+              // Fallback: use subtle gray background instead
+              messageDiv.style.backgroundColor = 'rgba(200, 200, 200, 0.3)';
+            }}
             
             messageDiv.innerHTML = `
               <div class="message-header">
@@ -337,6 +365,9 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
 
           async function loadMessages(showAll = true) {{
             try {{
+              console.log('Loading messages from:', `${{SUPABASE_URL}}/rest/v1/tavern_messages`);
+              console.log('Using API key:', SUPABASE_ANON_KEY ? 'Present' : 'Missing');
+              
               const response = await fetch(`${{SUPABASE_URL}}/rest/v1/tavern_messages?select=*&order=created_at.asc`, {{
                 headers: {{
                   'apikey': SUPABASE_ANON_KEY,
@@ -345,20 +376,39 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
                 }}
               }});
               
-              if (!response.ok) throw new Error('Failed to load messages');
+              console.log('Response status:', response.status);
+              
+              if (!response.ok) {{
+                const errorText = await response.text();
+                console.error('Response error:', errorText);
+                throw new Error(`HTTP ${{response.status}}: ${{errorText}}`);
+              }}
               
               const messages = await response.json();
+              console.log('Loaded', messages.length, 'messages');
               
               if (showAll) {{
                 messagesEl.innerHTML = '';
-                messages.forEach(msg => addMessage(msg));
+                messages.forEach(msg => {{
+                  try {{
+                    addMessage(msg);
+                  }} catch (msgError) {{
+                    console.warn('Error adding message:', msgError, 'Message data:', msg);
+                  }}
+                }});
                 lastMessageTime = messages.length > 0 ? messages[messages.length - 1].created_at : null;
               }} else {{
                 // Only add new messages
                 const newMessages = messages.filter(msg => 
                   !lastMessageTime || new Date(msg.created_at) > new Date(lastMessageTime)
                 );
-                newMessages.forEach(msg => addMessage(msg));
+                newMessages.forEach(msg => {{
+                  try {{
+                    addMessage(msg);
+                  }} catch (msgError) {{
+                    console.warn('Error adding new message:', msgError, 'Message data:', msg);
+                  }}
+                }});
                 if (newMessages.length > 0) {{
                   lastMessageTime = newMessages[newMessages.length - 1].created_at;
                 }}
@@ -366,7 +416,7 @@ def render_working_chat(user_email: Optional[str] = None, user_display_name: Opt
               
             }} catch (err) {{
               console.error('Load messages failed:', err);
-              statusEl.textContent = 'Error loading messages';
+              statusEl.textContent = `Error loading messages: ${{err.message}}`;
               statusEl.className = 'status error';
             }}
           }}
