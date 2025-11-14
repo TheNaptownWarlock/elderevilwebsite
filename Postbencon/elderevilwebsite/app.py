@@ -2387,10 +2387,36 @@ def get_user_hosted_events(user_email):
     return [event for event in st.session_state.events if event.get("creator_email") == user_email]
 
 def update_event(event_id, updated_data):
-    """Update an existing event"""
+    """Update an existing event in both session state and database"""
     for i, event in enumerate(st.session_state.events):
         if event["id"] == event_id:
+            # Update session state
             st.session_state.events[i].update(updated_data)
+            
+            # Prepare data for database update
+            db_update_data = {
+                "id": event_id,
+                "title": updated_data.get("name", event["name"]),
+                "description": updated_data.get("description", event["description"]),
+                "date": updated_data.get("day", event["day"]),
+                "time": updated_data.get("start", event["start"]),
+                "end_time": updated_data.get("end", event.get("end", "")),
+                "location": event.get("location", ""),  # Keep existing location
+                "host_email": event.get("host_email", event.get("creator_email", "")),
+                "tags": json.dumps([updated_data.get("tag", "")]) if updated_data.get("tag") else json.dumps([]),
+                "game_system": updated_data.get("game_system", "Not specified"),
+                "seat_min": updated_data.get("seat_min", 1),
+                "seat_max": updated_data.get("seat_max", 1),
+                "max_attendees": updated_data.get("seat_max", 1)
+            }
+            
+            # Update in Supabase using direct API
+            success = update_to_supabase("events", db_update_data, key_field="id")
+            if success:
+                print(f"✅ Event {event_id} updated successfully in database")
+            else:
+                print(f"❌ Failed to update event {event_id} in database")
+            
             break
 
 def generate_schedule_html(user_email):
