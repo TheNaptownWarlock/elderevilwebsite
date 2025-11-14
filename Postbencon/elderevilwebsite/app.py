@@ -4815,6 +4815,7 @@ if st.session_state.viewing_user_schedule:
                 # Handle both database field names (date, time, title) and local field names (day, start, name)
                 event_date = event.get("date", event.get("day", ""))
                 event_time = event.get("time", event.get("start", ""))
+                event_end = event.get("end", event.get("end_time", ""))
                 event_name = event.get("title", event.get("name", "Untitled Event"))
                 event_description = event.get("description", "")
                 event_host = event.get("host", event.get("host_email", "Unknown"))
@@ -4825,6 +4826,11 @@ if st.session_state.viewing_user_schedule:
                     day_name = next(day[1] for day in DAYS if day[0] == event_date)
                 
                 tag_icon = get_first_tag_icon(event)
+                
+                # Format time display with end time if available
+                time_display = event_time
+                if event_end and event_end != event_time:
+                    time_display = f"{event_time} - {event_end}"
                 
                 # Check if event is past (simplified check)
                 is_past = False  # For now, skip past event checking to avoid errors
@@ -4839,7 +4845,7 @@ if st.session_state.viewing_user_schedule:
                             {tag_icon} {event_name}{past_indicator}
                         </div>
                         <div style="color: #333; margin-bottom: 8px; font-size: 14px; {strikethrough_style}">
-                            📅 {day_name} at {event_time} | Host: {event_host}
+                            📅 {day_name} at {time_display} | Host: {event_host}
                         </div>
                         <div style="color: #666; font-size: 12px; {strikethrough_style}">
                             💻 System: {event.get('game_system', 'Not specified')}
