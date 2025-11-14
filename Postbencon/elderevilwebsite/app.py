@@ -5644,11 +5644,11 @@ if st.session_state.current_page == "Profile":
                                          value=max_seats)
                 edit_desc = st.text_area("Quest Description", value=event_to_edit["description"], max_chars=300)
                 
-                # Buttons centered horizontally
-                col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 2])
-                with col2:
+                # Buttons aligned to left
+                col1, col2, col3 = st.columns([1, 1, 4])
+                with col1:
                     save_edit = st.form_submit_button("💾 Save Changes", type="primary", use_container_width=True)
-                with col4:
+                with col2:
                     cancel_edit = st.form_submit_button("❌ Cancel", use_container_width=True)
                 
                 if save_edit:
