@@ -1285,6 +1285,9 @@ def load_events_from_db():
                     else:
                         host_display_name = user_data[2]  # display_name is 3rd column in SQLite
             
+            # Get end time from database, fallback to start time if not available
+            end_time = event_data.get("end_time", time) if isinstance(event_data, dict) else time
+            
             events.append({
                 "id": event_id,
                 "title": title,
@@ -1294,7 +1297,7 @@ def load_events_from_db():
                 "day": date,    # Map date to day for Quest Counter compatibility
                 "time": time,
                 "start": time,  # Map time to start for compatibility
-                "end": time,    # Add end time (using same time for now)
+                "end": end_time,  # Use proper end time from database
                 "location": location,
                 "host_email": host_email,
                 "host": host_display_name,  # Add host display name
