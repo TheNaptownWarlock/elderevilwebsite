@@ -5567,6 +5567,29 @@ if st.session_state.current_page == "Profile":
                 </h1>
             </div>
             """, unsafe_allow_html=True)
+
+            # Add CSS for silver form background on Edit Quest page
+            st.markdown("""
+            <style>
+            /* Silver background for edit quest form - ultra specific */
+            div[data-testid="stForm"],
+            .main .block-container div[data-testid="stForm"],
+            section[data-testid="stForm"],
+            form[data-testid="stForm"],
+            .stForm,
+            .main .stForm,
+            div.stForm > div {
+                background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 25%, #D3D3D3 50%, #E8E8E8 75%, #C0C0C0 100%) !important;
+                border: 3px solid #A9A9A9 !important;
+                border-radius: 15px !important;
+                padding: 25px !important;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.5),
+                    inset 0 -1px 3px rgba(0,0,0,0.2) !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
             
             with st.form("edit_event_form"):
                 edit_name = st.text_input("Quest Name:", value=event_to_edit["name"])
@@ -5621,11 +5644,11 @@ if st.session_state.current_page == "Profile":
                                          value=max_seats)
                 edit_desc = st.text_area("Quest Description", value=event_to_edit["description"], max_chars=300)
                 
-                # Buttons aligned to the right side
-                col1, col2, col3 = st.columns([3, 1, 1])
+                # Buttons centered horizontally
+                col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 2])
                 with col2:
                     save_edit = st.form_submit_button("💾 Save Changes", type="primary", use_container_width=True)
-                with col3:
+                with col4:
                     cancel_edit = st.form_submit_button("❌ Cancel", use_container_width=True)
                 
                 if save_edit:
