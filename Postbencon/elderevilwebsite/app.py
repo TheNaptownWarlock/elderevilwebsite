@@ -5526,20 +5526,54 @@ if st.session_state.current_page == "Profile":
             with st.form("edit_event_form"):
                 edit_name = st.text_input("Quest Name:", value=event_to_edit["name"])
                 edit_host = st.text_input("Quest Host/GM:", value=event_to_edit["host"])
+                # Handle day selection with error handling
+                day_indices = [i for i, day in enumerate(DAYS) if day[0] == event_to_edit["day"]]
+                day_index = day_indices[0] if day_indices else 0
+                
                 edit_day = st.selectbox("Select Day", DAYS, 
-                                      index=[i for i, day in enumerate(DAYS) if day[0] == event_to_edit["day"]][0],
+                                      index=day_index,
                                       format_func=lambda x: x[1])
-                edit_start = st.selectbox("Start Time", TIME_SLOTS,
-                                        index=TIME_SLOTS.index(event_to_edit["start"]))
-                edit_end = st.selectbox("End Time", TIME_SLOTS,
-                                      index=TIME_SLOTS.index(event_to_edit["end"]))
-                edit_tag = st.selectbox("Event Tag", list(TAGS.keys()),
-                                      index=list(TAGS.keys()).index(event_to_edit["tag"]))
+                
+                # Handle time selection with error handling
+                start_time = event_to_edit.get("start", "")
+                end_time = event_to_edit.get("end", "")
+                
+                try:
+                    start_index = TIME_SLOTS.index(start_time) if start_time in TIME_SLOTS else 0
+                except (ValueError, IndexError):
+                    start_index = 0
+                    
+                try:
+                    end_index = TIME_SLOTS.index(end_time) if end_time in TIME_SLOTS else 0
+                except (ValueError, IndexError):
+                    end_index = 0
+                
+                edit_start = st.selectbox("Start Time", TIME_SLOTS, index=start_index)
+                edit_end = st.selectbox("End Time", TIME_SLOTS, index=end_index)
+                
+                # Handle tag selection with proper error handling for empty or missing tags
+                event_tag = event_to_edit.get("tag", "")
+                tag_keys = list(TAGS.keys())
+                try:
+                    tag_index = tag_keys.index(event_tag) if event_tag in tag_keys else 0
+                except (ValueError, IndexError):
+                    tag_index = 0  # Default to first tag if not found
+                
+                edit_tag = st.selectbox("Event Tag", tag_keys, index=tag_index)
                 edit_system = st.text_input("Game System:", value=event_to_edit.get("game_system", ""))
+                # Handle seat values with error handling
+                min_seats = event_to_edit.get("seat_min", 1)
+                max_seats = event_to_edit.get("seat_max", 1)
+                
+                # Ensure valid seat numbers
+                min_seats = max(1, min_seats) if isinstance(min_seats, (int, float)) else 1
+                max_seats = max(1, max_seats) if isinstance(max_seats, (int, float)) else 1
+                max_seats = max(min_seats, max_seats)  # Ensure max >= min
+                
                 edit_min = st.number_input("Minimum Seats", min_value=1, max_value=100, 
-                                         value=event_to_edit["seat_min"])
+                                         value=min_seats)
                 edit_max = st.number_input("Maximum Seats", min_value=edit_min, max_value=100,
-                                         value=event_to_edit["seat_max"])
+                                         value=max_seats)
                 edit_desc = st.text_area("Quest Description", value=event_to_edit["description"], max_chars=300)
                 
                 col1, col2 = st.columns(2)
