@@ -955,14 +955,26 @@ print("ℹ️ Realtime subscriptions disabled - using sync client with polling f
 
 # ============================================================================
 
-# Helper function for parsing tags
+# Helper function for parsing tags safely (handles both strings and lists)
+def parse_tags_safely(tags):
+    """Safely parse tags whether they come as a string (JSON) or already as a list"""
+    if isinstance(tags, list):
+        return tags
+    elif isinstance(tags, str) and tags.strip():
+        try:
+            return json.loads(tags)
+        except (json.JSONDecodeError, TypeError):
+            return []
+    else:
+        return []
+
 def get_first_tag_icon(event):
     tags = event.get("tags", "")
     try:
-        parsed_tags = json.loads(tags) if tags and tags.strip() else []
+        parsed_tags = parse_tags_safely(tags)
         first_tag = parsed_tags[0] if parsed_tags else ""
         return TAGS.get(first_tag, "📝")
-    except (json.JSONDecodeError, TypeError, IndexError):
+    except (IndexError, AttributeError):
         return "📝"
 
 # Fantasy tags with icons
@@ -1259,10 +1271,8 @@ def load_events_from_db():
                 # Fallback for SQLite format (tuple)
                 event_id, title, description, date, time, location, host_email, tags, seat_min, seat_max, max_attendees, created_at = event_data
         
-            try:
-                parsed_tags = json.loads(tags) if tags and tags.strip() else []
-            except (json.JSONDecodeError, TypeError):
-                parsed_tags = []
+            # Parse tags safely (handles both string JSON and list formats)
+            parsed_tags = parse_tags_safely(tags)
         
             # Look up host display name from users
             host_display_name = ""
@@ -5602,11 +5612,12 @@ if st.session_state.current_page == "Profile":
                                          value=max_seats)
                 edit_desc = st.text_area("Quest Description", value=event_to_edit["description"], max_chars=300)
                 
-                col1, col2 = st.columns(2)
-                with col1:
-                    save_edit = st.form_submit_button("� Save Changes", type="primary")
+                # Buttons aligned to the right side
+                col1, col2, col3 = st.columns([3, 1, 1])
                 with col2:
-                    cancel_edit = st.form_submit_button("❌ Cancel Edit")
+                    save_edit = st.form_submit_button("💾 Save Changes", type="primary", use_container_width=True)
+                with col3:
+                    cancel_edit = st.form_submit_button("❌ Cancel", use_container_width=True)
                 
                 if save_edit:
                     start_dt = datetime.strptime(edit_start, "%I:%M %p")
@@ -5794,12 +5805,9 @@ if st.session_state.current_page == "Profile":
                 day_name = next(day[1] for day in DAYS if day[0] == event["day"])
                 # Parse tags and get first tag's icon
                 tags = event.get("tags", "")
-                try:
-                    parsed_tags = json.loads(tags) if tags and tags.strip() else []
-                    first_tag = parsed_tags[0] if parsed_tags else ""
-                    tag_icon = TAGS.get(first_tag, "📝")
-                except (json.JSONDecodeError, TypeError, IndexError):
-                    tag_icon = "📝"
+                parsed_tags = parse_tags_safely(tags)
+                first_tag = parsed_tags[0] if parsed_tags else ""
+                tag_icon = TAGS.get(first_tag, "📝")
                 is_hosting = event.get("creator_email") == user["email"]
                 
                 # Add day separator and header if this is a new day
