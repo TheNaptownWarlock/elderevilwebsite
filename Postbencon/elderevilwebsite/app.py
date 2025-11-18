@@ -1695,6 +1695,23 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
         print(f"� register_user: save_to_database returned: {result}")
         print("=" * 80)
         
+        # Auto-add new user to Friday Night Family Dinner event
+        try:
+            friday_dinner_event_id = "1f09e2cf-71cd-41de-a79b-f8bf78af0f30"  # The special event ID
+            rsvp_result = save_to_database("rsvps", {
+                "id": str(uuid.uuid4()),
+                "event_id": friday_dinner_event_id,
+                "user_email": email,
+                "status": "yes"
+            })
+            
+            if rsvp_result:
+                print(f"👤 register_user: Auto-added {email} to Friday Night Family Dinner")
+            else:
+                print(f"⚠️ register_user: Failed to auto-add {email} to Friday Night Family Dinner")
+        except Exception as e:
+            print(f"❌ register_user: Error auto-adding to Friday Night Family Dinner: {e}")
+        
         # Auto-login after registration
         st.session_state.current_user = {
             "email": email,
@@ -1704,7 +1721,7 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
             "bio": bio
         }
         print(f"👤 register_user: User logged in successfully")
-        return True, f"Welcome to the party, {display_name}! 🎉"
+        return True, f"Welcome to the party, {display_name}! 🎉 You've been automatically added to Friday Night Family Dinner!"
         
     print(f"👤 register_user: Registration failed - missing required fields")
     return False, "All fields are required!"
