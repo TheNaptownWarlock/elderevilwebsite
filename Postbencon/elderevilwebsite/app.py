@@ -990,6 +990,7 @@ DAYS = [
     ("2026-02-05", "Thursday, Feb 5"),
     ("2026-02-06", "Friday, Feb 6"),
     ("2026-02-07", "Saturday, Feb 7"),
+    ("2026-02-08", "Sunday, Feb 8"),
 ]
 
 # Generate 30-minute time slots
@@ -1695,22 +1696,29 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
         print(f"� register_user: save_to_database returned: {result}")
         print("=" * 80)
         
-        # Auto-add new user to Friday Night Family Dinner event
-        try:
-            friday_dinner_event_id = "1f09e2cf-71cd-41de-a79b-f8bf78af0f30"  # The special event ID
-            rsvp_result = save_to_database("rsvps", {
-                "id": str(uuid.uuid4()),
-                "event_id": friday_dinner_event_id,
-                "user_email": email,
-                "status": "yes"
-            })
-            
-            if rsvp_result:
-                print(f"👤 register_user: Auto-added {email} to Friday Night Family Dinner")
-            else:
-                print(f"⚠️ register_user: Failed to auto-add {email} to Friday Night Family Dinner")
-        except Exception as e:
-            print(f"❌ register_user: Error auto-adding to Friday Night Family Dinner: {e}")
+        # Auto-add new user to special events (Friday Night Family Dinner & Cleanup and GTFO)
+        special_events = [
+            ("1f09e2cf-71cd-41de-a79b-f8bf78af0f30", "Friday Night Family Dinner"),
+            ("58b26a27-177e-42f4-9807-e377239bd3ed", "Cleanup and GTFO")
+        ]
+        
+        enrolled_events = []
+        for event_id, event_name in special_events:
+            try:
+                rsvp_result = save_to_database("rsvps", {
+                    "id": str(uuid.uuid4()),
+                    "event_id": event_id,
+                    "user_email": email,
+                    "status": "yes"
+                })
+                
+                if rsvp_result:
+                    print(f"👤 register_user: Auto-added {email} to {event_name}")
+                    enrolled_events.append(event_name)
+                else:
+                    print(f"⚠️ register_user: Failed to auto-add {email} to {event_name}")
+            except Exception as e:
+                print(f"❌ register_user: Error auto-adding to {event_name}: {e}")
         
         # Auto-login after registration
         st.session_state.current_user = {
@@ -1721,7 +1729,16 @@ def register_user(email, password, display_name, avatar, pronouns, bio=""):
             "bio": bio
         }
         print(f"👤 register_user: User logged in successfully")
-        return True, f"Welcome to the party, {display_name}! 🎉 You've been automatically added to Friday Night Family Dinner!"
+        
+        # Create welcome message based on enrolled events
+        if len(enrolled_events) == 2:
+            events_msg = "You've been automatically added to Friday Night Family Dinner and Cleanup and GTFO!"
+        elif enrolled_events:
+            events_msg = f"You've been automatically added to {' and '.join(enrolled_events)}!"
+        else:
+            events_msg = "Welcome to the party!"
+            
+        return True, f"Welcome to the party, {display_name}! 🎉 {events_msg}"
         
     print(f"👤 register_user: Registration failed - missing required fields")
     return False, "All fields are required!"
