@@ -4696,6 +4696,12 @@ if st.session_state.current_user:
         print_html = generate_clean_print_html(st.session_state.current_user["email"])
         st.components.v1.html(print_html, height=0, scrolling=False)
     
+    # FAQ button
+    if st.sidebar.button("❓ FAQs", use_container_width=True, key="nav_faq",
+            type="primary" if st.session_state.current_page == "FAQ" else "secondary"):
+        st.session_state.current_page = "FAQ"
+        st.rerun()
+    
     # Show current page indicator (after navigation buttons are processed)
     if st.session_state.current_page:
         # Define color schemes for each page
@@ -4719,6 +4725,11 @@ if st.session_state.current_user:
                 "bg_gradient": "linear-gradient(135deg, #B45309 0%, #F59E0B 50%, #B45309 100%)",
                 "border": "#D97706",
                 "text": "#FEF3C7"
+            },
+            "FAQ": {
+                "bg_gradient": "linear-gradient(135deg, #0F766E 0%, #14B8A6 50%, #0F766E 100%)",
+                "border": "#0D9488",
+                "text": "#CCFBF1"
             }
         }
         
@@ -6627,6 +6638,163 @@ if st.session_state.current_page == "Quest Counter":
     
     # Tavern chat at bottom of Quest Counter page
     render_tavern_chat_at_bottom()
+
+# ============================================================================
+# FAQ PAGE
+# ============================================================================
+
+if st.session_state.current_page == "FAQ":
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #0F766E 0%, #14B8A6 25%, #06B6D4 50%, #14B8A6 75%, #0F766E 100%);
+                border: 3px solid #0D9488;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 20px 0;
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.3),
+                    inset 0 1px 3px rgba(255,255,255,0.2),
+                    inset 0 -1px 3px rgba(0,0,0,0.3);
+                text-align: center;">
+        <h1 style="color: #CCFBF1; font-family: 'Uncial Antiqua', 'Cinzel', serif; 
+                   font-weight: bold; margin: 0 0 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+            ❓ Bencon FAQs ❓
+        </h1>
+        <p style="color: #CCFBF1; font-family: 'Cinzel', serif; 
+                  font-style: italic; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+            "All the answers to your burning questions about the grand adventure!"
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # FAQ Content Container
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 50%, #F0FDFA 100%);
+                border: 2px solid #0D9488;
+                border-radius: 10px;
+                padding: 30px;
+                margin: 20px 0;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    """, unsafe_allow_html=True)
+
+    # FAQ Items
+    faqs = [
+        {
+            "question": "🏠 Where are we staying?",
+            "answer": "Berrien Springs MI on the Southern Border of Michigan at the Dahlia vacation home provided by Dwell.",
+            "link": "https://dwellvacations.com/property/dahlia/",
+            "link_text": "View the Dahlia Property"
+        },
+        {
+            "question": "🚗 How far away is it?",
+            "answer": "About 1hr 30min from Chicago (2hrs for Northsiders), 2hr 30min from Indianapolis"
+        },
+        {
+            "question": "📍 What's the address?",
+            "answer": "10630 Garr Rd, Berrien Springs, MI 49103"
+        },
+        {
+            "question": "🚌 Is there transportation provided?",
+            "answer": "I will be assembling a carpool. Please let me know if you have a car."
+        },
+        {
+            "question": "🅿️ Is there parking?",
+            "answer": "Yes."
+        },
+        {
+            "question": "📅 What are the dates and times?",
+            "answer": "We're arriving at 6pm on Thursday, 2/5 and departing by 10am on Sunday 2/8."
+        },
+        {
+            "question": "💰 What's the cost?",
+            "answer": "₤250 per person. If the ₤50 increase would prohibit you from coming please allow us to know as we can subsidize."
+        },
+        {
+            "question": "💳 How and when do I pay?",
+            "answer": "You can pay Ben via venmo or zelle. His venmo is ben-busald. His number is 317-626-2990."
+        },
+        {
+            "question": "🍽️ Does the cost include food?",
+            "answer": "The budget includes dinner and breakfast. Lunch is on your own. *Subject to change based on final number of attendees."
+        },
+        {
+            "question": "🎮 What is there to do at Bencon?",
+            "answer": "Bencon is an environment curated for play, curiosity and community. We exist as a platform to let you ideate quickly on concepts whether its games/conversations etc in support of like minded people who want to have a good time. There'll be board games/video games/rpgs/discussions/hot tubs and more! Please think about any concept of programming you'd like to host and let us know if you need support! (I'm having people work on my dating profiles haha)."
+        },
+        {
+            "question": "🧙‍♂️ I've heard there's subcommittees! I would like to volunteer for one!",
+            "answer": "Please reachout to Ben and he'll connect you with the subcommittees."
+        },
+        {
+            "question": "🚨 What happens in case of Emergency?",
+            "answer": "Let Ben or one of the Wizards know. We'll be collecting emergency forms and have a plan in case of injury."
+        },
+        {
+            "question": "🛡️ Are you insured?",
+            "answer": "Yes I'll have special events insurance."
+        }
+    ]
+
+    for i, faq in enumerate(faqs):
+        # Create alternating background colors for better readability
+        bg_color = "#E6FFFA" if i % 2 == 0 else "#B2F5EA"
+        
+        st.markdown(f"""
+        <div style="background-color: {bg_color}; 
+                    border-left: 4px solid #0D9488; 
+                    border-radius: 6px; 
+                    padding: 20px; 
+                    margin: 15px 0;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #0F766E; margin: 0 0 10px 0; font-family: 'Cinzel', serif;">
+                {faq['question']}
+            </h3>
+            <p style="color: #134E4A; margin: 10px 0; line-height: 1.6; font-size: 16px;">
+                {faq['answer']}
+            </p>
+        """, unsafe_allow_html=True)
+        
+        # Add link if provided
+        if faq.get('link'):
+            st.markdown(f"""
+            <div style="margin-top: 15px;">
+                <a href="{faq['link']}" target="_blank" 
+                   style="background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+                          color: white;
+                          padding: 10px 20px;
+                          border-radius: 6px;
+                          text-decoration: none;
+                          font-weight: bold;
+                          display: inline-block;
+                          transition: all 0.3s ease;
+                          box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.3)';"
+                   onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)';">
+                    🔗 {faq.get('link_text', 'Visit Link')}
+                </a>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # Contact Information Section
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #0F766E 0%, #14B8A6 100%);
+                border-radius: 10px;
+                padding: 25px;
+                margin: 30px 0;
+                text-align: center;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h3 style="color: #CCFBF1; margin: 0 0 15px 0; font-family: 'Cinzel', serif;">
+            📞 Still have questions?
+        </h3>
+        <p style="color: #CCFBF1; margin: 0; font-size: 16px;">
+            Reach out to Ben via message in the app, Venmo (@ben-busald), or text (317-626-2990)
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Close the main container
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================================================================
 # RECURSION DEBUGGING DISPLAY - ALWAYS SHOW AT END
