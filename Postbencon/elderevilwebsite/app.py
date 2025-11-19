@@ -6644,6 +6644,7 @@ if st.session_state.current_page == "Quest Counter":
 # ============================================================================
 
 if st.session_state.current_page == "FAQ":
+    # FAQ Header and Content Container - Combined to remove empty container
     st.markdown("""
     <div style="background: linear-gradient(135deg, #0F766E 0%, #14B8A6 25%, #06B6D4 50%, #14B8A6 75%, #0F766E 100%);
                 border: 3px solid #0D9488;
@@ -6660,14 +6661,11 @@ if st.session_state.current_page == "FAQ":
             ❓ Bencon FAQs ❓
         </h1>
         <p style="color: #CCFBF1; font-family: 'Cinzel', serif; 
-                  font-style: italic; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                  font-style: italic; margin: 0 0 20px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
             "All the answers to your burning questions about the grand adventure!"
         </p>
     </div>
-    """, unsafe_allow_html=True)
-
-    # FAQ Content Container
-    st.markdown("""
+    
     <div style="background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 50%, #F0FDFA 100%);
                 border: 2px solid #0D9488;
                 border-radius: 10px;
@@ -6706,7 +6704,7 @@ if st.session_state.current_page == "FAQ":
         },
         {
             "question": "💰 What's the cost?",
-            "answer": "₤250 per person. If the ₤50 increase would prohibit you from coming please allow us to know as we can subsidize."
+            "answer": "$250 per person. If the $50 increase would prohibit you from coming please allow us to know as we can subsidize."
         },
         {
             "question": "💳 How and when do I pay?",
@@ -6788,7 +6786,7 @@ if st.session_state.current_page == "FAQ":
             📞 Still have questions?
         </h3>
         <p style="color: #CCFBF1; margin: 0; font-size: 16px;">
-            Reach out to Ben via message in the app, Venmo (@ben-busald), or text (317-626-2990)
+            Reach out to Ben via text (317-626-2990) or on Signal
         </p>
     </div>
     """, unsafe_allow_html=True)
