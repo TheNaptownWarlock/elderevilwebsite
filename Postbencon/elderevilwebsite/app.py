@@ -6683,7 +6683,11 @@ if st.session_state.current_page == "FAQ":
             "link_text": "View the Dahlia Property"
         },
         {
-            "question": "🚗 How far away is it?",
+            "question": "�️ What's the sleeping arrangements?",
+            "answer": "There's enough beds for everyone to have their own. No one will be on an airmattress."
+        },
+        {
+            "question": "�🚗 How far away is it?",
             "answer": "About 1hr 30min from Chicago (2hrs for Northsiders), 2hr 30min from Indianapolis"
         },
         {
