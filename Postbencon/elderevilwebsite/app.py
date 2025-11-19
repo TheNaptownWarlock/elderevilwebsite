@@ -247,7 +247,7 @@ def init_supabase():
             def modify_session(obj, path=""):
                 if hasattr(obj, 'session') and isinstance(obj.session, requests.Session):
                     obj.session.verify = False
-                    obj.session.trust_env = False
+                    obj.session.t_env = False
                     st.info(f"🔧 Modified session at {path}")
                 
                 for attr_name in dir(obj):
@@ -6478,13 +6478,16 @@ if st.session_state.current_page == "Quest Counter":
 
     # Available Events Display - with wider container
     st.markdown('<div class="quest-section-wide">', unsafe_allow_html=True)
+    
+    # Load ALL events once instead of per-day to improve performance
+    with st.spinner('🗡️ Loading all quests from the tavern board...'):
+        fresh_events = get_events_from_supabase()
 
     for day_key, day_label in DAYS:
         # Fantasy styled day header
         st.markdown(f'<div class="fantasy-day-header">⚔️ {day_label} ⚔️</div>', unsafe_allow_html=True)
         
-        # Show ALL events (including user's own) - fetch fresh from Supabase
-        fresh_events = get_events_from_supabase()
+        # Filter events for this day from the already-loaded events
         day_events = [e for e in fresh_events if e["day"] == day_key]
         if not day_events:
             st.write("_No quests yet for this day._")
