@@ -6708,18 +6708,14 @@ if st.session_state.current_page == "FAQ":
         },
         {
             "question": "💰 What's the cost?",
-            "answer": "$250 per person. If the $50 increase would prohibit you from coming please allow us to know as we can subsidize."
+            "answer": "$250 per person for accommodation. $60 per person for food."
         },
         {
             "question": "💳 How and when do I pay?",
             "answer": "You can pay Ben via venmo or zelle. His venmo is ben-busald. His number is 317-626-2990."
         },
         {
-            "question": "🍽️ Does the cost include food?",
-            "answer": "The budget includes dinner and breakfast. Lunch is on your own. *Subject to change based on final number of attendees."
-        },
-        {
-            "question": "🎮 What is there to do at Bencon?",
+            "question": " What is there to do at Bencon?",
             "answer": "Bencon is an environment curated for play, curiosity and community. We exist as a platform to let you ideate quickly on concepts whether its games/conversations etc in support of like minded people who want to have a good time. There'll be board games/video games/rpgs/discussions/hot tubs and more! Please think about any concept of programming you'd like to host and let us know if you need support! (I'm having people work on my dating profiles haha)."
         },
         {
